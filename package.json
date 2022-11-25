@@ -7,7 +7,8 @@
 		"start": "wp-scripts start",
 		"build": "wp-scripts build",
 		"plugin-zip": "wp-scripts plugin-zip",
-		"format": "wp-scripts format"
+		"format": "wp-scripts format",
+		"env": "wp-env"
 	},
 	"files": [
 		"build",
@@ -19,6 +20,7 @@
 	"author": "",
 	"license": "GPLv2 or later",
 	"devDependencies": {
+		"@wordpress/env": "^5.7.0",
 		"@wordpress/scripts": "^24.6.0"
 	}
 }
