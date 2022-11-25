@@ -24,7 +24,7 @@ const compareMetaOptions = [
 	'RLIKE',
 ];
 
-export const PostMetaControls = ({ attributes, setAttributes }) => {
+export const PostMetaControls = ( { attributes, setAttributes } ) => {
 	const {
 		query: {
 			postType,
@@ -34,93 +34,98 @@ export const PostMetaControls = ({ attributes, setAttributes }) => {
 		} = {},
 	} = attributes;
 
-	const { records } = useEntityRecords('postType', postType, {
+	const { records } = useEntityRecords( 'postType', postType, {
 		per_page: 1,
-	});
+	} );
 
-	const registeredMetaKeys = records?.[0]?.meta || {};
+	const registeredMetaKeys = records?.[ 0 ]?.meta || {};
 
 	return (
 		<PanelBody
-			title={__('Post Meta', 'advanced-query-loop')}
-			initialOpen={false}
+			title={ __( 'Post Meta', 'advanced-query-loop' ) }
+			initialOpen={ false }
 		>
-			{Object.keys(registeredMetaKeys).length > 0 ? (
+			{ Object.keys( registeredMetaKeys ).length > 0 ? (
 				<SelectControl
-					label={__('Meta Key', 'advanced-query-loop')}
-					value={metaKeyFromQuery}
-					options={[
+					label={ __( 'Meta Key', 'advanced-query-loop' ) }
+					value={ metaKeyFromQuery }
+					options={ [
 						{ label: 'Choose Meta', value: '' },
-						...Object.keys(registeredMetaKeys).map((metaKey) => {
-							return {
-								label: metaKey,
-								value: metaKey,
-							};
-						}),
-					]}
-					onChange={(newMeta) =>
-						setAttributes({
+						...Object.keys( registeredMetaKeys ).map(
+							( metaKey ) => {
+								return {
+									label: metaKey,
+									value: metaKey,
+								};
+							}
+						),
+					] }
+					onChange={ ( newMeta ) =>
+						setAttributes( {
 							query: {
 								...attributes.query,
 								meta_key: newMeta,
 							},
-						})
+						} )
 					}
 				/>
 			) : (
 				<h3>
-					{__(
+					{ __(
 						'This post type has to registered post meta to query',
 						'advanced-query-loop'
-					)}
+					) }
 				</h3>
-			)}
+			) }
 
-			{metaKeyFromQuery && (
+			{ metaKeyFromQuery && (
 				<>
 					<TextControl
-						label={__('Meta Value', 'advanced-query-loop')}
-						value={metaValueFromQuery}
-						onChange={(newText) => {
-							if (newText.length) {
-								setAttributes({
+						label={ __( 'Meta Value', 'advanced-query-loop' ) }
+						value={ metaValueFromQuery }
+						onChange={ ( newText ) => {
+							if ( newText.length ) {
+								setAttributes( {
 									query: {
 										...attributes.query,
 										meta_value: newText,
 									},
-								});
+								} );
 							} else {
-								setAttributes({
+								setAttributes( {
 									query: {
 										...attributes.query,
 										meta_value: newText,
 										meta_compare: '',
 									},
-								});
+								} );
 							}
-						}}
+						} }
 					/>
-					{metaValueFromQuery && (
+					{ metaValueFromQuery && (
 						<SelectControl
-							label={__('Meta Compare', 'advanced-query-loop')}
-							value={metaCompareFromQuery}
-							options={[
-								...compareMetaOptions.map((operator) => {
+							label={ __(
+								'Meta Compare',
+								'advanced-query-loop'
+							) }
+							value={ metaCompareFromQuery }
+							options={ [
+								...compareMetaOptions.map( ( operator ) => {
 									return { label: operator, value: operator };
-								}),
-							]}
-							onChange={(newCompare) =>
-								setAttributes({
+								} ),
+							] }
+							onChange={ ( newCompare ) =>
+								setAttributes( {
 									query: {
 										...attributes.query,
 										meta_compare: newCompare,
 									},
-								})
+								} )
 							}
 						/>
-					)}
+					) }
 				</>
-			)}
+			) }
 		</PanelBody>
 	);
 };

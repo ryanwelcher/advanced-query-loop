@@ -17,7 +17,7 @@ import { PostCountControls } from './post-count-controls';
  * @param {*} props
  * @return {boolean} Is this the correct variation?
  */
-const isAdvancedQueryLoop = (props) => {
+const isAdvancedQueryLoop = ( props ) => {
 	const {
 		attributes: { namespace, query: { inherit } = {} },
 	} = props;
@@ -30,20 +30,20 @@ const isAdvancedQueryLoop = (props) => {
  * @param {*} BlockEdit
  * @return {Element} BlockEdit instance
  */
-const withAdvancedQueryControls = (BlockEdit) => (props) => {
+const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 	// If the is the correct variation, add the custom controls.
-	return isAdvancedQueryLoop(props) ? (
+	return isAdvancedQueryLoop( props ) ? (
 		<>
-			<BlockEdit {...props} />
+			<BlockEdit { ...props } />
 			<InspectorControls>
-				<PostCountControls {...props} />
-				<PostMetaControls {...props} />
-				{/** Our custom component */}
+				<PostCountControls { ...props } />
+				<PostMetaControls { ...props } />
+				{ /** Our custom component */ }
 			</InspectorControls>
 		</>
 	) : (
-		<BlockEdit {...props} />
+		<BlockEdit { ...props } />
 	);
 };
 
-addFilter('editor.BlockEdit', 'core/query', withAdvancedQueryControls);
+addFilter( 'editor.BlockEdit', 'core/query', withAdvancedQueryControls );

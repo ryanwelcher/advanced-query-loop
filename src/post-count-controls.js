@@ -14,38 +14,40 @@ import { __ } from '@wordpress/i18n';
  * @param {*} param0
  * @return {Element} PostCountControls
  */
-export const PostCountControls = ({ attributes, setAttributes }) => {
+export const PostCountControls = ( { attributes, setAttributes } ) => {
 	const { query: { perPage, offset = 0 } = {} } = attributes;
 
 	return (
-		<PanelBody title={__('Post Count', 'advanced-query-loop')}>
+		<PanelBody
+			title={ __( 'Post Count and offset', 'advanced-query-loop' ) }
+		>
 			<RangeControl
-				label={__('Posts Per Page', 'advanced-query-loop')}
-				min={1}
-				max={10}
-				onChange={(newCount) => {
-					setAttributes({
+				label={ __( 'Posts Per Page', 'advanced-query-loop' ) }
+				min={ 1 }
+				max={ 10 }
+				onChange={ ( newCount ) => {
+					setAttributes( {
 						query: {
 							...attributes.query,
 							perPage: newCount,
 							offset,
 						},
-					});
-				}}
-				value={perPage}
+					} );
+				} }
+				value={ perPage }
 			/>
 			<NumberControl
-				label={__('Offset', 'advanced-query-loop')}
-				value={offset}
-				min={0}
-				onChange={(newOffset) => {
-					setAttributes({
+				label={ __( 'Offset', 'advanced-query-loop' ) }
+				value={ offset }
+				min={ 0 }
+				onChange={ ( newOffset ) => {
+					setAttributes( {
 						query: {
 							...attributes.query,
 							offset: newOffset,
 						},
-					});
-				}}
+					} );
+				} }
 			/>
 		</PanelBody>
 	);
