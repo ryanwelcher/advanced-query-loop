@@ -11,7 +11,8 @@
 	},
 	"files": [
 		"build",
-		"index.php"
+		"index.php",
+		"readme.txt"
 	],
 	"prettier": "@wordpress/prettier-config",
 	"keywords": [],
