@@ -24,13 +24,19 @@ const compareMetaOptions = [
 	'RLIKE',
 ];
 
-export const PostMetaControls = ( { attributes, setAttributes } ) => {
+export const PostMetaControls = ( {
+	attributes,
+	setAttributes,
+	meta_key: metaKeyFromQuery = '',
+	meta_value: metaValueFromQuery = '',
+	meta_compare: metaCompareFromQuery = '',
+} ) => {
 	const {
 		query: {
 			postType,
-			meta_key: metaKeyFromQuery = '',
-			meta_value: metaValueFromQuery = '',
-			meta_compare: metaCompareFromQuery = '',
+			// meta_key: metaKeyFromQuery = '',
+			// meta_value: metaValueFromQuery = '',
+			// meta_compare: metaCompareFromQuery = '',
 		} = {},
 	} = attributes;
 
