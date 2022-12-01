@@ -24,6 +24,7 @@
 		"@wordpress/scripts": "^24.6.0"
 	},
 	"dependencies": {
-		"@wordpress/icons": "^9.13.0"
+		"@wordpress/icons": "^9.13.0",
+		"uuid": "^9.0.0"
 	}
 }

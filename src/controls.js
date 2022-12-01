@@ -38,7 +38,7 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 			<BlockEdit { ...props } />
 			<InspectorControls>
 				<PostCountControls { ...props } />
-				<PostMetaControls { ...props } />
+				{ /* <PostMetaControls { ...props } /> */ }
 				<PostMetaQueryControls { ...props } />
 				{ /** Our custom component */ }
 			</InspectorControls>

@@ -54,15 +54,28 @@ add_filter(
 				function( $query ) use ( $parsed_block ) {
 					$custom_query = $parsed_block['attrs']['query'];
 					// Generate a new custom query will all potential query vars.
+
+					$meta_queries = array();
+
+
+					foreach( $custom_query['meta_query']['queries'] as $query ) {
+						$meta_queries[] = array_filter ( array(
+							'key'       => $query['meta_key' ],
+							'value'     => $query['meta_value' ],
+							'compare'   => $query['meta_compare' ],
+						));
+					}
 					$custom_args = array(
-						'meta_key'     => $custom_query['meta_key'],
-						'meta_value'   => $custom_query['meta_value'],
-						'meta_compare' => $custom_query['meta_compare'],
+						'meta_query' => array_filter( $meta_queries )
 					);
+
+					// die( 
+					// 	var_dump($custom_query['meta_query'])
+					// );
+
 					// Filter out any empty values from the custom query and merge it with the existing query.
 					return array_merge(
-						array_filter( $custom_args ),
-						$query
+						$custom_query
 					);
 				},
 				10,
@@ -85,10 +98,23 @@ add_filter(
 	'rest_twitch-stream_query',
 	function( $args, $request ) {
 		// Generate a new custom query will all potential query vars.
+
+		$meta_query = $request->get_param( 'meta_query' );
+
+		$meta_queries = array();
+
+		foreach( $meta_query['queries'] as $query ) {
+			$meta_queries[] = array_filter (array(
+				'key'       => $query['meta_key' ],
+				'value'     => $query['meta_value' ],
+				'compare'   => $query['meta_compare' ],
+			));
+		}
+
+		
+
 		$custom_args = array(
-			'meta_key'       => $request->get_param( 'meta_key' ),
-			'meta_value'     => $request->get_param( 'meta_value' ),
-			'meta_compare'   => $request->get_param( 'meta_compare' ),
+			'meta_query' => array_filter( $meta_queries )
 		);
 
 		// Filter out any empty values from the custom query and merge it with the existing query.
