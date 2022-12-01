@@ -124,7 +124,28 @@ export const PostMetaControl = ( {
 					} );
 				} }
 			/>
-			<Button isSmall icon={ closeSmall } />
+			<Button
+				isSmall
+				variant="secondary"
+				isDestructive
+				onClick={ () => {
+					const updatedQueries = queries.filter(
+						( query ) => query.id !== id
+					);
+
+					setAttributes( {
+						query: {
+							...attributes.query,
+							meta_query: {
+								...attributes.query.meta_query,
+								queries: updatedQueries,
+							},
+						},
+					} );
+				} }
+			>
+				{ __( 'Remove meta query', 'advanced-query-loop' ) }
+			</Button>
 		</>
 	);
 };

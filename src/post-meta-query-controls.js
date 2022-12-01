@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { v4 as uuidv4 } from 'uuid';
+
 /**
  * WordPress dependencies
  */
@@ -41,29 +42,31 @@ export const PostMetaQueryControls = ( { attributes, setAttributes } ) => {
 				</p>
 			) : (
 				<>
-					<SelectControl
-						label={ __(
-							'Query Relationship',
-							'advanced-query-loop'
-						) }
-						value={ relationFromQuery }
-						options={ [
-							{ label: 'Choose relationship', value: '' },
-							{ label: 'AND', value: 'AND' },
-							{ label: 'OR', value: 'OR' },
-						] }
-						onChange={ ( relation ) =>
-							setAttributes( {
-								query: {
-									...attributes.query,
-									meta_query: {
-										...attributes.query.meta_query,
-										relation,
+					{ queries.length > 1 && (
+						<SelectControl
+							label={ __(
+								'Query Relationship',
+								'advanced-query-loop'
+							) }
+							value={ relationFromQuery }
+							options={ [
+								{ label: 'Choose relationship', value: '' },
+								{ label: 'AND', value: 'AND' },
+								{ label: 'OR', value: 'OR' },
+							] }
+							onChange={ ( relation ) =>
+								setAttributes( {
+									query: {
+										...attributes.query,
+										meta_query: {
+											...attributes.query.meta_query,
+											relation,
+										},
 									},
-								},
-							} )
-						}
-					/>
+								} )
+							}
+						/>
+					) }
 
 					{ queries.map(
 						( {
