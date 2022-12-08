@@ -3,7 +3,6 @@
  */
 import { SelectControl, TextControl, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { closeSmall } from '@wordpress/icons';
 
 const compareMetaOptions = [
 	'=',
