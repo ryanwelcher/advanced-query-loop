@@ -78,6 +78,15 @@ export const PostMetaQueryControls = ( { attributes, setAttributes } ) => {
 						/>
 					) }
 
+					{ queries.length < 1 && (
+						<p>
+							{ __(
+								'Add a meta query to select post meta to query',
+								'advanced-query-loop'
+							) }
+						</p>
+					) }
+
 					{ queries.map(
 						( {
 							id,
@@ -103,7 +112,6 @@ export const PostMetaQueryControls = ( { attributes, setAttributes } ) => {
 							);
 						}
 					) }
-
 					<Button
 						isSmall
 						variant="primary"
