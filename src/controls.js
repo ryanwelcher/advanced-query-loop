@@ -8,7 +8,6 @@ import { InspectorControls } from '@wordpress/block-editor';
  *  Internal dependencies
  */
 import { AQL } from './variations';
-import { PostMetaControls } from './post-meta-controls';
 import { PostCountControls } from './post-count-controls';
 import { PostMetaQueryControls } from './post-meta-query-controls';
 

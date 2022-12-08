@@ -7,7 +7,6 @@ import { v4 as uuidv4 } from 'uuid';
  * WordPress dependencies
  */
 import { Button, SelectControl, PanelBody } from '@wordpress/components';
-import { plus } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
 import { useEntityRecords } from '@wordpress/core-data';
 
@@ -97,7 +96,6 @@ export const PostMetaQueryControls = ( { attributes, setAttributes } ) => {
 					<Button
 						isSmall
 						variant="primary"
-						icon={ plus }
 						onClick={ () => {
 							const newQueries = [
 								...queries,
@@ -118,7 +116,9 @@ export const PostMetaQueryControls = ( { attributes, setAttributes } ) => {
 								},
 							} );
 						} }
-					/>
+					>
+						{ __( 'Add meta query', 'advanced-query-loop' ) }
+					</Button>
 				</>
 			) }
 		</PanelBody>

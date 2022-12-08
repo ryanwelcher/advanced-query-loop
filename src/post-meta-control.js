@@ -37,6 +37,27 @@ export const PostMetaControl = ( {
 	setAttributes,
 } ) => {
 	const activeQuery = queries.find( ( query ) => query.id === id );
+
+	/**
+	 *
+	 * @param {*} queries
+	 * @param {*} queryId
+	 * @param {*} item
+	 * @param {*} value
+	 * @returns
+	 */
+	const updateQueryParam = ( queries, queryId, item, value ) => {
+		return queries.map( ( query ) => {
+			if ( query.id === queryId ) {
+				return {
+					...query,
+					[ item ]: value,
+				};
+			}
+			return query;
+		} );
+	};
+
 	return (
 		<>
 			<SelectControl
@@ -54,20 +75,17 @@ export const PostMetaControl = ( {
 					),
 				] }
 				onChange={ ( newMeta ) => {
-					const newQueries = [
-						...queries.filter( ( query ) => query.id !== id ),
-						{
-							...activeQuery,
-							meta_key: newMeta,
-						},
-					];
-
 					setAttributes( {
 						query: {
 							...attributes.query,
 							meta_query: {
 								...attributes.query.meta_query,
-								queries: newQueries,
+								queries: updateQueryParam(
+									queries,
+									id,
+									'meta_key',
+									newMeta
+								),
 							},
 						},
 					} );
@@ -76,21 +94,18 @@ export const PostMetaControl = ( {
 			<TextControl
 				label={ __( 'Meta Value', 'advanced-query-loop' ) }
 				value={ activeQuery.meta_value }
-				onChange={ ( newText ) => {
-					const newQueries = [
-						...queries.filter( ( query ) => query.id !== id ),
-						{
-							...activeQuery,
-							meta_value: newText,
-						},
-					];
-
+				onChange={ ( newValue ) => {
 					setAttributes( {
 						query: {
 							...attributes.query,
 							meta_query: {
 								...attributes.query.meta_query,
-								queries: newQueries,
+								queries: updateQueryParam(
+									queries,
+									id,
+									'meta_value',
+									newValue
+								),
 							},
 						},
 					} );
@@ -105,20 +120,17 @@ export const PostMetaControl = ( {
 					} ),
 				] }
 				onChange={ ( newCompare ) => {
-					const newQueries = [
-						...queries.filter( ( query ) => query.id !== id ),
-						{
-							...activeQuery,
-							meta_compare: newCompare,
-						},
-					];
-
 					setAttributes( {
 						query: {
 							...attributes.query,
 							meta_query: {
 								...attributes.query.meta_query,
-								queries: newQueries,
+								queries: updateQueryParam(
+									queries,
+									id,
+									'meta_compare',
+									newCompare
+								),
 							},
 						},
 					} );
