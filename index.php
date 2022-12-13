@@ -41,7 +41,6 @@ add_action(
 	}
 );
 
-
 /**
  * Updates the query on the front end based on custom query attributes.
  */
@@ -51,19 +50,34 @@ add_filter(
 		if ( 'advanced-query-loop' === $parsed_block['attrs']['namespace'] ) {
 			add_filter(
 				'query_loop_block_query_vars',
-				function( $query ) use ( $parsed_block ) {
+				function( $default_query ) use ( $parsed_block ) {
 					$custom_query = $parsed_block['attrs']['query'];
 					// Generate a new custom query will all potential query vars.
+					$meta_queries = array(
+						'relation' => $custom_query['meta_query']['relation'],
+					);
+
+					foreach ( $custom_query['meta_query']['queries'] as $query ) {
+						$meta_queries[] = array_filter(
+							array(
+								'key'     => $query['meta_key'],
+								'value'   => $query['meta_value'],
+								'compare' => $query['meta_compare'],
+							)
+						);
+					}
 					$custom_args = array(
-						'meta_key'     => $custom_query['meta_key'],
-						'meta_value'   => $custom_query['meta_value'],
-						'meta_compare' => $custom_query['meta_compare'],
+						'meta_query' => array_filter( $meta_queries ),
 					);
+
+					$new_query = array_merge(
+						$default_query,
+						$custom_args
+					);
+					// die( '<pre>' . print_r( $new_query, 1 ) . '</pre>)' );
+
 					// Filter out any empty values from the custom query and merge it with the existing query.
-					return array_merge(
-						array_filter( $custom_args ),
-						$query
-					);
+					return $new_query;
 				},
 				10,
 				2
@@ -77,26 +91,56 @@ add_filter(
 	2
 );
 
-
 /**
  * Updates the query vars for the Query Loop block in the block editor
  */
-add_filter(
-	'rest_twitch-stream_query',
-	function( $args, $request ) {
-		// Generate a new custom query will all potential query vars.
-		$custom_args = array(
-			'meta_key'       => $request->get_param( 'meta_key' ),
-			'meta_value'     => $request->get_param( 'meta_value' ),
-			'meta_compare'   => $request->get_param( 'meta_compare' ),
-		);
 
-		// Filter out any empty values from the custom query and merge it with the existing query.
-		return array_merge(
-			$args,
-			array_filter( $custom_args )
-		);
+// Add a filter to each rest endpoint to add our custom query params.
+add_action(
+	'init',
+	function() {
+		$registered_post_types = get_post_types( array( 'public' => true ) );
+		foreach ( $registered_post_types as $registered_post_type ) {
+			add_filter( 'rest_' . $registered_post_type . '_query', 'add_custom_query_params', 10, 2 );
+		}
+
 	},
-	10,
-	2
+	PHP_INT_MAX
 );
+
+/**
+ * Callback to handle the custom query params.
+ */
+function add_custom_query_params( $args, $request ) {
+	// Generate a new custom query will all potential query vars.
+
+	$meta_query = $request->get_param( 'meta_query' );
+
+	$meta_queries = array(
+		'relation' => $meta_query['relation'],
+	);
+
+	foreach ( $meta_query['queries'] as $query ) {
+		$meta_queries[] = array_filter(
+			array(
+				'key'     => $query['meta_key'],
+				'value'   => $query['meta_value'],
+				'compare' => $query['meta_compare'],
+			)
+		);
+	}
+
+	$custom_args = array(
+		'meta_query' => array_filter( $meta_queries ),
+	);
+
+	$new_query = array_merge(
+		$args,
+		array_filter( $custom_args )
+	);
+
+	// die( '<pre>' . print_r( $new_query, 1 ) . '</pre>)' );
+
+	// Filter out any empty values from the custom query and merge it with the existing query.
+	return $new_query;
+}

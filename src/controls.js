@@ -8,8 +8,8 @@ import { InspectorControls } from '@wordpress/block-editor';
  *  Internal dependencies
  */
 import { AQL } from './variations';
-import { PostMetaControls } from './post-meta-controls';
 import { PostCountControls } from './post-count-controls';
+import { PostMetaQueryControls } from './post-meta-query-controls';
 
 /**
  * Determines if the active variation is this one
@@ -37,7 +37,8 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 			<BlockEdit { ...props } />
 			<InspectorControls>
 				<PostCountControls { ...props } />
-				<PostMetaControls { ...props } />
+				{ /* <PostMetaControls { ...props } /> */ }
+				<PostMetaQueryControls { ...props } />
 				{ /** Our custom component */ }
 			</InspectorControls>
 		</>
