@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Button, SelectControl, PanelBody } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useEntityRecords } from '@wordpress/core-data';
-import { useEffect } from '@wordpress/element';
+import { useEffect, useState } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -29,16 +29,20 @@ export const PostMetaQueryControls = ( { attributes, setAttributes } ) => {
 		per_page: 1,
 	} );
 
+	const [ selectedPostType ] = useState( postType );
+
 	const registeredMetaKeys = records?.[ 0 ]?.meta || {};
 
 	useEffect( () => {
 		// If the post type changes, reset the meta query.
-		setAttributes( {
-			query: {
-				...attributes.query,
-				meta_query: {},
-			},
-		} );
+		if ( postType !== selectedPostType ) {
+			setAttributes( {
+				query: {
+					...attributes.query,
+					meta_query: {},
+				},
+			} );
+		}
 	}, [ postType ] );
 
 	return (
