@@ -21,7 +21,7 @@ const isAdvancedQueryLoop = ( props ) => {
 	const {
 		attributes: { namespace, query: { inherit } = {} },
 	} = props;
-	return namespace && namespace === AQL && inherit === false;
+	return namespace && namespace === AQL;
 };
 
 /**
@@ -37,9 +37,7 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 			<BlockEdit { ...props } />
 			<InspectorControls>
 				<PostCountControls { ...props } />
-				{ /* <PostMetaControls { ...props } /> */ }
 				<PostMetaQueryControls { ...props } />
-				{ /** Our custom component */ }
 			</InspectorControls>
 		</>
 	) : (
