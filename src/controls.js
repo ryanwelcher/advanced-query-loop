@@ -21,7 +21,7 @@ const isAdvancedQueryLoop = ( props ) => {
 	const {
 		attributes: { namespace, query: { inherit } = {} },
 	} = props;
-	return namespace && namespace === AQL;
+	return namespace && namespace === AQL && inherit === false;
 };
 
 /**
