@@ -10,6 +10,7 @@ import { InspectorControls } from '@wordpress/block-editor';
 import { AQL } from './variations';
 import { PostCountControls } from './post-count-controls';
 import { PostMetaQueryControls } from './post-meta-query-controls';
+import { PostDateQueryControls } from './post-date-query-controls';
 
 /**
  * Determines if the active variation is this one
@@ -38,6 +39,7 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 			<InspectorControls>
 				<PostCountControls { ...props } />
 				<PostMetaQueryControls { ...props } />
+				<PostDateQueryControls { ...props } />
 			</InspectorControls>
 		</>
 	) : (

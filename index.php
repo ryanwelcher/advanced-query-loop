@@ -52,7 +52,11 @@ add_filter(
 				'query_loop_block_query_vars',
 				function( $default_query ) use ( $parsed_block ) {
 					$custom_query = $parsed_block['attrs']['query'];
+
+
 					// Generate a new custom query will all potential query vars.
+
+
 					$meta_queries = array(
 						'relation' => $custom_query['meta_query']['relation'],
 					);
@@ -66,8 +70,50 @@ add_filter(
 							)
 						);
 					}
+
+					// Date related.
+					$date_query        = $custom_query['date_query'];
+					$date_relationship = $date_query['relation'];
+					$date_is_inclusive = $date_query['inclusive'];
+					$date_primary      = $date_query['date_primary'];
+					$date_secondary    = $date_query['date_secondary'];
+
+					// Date format: 2022-12-27T11:14:21.
+					$primary_year    = substr( $date_primary, 0, 4 );
+					$primary_month   = substr( $date_primary, 5, 2 );
+					$primary_day     = substr( $date_primary, 8, 2 );
+					$secondary_year  = substr( $date_secondary, 0, 4 );
+					$secondary_month = substr( $date_secondary, 5, 2 );
+					$secondary_day   = substr( $date_secondary, 8, 2 );
+
+					if ( 'between' === $date_relationship ) {
+						$date_queries = array(
+							'after' => array(
+								'year'  => $primary_year,
+								'month' => $primary_month,
+								'day'   => $primary_day,
+							),
+							'before'  => array(
+								'year'  => $secondary_year,
+								'month' => $secondary_month,
+								'day'   => $secondary_day,
+							),
+						);
+					} else {
+						$date_queries = array(
+							$date_relationship => array(
+								'year'  => $primary_year,
+								'month' => $primary_month,
+								'day'   => $primary_day,
+							),
+						);
+					}
+
+					$date_queries['inclusive'] = $date_is_inclusive;
+
 					$custom_args = array(
 						'meta_query' => array_filter( $meta_queries ),
+						'date_query' => array_filter( $date_queries ),
 					);
 
 					$new_query = array_merge(
@@ -109,17 +155,18 @@ add_action(
 );
 
 /**
- * Callback to handle the custom query params.
+ * Callback to handle the custom query params. Updates the block editor.
  */
 function add_custom_query_params( $args, $request ) {
 	// Generate a new custom query will all potential query vars.
 
-	$meta_query = $request->get_param( 'meta_query' );
+	// die( '<pre>' . print_r( $request, 1 ) . '</pre>)' );
 
+	// Meta related.
+	$meta_query = $request->get_param( 'meta_query' );
 	$meta_queries = array(
 		'relation' => $meta_query['relation'],
 	);
-
 	foreach ( $meta_query['queries'] as $query ) {
 		$meta_queries[] = array_filter(
 			array(
@@ -130,8 +177,49 @@ function add_custom_query_params( $args, $request ) {
 		);
 	}
 
+	// Date related.
+	$date_query        = $request->get_param( 'date_query' );
+	$date_relationship = $date_query['relation'];
+	$date_is_inclusive = ( 'true' === $date_query['inclusive'] ) ? true : false;
+	$date_primary      = $date_query['date_primary'];
+	$date_secondary    = $date_query['date_secondary'];
+
+	// Date format: 2022-12-27T11:14:21.
+	$primary_year    = substr( $date_primary, 0, 4 );
+	$primary_month   = substr( $date_primary, 5, 2 );
+	$primary_day     = substr( $date_primary, 8, 2 );
+	$secondary_year  = substr( $date_secondary, 0, 4 );
+	$secondary_month = substr( $date_secondary, 5, 2 );
+	$secondary_day   = substr( $date_secondary, 8, 2 );
+
+	if ( 'between' === $date_relationship ) {
+		$date_queries = array(
+			'after'  => array(
+				'year'  => $primary_year,
+				'month' => $primary_month,
+				'day'   => $primary_day,
+			),
+			'before'  => array(
+				'year'  => $secondary_year,
+				'month' => $secondary_month,
+				'day'   => $secondary_day,
+			),
+		);
+	} else {
+		$date_queries = array(
+			$date_relationship => array(
+				'year'  => $primary_year,
+				'month' => $primary_month,
+				'day'   => $primary_day,
+			),
+		);
+	}
+	$date_queries['inclusive'] = $date_is_inclusive;
+
+	// Merge all queries.
 	$custom_args = array(
 		'meta_query' => array_filter( $meta_queries ),
+		'date_query' => array_filter( $date_queries ),
 	);
 
 	$new_query = array_merge(
