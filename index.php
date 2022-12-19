@@ -1,7 +1,6 @@
 <?php
 /**
  * Plugin Name:       Advanced Query Loop
- * Plugin URI:        https://example.com/plugins/the-basics/
  * Description:       Query loop block variations to create custom queries.
  * Version:           1.0.0
  * Requires at least: 6.1
@@ -10,12 +9,13 @@
  * Author URI:        https://www.ryanwelcher.com/
  * License:           GPL v2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
- * Update URI:        https://example.com/my-plugin/
  * Text Domain:       advanced-query-loop
  * Domain Path:       /languages
  *
  * @package           AdvancedQueryLoop
  */
+
+namespace AdvancedQueryLoop;
 
 /**
  * Enqueue our variations.
@@ -52,10 +52,7 @@ add_filter(
 				'query_loop_block_query_vars',
 				function( $default_query ) use ( $parsed_block ) {
 					$custom_query = $parsed_block['attrs']['query'];
-
-
 					// Generate a new custom query will all potential query vars.
-
 
 					$meta_queries = array(
 						'relation' => $custom_query['meta_query']['relation'],
@@ -88,12 +85,12 @@ add_filter(
 
 					if ( 'between' === $date_relationship ) {
 						$date_queries = array(
-							'after' => array(
+							'after'  => array(
 								'year'  => $primary_year,
 								'month' => $primary_month,
 								'day'   => $primary_day,
 							),
-							'before'  => array(
+							'before' => array(
 								'year'  => $secondary_year,
 								'month' => $secondary_month,
 								'day'   => $secondary_day,
@@ -120,8 +117,6 @@ add_filter(
 						$default_query,
 						$custom_args
 					);
-					// die( '<pre>' . print_r( $new_query, 1 ) . '</pre>)' );
-
 					// Filter out any empty values from the custom query and merge it with the existing query.
 					return $new_query;
 				},
@@ -160,10 +155,8 @@ add_action(
 function add_custom_query_params( $args, $request ) {
 	// Generate a new custom query will all potential query vars.
 
-	// die( '<pre>' . print_r( $request, 1 ) . '</pre>)' );
-
 	// Meta related.
-	$meta_query = $request->get_param( 'meta_query' );
+	$meta_query   = $request->get_param( 'meta_query' );
 	$meta_queries = array(
 		'relation' => $meta_query['relation'],
 	);
@@ -199,7 +192,7 @@ function add_custom_query_params( $args, $request ) {
 				'month' => $primary_month,
 				'day'   => $primary_day,
 			),
-			'before'  => array(
+			'before' => array(
 				'year'  => $secondary_year,
 				'month' => $secondary_month,
 				'day'   => $secondary_day,
@@ -226,8 +219,6 @@ function add_custom_query_params( $args, $request ) {
 		$args,
 		array_filter( $custom_args )
 	);
-
-	// die( '<pre>' . print_r( $new_query, 1 ) . '</pre>)' );
 
 	// Filter out any empty values from the custom query and merge it with the existing query.
 	return $new_query;
