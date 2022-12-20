@@ -14,4 +14,5 @@ registerBlockVariation( 'core/query', {
 	attributes: {
 		namespace: AQL,
 	},
+	scope: [ 'inserter' ],
 } );
