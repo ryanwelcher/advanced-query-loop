@@ -16,12 +16,22 @@ This plugin introduces a Query Loop block variation that will empower users to b
 === Available Controls ===
 
 ==== Post Count and Offset ====
-
 Set the number of items you want to display ( up to 10 ) and choose whether you want to start at the first or 100th!
 
 ==== Post Meta Query ====
-
 Generate complicated post meta queries using an interface that allows you to create a query based on `meta_key`, `meta_value` and the `compare` options. Combine multiple queries and determine if they combine results (OR) or narrow them down (AND).
 
 ==== Date Query ====
-Query item before a date, after a date or between two dates!
+Query items before a date, after a date or between two dates!
+
+== Screenshots ==
+
+1. Select how many posts you want to display and the number to start at.
+2. Create complicated queries for post types with registered post meta.x
+3. Query posts before a date, after a date or between two dates.
+
+== Changelog ==
+
+= 1.0.0 =
+* Initial release with support for post count, offset, post meta, and date queries.
+
