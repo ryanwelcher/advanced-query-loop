@@ -20,7 +20,7 @@ namespace AdvancedQueryLoop;
 /**
  * Enqueue our variations.
  */
-add_action(
+\add_action(
 	'enqueue_block_editor_assets',
 	function() {
 
@@ -29,7 +29,7 @@ add_action(
 
 		if ( file_exists( $variations_assets_file ) ) {
 			$assets = include $variations_assets_file;
-			wp_enqueue_script(
+			\wp_enqueue_script(
 				'advanced-query-loop',
 				plugin_dir_url( __FILE__ ) . '/build/index.js',
 				$assets['dependencies'],
@@ -44,11 +44,11 @@ add_action(
 /**
  * Updates the query on the front end based on custom query attributes.
  */
-add_filter(
+\add_filter(
 	'pre_render_block',
 	function( $pre_render, $parsed_block ) {
 		if ( 'advanced-query-loop' === $parsed_block['attrs']['namespace'] ) {
-			add_filter(
+			\add_filter(
 				'query_loop_block_query_vars',
 				function( $default_query ) use ( $parsed_block ) {
 					$custom_query = $parsed_block['attrs']['query'];
@@ -137,12 +137,12 @@ add_filter(
  */
 
 // Add a filter to each rest endpoint to add our custom query params.
-add_action(
+\add_action(
 	'init',
 	function() {
 		$registered_post_types = get_post_types( array( 'public' => true ) );
 		foreach ( $registered_post_types as $registered_post_type ) {
-			add_filter( 'rest_' . $registered_post_type . '_query', 'add_custom_query_params', 10, 2 );
+			add_filter( 'rest_' . $registered_post_type . '_query', __NAMESPACE__ . '\add_custom_query_params', 10, 2 );
 		}
 
 	},
