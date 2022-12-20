@@ -50,7 +50,7 @@ export const PostMetaQueryControls = ( { attributes, setAttributes } ) => {
 			{ Object.keys( registeredMetaKeys ).length < 1 ? (
 				<p>
 					{ __(
-						'This post type has to registered post meta to query',
+						'This post type has no registered post meta to query',
 						'advanced-query-loop'
 					) }
 				</p>
