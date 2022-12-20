@@ -35,3 +35,5 @@ Query items before a date, after a date or between two dates!
 = 1.0.0 =
 * Initial release with support for post count, offset, post meta, and date queries.
 
+= 1.0.1 =
+* Small fix to no longer show an empty pattern after inserting the block.
