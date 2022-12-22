@@ -25,13 +25,13 @@ namespace AdvancedQueryLoop;
 	function() {
 
 		// Variations.
-		$variations_assets_file = plugin_dir_path( __FILE__ ) . 'build/index.asset.php';
+		$variations_assets_file = plugin_dir_path( __FILE__ ) . 'build/variation.asset.php';
 
 		if ( file_exists( $variations_assets_file ) ) {
 			$assets = include $variations_assets_file;
 			\wp_enqueue_script(
 				'advanced-query-loop',
-				plugin_dir_url( __FILE__ ) . '/build/index.js',
+				plugin_dir_url( __FILE__ ) . 'build/variation.js',
 				$assets['dependencies'],
 				$assets['version'],
 				true
@@ -223,3 +223,14 @@ function add_custom_query_params( $args, $request ) {
 	// Filter out any empty values from the custom query and merge it with the existing query.
 	return $new_query;
 }
+
+
+/**
+ * Registers the block type.
+ */
+add_action(
+	'init',
+	function() {
+		register_block_type( plugin_dir_path( __FILE__ ) . 'build/post-meta-scaffold' );
+	}
+);

@@ -1,0 +1,21 @@
+{
+	"apiVersion": 2,
+	"name": "advanced-query-loop/post-meta-scaffold",
+	"title": "Post meta scaffold",
+	"category": "common",
+	"description": "A framework block to display any post meta",
+	"text-domain": "advanced-query-loop",
+	"icon": "feedback",
+	"attributes": {},
+	"keywords": [ "query", "meta", "loop" ],
+	"version": "0.0.1",
+	"providesContext": {},
+	"usesContext": [],
+	"styles": [],
+	"example": {
+		"attributes": {}
+	},
+	"supports": {},
+	"editorScript": "file:./index.js",
+	"render": "file:./render.php"
+}
