@@ -1,16 +1,23 @@
 {
 	"apiVersion": 2,
-	"name": "advanced-query-loop/post-meta-scaffold",
-	"title": "Post meta scaffold",
+	"name": "advanced-query-loop/post-meta",
+	"title": "Advanced Query Loop: Post Meta Display",
 	"category": "common",
-	"description": "A framework block to display any post meta",
+	"description": "A framework block to allow displaying of post meta.",
 	"text-domain": "advanced-query-loop",
 	"icon": "feedback",
-	"attributes": {},
+	"attributes": {
+		"identifier": {
+			"type": "string"
+		},
+		"metaKey": {
+			"type": "string"
+		}
+	},
 	"keywords": [ "query", "meta", "loop" ],
 	"version": "0.0.1",
 	"providesContext": {},
-	"usesContext": [],
+	"usesContext": [ "queryId", "postId", "postType" ],
 	"styles": [],
 	"example": {
 		"attributes": {}

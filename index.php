@@ -231,6 +231,25 @@ function add_custom_query_params( $args, $request ) {
 add_action(
 	'init',
 	function() {
-		register_block_type( plugin_dir_path( __FILE__ ) . 'build/post-meta-scaffold' );
+		register_block_type( plugin_dir_path( __FILE__ ) . 'build/post-meta' );
 	}
+);
+
+
+/**
+ * Default post meta render callback.
+ */
+add_action(
+	'aql_post_meta_default_render',
+	function( $attributes, $content, $block, $identifier ) {
+		if ( isset( $attributes['metaKey'] ) ) {
+			?>
+				<div>
+					<?php echo wp_kses_post( get_post_meta( $block->context['postId'], $attributes['metaKey'], true ) ); ?>
+				</div>
+			<?php
+		}
+	},
+	10,
+	4
 );
