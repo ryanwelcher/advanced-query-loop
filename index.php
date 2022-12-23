@@ -25,13 +25,13 @@ namespace AdvancedQueryLoop;
 	function() {
 
 		// Variations.
-		$variations_assets_file = plugin_dir_path( __FILE__ ) . 'build/variation.asset.php';
+		$variations_assets_file = plugin_dir_path( __FILE__ ) . 'build/variations.asset.php';
 
 		if ( file_exists( $variations_assets_file ) ) {
 			$assets = include $variations_assets_file;
 			\wp_enqueue_script(
 				'advanced-query-loop',
-				plugin_dir_url( __FILE__ ) . 'build/variation.js',
+				plugin_dir_url( __FILE__ ) . 'build/variations.js',
 				$assets['dependencies'],
 				$assets['version'],
 				true
@@ -231,7 +231,7 @@ function add_custom_query_params( $args, $request ) {
 add_action(
 	'init',
 	function() {
-		register_block_type( plugin_dir_path( __FILE__ ) . 'build/post-meta' );
+		register_block_type( plugin_dir_path( __FILE__ ) . 'build/blocks/post-meta' );
 	}
 );
 

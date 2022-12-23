@@ -9,6 +9,6 @@ module.exports = {
 	...defaultConfig,
 	entry: {
 		...getWebpackEntryPoints(),
-		variation: './src/index.js',
+		variations: './src/variations/index.js',
 	},
 };

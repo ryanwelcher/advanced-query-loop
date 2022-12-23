@@ -4,6 +4,11 @@
 import { registerBlockVariation } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
 
+/**
+ * Internal dependencies
+ */
+import './controls';
+
 export const AQL = 'advanced-query-loop';
 
 registerBlockVariation( 'core/query', {
