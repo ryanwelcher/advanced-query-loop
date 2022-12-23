@@ -4,8 +4,51 @@
 import { __ } from '@wordpress/i18n';
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 import { useEntityProp } from '@wordpress/core-data';
-import { PanelBody, TextControl, SelectControl } from '@wordpress/components';
+import {
+	PanelBody,
+	TextControl,
+	SelectControl,
+	Placeholder,
+} from '@wordpress/components';
 import ServerSideRender from '@wordpress/server-side-render';
+
+const MetaSelect = ( {
+	haveMetaKeys,
+	metaKey,
+	postMeta,
+	mapMetaToSelect,
+	setAttributes,
+} ) => {
+	return (
+		<>
+			{ haveMetaKeys ? (
+				<>
+					<SelectControl
+						label={ __( 'Meta Field', 'display-meta' ) }
+						value={ metaKey }
+						options={ [
+							{
+								label: 'Please Select',
+								value: '',
+							},
+							...mapMetaToSelect( postMeta ),
+						] }
+						onChange={ ( newKey ) => {
+							setAttributes( { metaKey: newKey } );
+						} }
+					/>
+				</>
+			) : (
+				<p>
+					{ __(
+						'This post type has no registered post meta to query',
+						'advanced-query-loop'
+					) }
+				</p>
+			) }
+		</>
+	);
+};
 
 export default function Edit( {
 	attributes: { identifier, metaKey },
@@ -26,6 +69,14 @@ export default function Edit( {
 		} );
 	};
 
+	const haveMetaKeys = Object.keys( postMeta ).length > 1;
+	const placeholderMessage = haveMetaKeys
+		? __( 'Please select a Meta key', 'advanced-query-loop' )
+		: __(
+				'This post type has no registered post meta to query',
+				'advanced-query-loop'
+		  );
+
 	return (
 		<>
 			<InspectorControls>
@@ -42,31 +93,13 @@ export default function Edit( {
 							setAttributes( { identifier: value } )
 						}
 					/>
-					{ Object.keys( postMeta ).length > 1 ? (
-						<>
-							<SelectControl
-								label={ __( 'Meta Field', 'display-meta' ) }
-								value={ metaKey }
-								options={ [
-									{
-										label: 'Please Select',
-										value: '',
-									},
-									...mapMetaToSelect( postMeta ),
-								] }
-								onChange={ ( newKey ) => {
-									setAttributes( { metaKey: newKey } );
-								} }
-							/>
-						</>
-					) : (
-						<p>
-							{ __(
-								'This post type has no registered post meta to query',
-								'advanced-query-loop'
-							) }
-						</p>
-					) }
+					<MetaSelect
+						haveMetaKeys={ haveMetaKeys }
+						mapMetaToSelect={ mapMetaToSelect }
+						postMeta={ postMeta }
+						metaKey={ metaKey }
+						setAttributes={ setAttributes }
+					/>
 				</PanelBody>
 			</InspectorControls>
 			<div { ...useBlockProps() }>
@@ -76,14 +109,22 @@ export default function Edit( {
 						block="advanced-query-loop/post-meta"
 					/>
 				) : (
-					<p>
-						{ __(
-							'Please select a meta field to display',
-							'advanced-query-loop'
-						) }
-					</p>
+					<Placeholder
+						icon="feedback"
+						label="AQL: Post Meta Block"
+						instructions={ placeholderMessage }
+					>
+						<MetaSelect
+							haveMetaKeys={ haveMetaKeys }
+							mapMetaToSelect={ mapMetaToSelect }
+							postMeta={ postMeta }
+							metaKey={ metaKey }
+							setAttributes={ setAttributes }
+						/>
+					</Placeholder>
 				) }
 			</div>
 		</>
 	);
 }
+``;

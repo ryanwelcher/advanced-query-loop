@@ -20,11 +20,17 @@ import Edit from './edit';
 import metadata from './block.json';
 
 /**
+ * Internal dependencies
+ */
+import AQLIcon from '../../components/icons';
+
+/**
  * Every block starts by registering a new block type definition.
  *
  * @see https://developer.wordpress.org/block-editor/reference-guides/block-api/block-registration/
  */
 registerBlockType( metadata.name, {
+	icon: AQLIcon,
 	/**
 	 * @see ./edit.js
 	 */
