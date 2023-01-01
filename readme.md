@@ -17,3 +17,7 @@ Generate complicated post meta queries using an interface that allows you to cre
 #### Date Query
 
 Query item before a date, after a date or between two dates!
+
+### Post Meta Block.
+
+This block is intended as a framework of sorts to allow theme developers to customize how post meta displays.
