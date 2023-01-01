@@ -8,6 +8,33 @@
 namespace AdvancedQueryLoop;
 
 /**
+ * Adds the custom query attributes to the Query Loop block.
+ *
+ * @param array $meta_query_data Post meta query data.
+ * @return array
+ */
+function parse_meta_query( $meta_query_data ) {
+	$meta_queries = array();
+	if ( isset( $meta_query_data ) ) {
+		$meta_queries = array(
+			'relation' => isset( $meta_query_data['relation'] ) ? $meta_query_data['relation'] : '',
+		);
+
+		foreach ( $meta_query_data['queries'] as $query ) {
+			$meta_queries[] = array_filter(
+				array(
+					'key'     => $query['meta_key'],
+					'value'   => $query['meta_value'],
+					'compare' => $query['meta_compare'],
+				)
+			);
+		}
+	}
+
+	return array_filter( $meta_queries );
+}
+
+/**
  * Updates the query on the front end based on custom query attributes.
  */
 \add_filter(
@@ -22,25 +49,7 @@ namespace AdvancedQueryLoop;
 					$custom_args = array();
 
 					// Check for meta queries.
-					if ( isset( $custom_query['meta_query']['queries'] ) ) {
-
-						$meta_queries = array(
-							'relation' => isset( $custom_query['meta_query']['relation'] ) ? $custom_query['meta_query']['relation'] : '',
-						);
-
-						foreach ( $custom_query['meta_query']['queries'] as $query ) {
-							$meta_queries[] = array_filter(
-								array(
-									'key'     => $query['meta_key'],
-									'value'   => $query['meta_value'],
-									'compare' => $query['meta_compare'],
-								)
-							);
-						}
-
-						// Add the meta queries to the custom args.
-						$custom_args['meta_query'] = array_filter( $meta_queries ); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
-					}
+					$custom_args['meta_query'] = parse_meta_query( $custom_query['meta_query'] ); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 
 					// Date queries.
 					if ( isset( $custom_query['date_query'] ) ) {
@@ -133,24 +142,9 @@ function add_custom_query_params( $args, $request ) {
 	// Generate a new custom query will all potential query vars.
 	$custom_args = array();
 	// Meta related.
-	$meta_query = $request->get_param( 'meta_query' );
+	$meta_query                = $request->get_param( 'meta_query' );
+	$custom_args['meta_query'] = parse_meta_query( $meta_query ); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 
-	if ( $meta_query ) {
-		$meta_queries = array(
-			'relation' => $meta_query['relation'],
-		);
-		foreach ( $meta_query['queries'] as $query ) {
-			$meta_queries[] = array_filter(
-				array(
-					'key'     => $query['meta_key'],
-					'value'   => $query['meta_value'],
-					'compare' => $query['meta_compare'],
-				)
-			);
-		}
-
-		$custom_args['meta_query'] = array_filter( $meta_queries );
-	}
 	// Date related.
 	$date_query = $request->get_param( 'date_query' );
 
