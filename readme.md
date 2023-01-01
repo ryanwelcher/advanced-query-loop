@@ -4,6 +4,10 @@
 
 This plugin introduces a Query Loop block variation that will empower users to be able to do much more complicated queries with the Query Loop block, such number of posts to display and post meta
 
+### Support/Issues
+
+Please use the either the [support](https://wordpress.org/support/plugin/advanced-query-loop/) forum or the [official repository](https://github.com/ryanwelcher/advanced-query-loop) for any questions or to log issues.
+
 ### Available Controls
 
 #### Post Count and Offset
