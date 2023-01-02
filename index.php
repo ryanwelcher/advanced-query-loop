@@ -78,7 +78,7 @@ namespace AdvancedQueryLoop;
 					}
 
 					// Date queries.
-					if ( isset( $custom_query['date_query'] ) ) {
+					if ( ! empty( $custom_query['date_query'] ) ) {
 						$date_query        = $custom_query['date_query'];
 						$date_relationship = $date_query['relation'];
 						$date_is_inclusive = $date_query['inclusive'];
