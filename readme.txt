@@ -3,7 +3,7 @@ Contributors: welcher
 Tags: Query Loop, Custom Queries
 Requires at least: 6.1
 Tested up to: 6.1
-Stable tag: 1.0.2
+Stable tag: 1.0.3
 Requires PHP: 7.2
 License: GPL v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -35,12 +35,15 @@ Query items before a date, after a date or between two dates!
 
 == Changelog ==
 
-= 1.0.0 =
-* Initial release with support for post count, offset, post meta, and date queries.
-
-= 1.0.1 =
-* Small fix to no longer show an empty pattern after inserting the block.
+= 1.0.3 =
+* Small fix for PHP 8. Props to @markus9312 for opening the support thread.
 
 = 1.0.2 =
 * Fix various PHP notices. Props to @wildworks for opening the support thread.
 * Add some information to the readmes.
+
+= 1.0.1 =
+* Small fix to no longer show an empty pattern after inserting the block.
+
+= 1.0.0 =
+* Initial release with support for post count, offset, post meta, and date queries.
