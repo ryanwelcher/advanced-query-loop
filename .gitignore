@@ -4,3 +4,7 @@ package-lock.json
 .DS_Store
 *.zip
 DNU
+
+/vendor/
+composer.lock
+.phpunit.*
