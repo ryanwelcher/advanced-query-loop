@@ -40,7 +40,7 @@ function parse_meta_query( $meta_query_data ) {
 \add_filter(
 	'pre_render_block',
 	function( $pre_render, $parsed_block ) {
-		if ( 'advanced-query-loop' === $parsed_block['attrs']['namespace'] ) {
+		if ( isset( $parsed_block['attrs']['namespace'] ) && 'advanced-query-loop' === $parsed_block['attrs']['namespace'] ) {
 			\add_filter(
 				'query_loop_block_query_vars',
 				function( $default_query ) use ( $parsed_block ) {
