@@ -40,7 +40,7 @@ function parse_meta_query( $meta_query_data ) {
 \add_filter(
 	'pre_render_block',
 	function( $pre_render, $parsed_block ) {
-		if ( 'advanced-query-loop' === $parsed_block['attrs']['namespace'] ) {
+		if ( isset( $parsed_block['attrs']['namespace'] ) && 'advanced-query-loop' === $parsed_block['attrs']['namespace'] ) {
 			\add_filter(
 				'query_loop_block_query_vars',
 				function( $default_query ) use ( $parsed_block ) {
@@ -52,7 +52,7 @@ function parse_meta_query( $meta_query_data ) {
 					$custom_args['meta_query'] = parse_meta_query( $custom_query['meta_query'] ); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 
 					// Date queries.
-					if ( isset( $custom_query['date_query'] ) ) {
+					if ( ! empty( $custom_query['date_query'] ) ) {
 						$date_query        = $custom_query['date_query'];
 						$date_relationship = $date_query['relation'];
 						$date_is_inclusive = $date_query['inclusive'];

@@ -35,17 +35,20 @@ Query items before a date, after a date or between two dates!
 
 == Changelog ==
 
-= 1.0.0 =
-* Initial release with support for post count, offset, post meta, and date queries.
+= 1.1.2 =
+* Introduces new AQL: Post Meta Block.
+* Adds custom icon.
+* Under the hood restructuring of code.
 
-= 1.0.1 =
-* Small fix to no longer show an empty pattern after inserting the block.
+= 1.0.3 =
+* Small fix for PHP 8. Props to @markus9312 for opening the support thread.
 
 = 1.0.2 =
 * Fix various PHP notices. Props to @wildworks for opening the support thread.
 * Add some information to the readmes.
 
-= 1.1.2 =
-* Introduces new AQL: Post Meta Block.
-* Adds custom icon.
-* Under the hood restructuring of code.
+= 1.0.1 =
+* Small fix to no longer show an empty pattern after inserting the block.
+
+= 1.0.0 =
+* Initial release with support for post count, offset, post meta, and date queries.
