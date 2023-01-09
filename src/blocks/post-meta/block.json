@@ -1,0 +1,27 @@
+{
+	"apiVersion": 2,
+	"name": "advanced-query-loop/post-meta",
+	"title": "AQL: Post Meta Block",
+	"category": "theme",
+	"description": "A framework block to allow displaying of post meta.",
+	"text-domain": "advanced-query-loop",
+	"attributes": {
+		"identifier": {
+			"type": "string"
+		},
+		"metaKey": {
+			"type": "string"
+		}
+	},
+	"keywords": [ "query", "meta", "loop" ],
+	"version": "0.0.1",
+	"providesContext": {},
+	"usesContext": [ "queryId", "postId", "postType" ],
+	"styles": [],
+	"example": {
+		"attributes": {}
+	},
+	"supports": {},
+	"editorScript": "file:./index.js",
+	"render": "file:./render.php"
+}

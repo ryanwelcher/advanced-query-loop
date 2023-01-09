@@ -7,10 +7,10 @@ import { InspectorControls } from '@wordpress/block-editor';
 /**
  *  Internal dependencies
  */
-import { AQL } from './variations';
-import { PostCountControls } from './post-count-controls';
-import { PostMetaQueryControls } from './post-meta-query-controls';
-import { PostDateQueryControls } from './post-date-query-controls';
+import { AQL } from '.';
+import { PostCountControls } from '../components/post-count-controls';
+import { PostMetaQueryControls } from '../components/post-meta-query-controls';
+import { PostDateQueryControls } from '../components/post-date-query-controls';
 
 /**
  * Determines if the active variation is this one
