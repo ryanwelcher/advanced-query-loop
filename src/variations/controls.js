@@ -11,6 +11,7 @@ import { AQL } from '.';
 import { PostCountControls } from '../components/post-count-controls';
 import { PostMetaQueryControls } from '../components/post-meta-query-controls';
 import { PostDateQueryControls } from '../components/post-date-query-controls';
+import { MultiplePostSelect } from '../components/multiple-post-select';
 
 /**
  * Determines if the active variation is this one
@@ -37,6 +38,7 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 		<>
 			<BlockEdit { ...props } />
 			<InspectorControls>
+				<MultiplePostSelect { ...props } />
 				<PostCountControls { ...props } />
 				<PostMetaQueryControls { ...props } />
 				<PostDateQueryControls { ...props } />
