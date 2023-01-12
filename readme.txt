@@ -3,7 +3,7 @@ Contributors: welcher
 Tags: Query Loop, Custom Queries
 Requires at least: 6.1
 Tested up to: 6.1
-Stable tag: 1.1.2
+Stable tag: 1.0.5
 Requires PHP: 7.2
 License: GPL v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -34,9 +34,10 @@ Query items before a date, after a date or between two dates!
 3. Query posts before a date, after a date or between two dates.
 
 == Changelog ==
+= 1.0.5 =
+* PRO TIP: Include the PHP files when you release the plugin :/
 
-= 1.1.2 =
-* Introduces new AQL: Post Meta Block.
+= 1.0.4 =
 * Adds custom icon.
 * Under the hood restructuring of code.
 

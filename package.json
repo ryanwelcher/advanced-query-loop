@@ -1,6 +1,6 @@
 {
 	"name": "query-loop-advanced",
-	"version": "1.1.2",
+	"version": "1.0.5",
 	"description": "",
 	"main": "index.js",
 	"scripts": {
@@ -13,7 +13,8 @@
 	"files": [
 		"build",
 		"index.php",
-		"readme.txt"
+		"readme.txt",
+		"includes"
 	],
 	"prettier": "@wordpress/prettier-config",
 	"keywords": [],
