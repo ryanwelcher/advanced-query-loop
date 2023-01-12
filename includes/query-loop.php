@@ -48,6 +48,12 @@ function parse_meta_query( $meta_query_data ) {
 					// Generate a new custom query will all potential query vars.
 					$custom_args = array();
 
+					// Post Related.
+					$multiple_post_types = $custom_query['multiple_posts'];
+					if ( ! empty( $multiple_post_types ) ) {
+						$custom_args['post_type'] = array_merge( array( $default_query['post_type'] ), $multiple_post_types );
+					}
+
 					// Check for meta queries.
 					$custom_args['meta_query'] = parse_meta_query( $custom_query['meta_query'] ); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 
@@ -141,6 +147,13 @@ function parse_meta_query( $meta_query_data ) {
 function add_custom_query_params( $args, $request ) {
 	// Generate a new custom query will all potential query vars.
 	$custom_args = array();
+
+	// Post Related.
+	$multiple_post_types = $request->get_param( 'multiple_posts' );
+	if ( $multiple_post_types ) {
+		$custom_args['post_type'] = array_merge( array( $args['post_type'] ), $multiple_post_types );
+	}
+
 	// Meta related.
 	$meta_query                = $request->get_param( 'meta_query' );
 	$custom_args['meta_query'] = parse_meta_query( $meta_query ); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
