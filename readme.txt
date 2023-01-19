@@ -34,6 +34,10 @@ Query items before a date, after a date or between two dates!
 3. Query posts before a date, after a date or between two dates.
 
 == Changelog ==
+
+= 1.1.0 =
+* Allow manual input of post meta. Props to @svenl77 for opening the support thread.
+
 = 1.0.5 =
 * PRO TIP: Include the PHP files when you release the plugin :/
 
