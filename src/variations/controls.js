@@ -9,6 +9,7 @@ import { InspectorControls } from '@wordpress/block-editor';
  */
 import { AQL } from '.';
 import { PostCountControls } from '../components/post-count-controls';
+import { PostOffsetControls } from '../components/post-offset-controls';
 import { PostMetaQueryControls } from '../components/post-meta-query-controls';
 import { PostDateQueryControls } from '../components/post-date-query-controls';
 
@@ -38,12 +39,18 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 			<BlockEdit { ...props } />
 			<InspectorControls>
 				<PostCountControls { ...props } />
+				<PostOffsetControls { ...props } />
 				<PostMetaQueryControls { ...props } />
 				<PostDateQueryControls { ...props } />
 			</InspectorControls>
 		</>
 	) : (
-		<BlockEdit { ...props } />
+		<>
+			<BlockEdit { ...props } />
+			<InspectorControls>
+				<PostCountControls { ...props } />
+			</InspectorControls>
+		</>
 	);
 };
 
