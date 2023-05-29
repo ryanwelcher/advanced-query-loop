@@ -12,6 +12,7 @@ import { PostCountControls } from '../components/post-count-controls';
 import { PostOffsetControls } from '../components/post-offset-controls';
 import { PostMetaQueryControls } from '../components/post-meta-query-controls';
 import { PostDateQueryControls } from '../components/post-date-query-controls';
+import { PostOrderControls } from '../components/post-order-controls';
 
 /**
  * Determines if the active variation is this one
@@ -43,6 +44,7 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 					<InspectorControls>
 						<PostCountControls { ...props } />
 						<PostOffsetControls { ...props } />
+						<PostOrderControls { ...props } />
 						<PostMetaQueryControls { ...props } />
 						<PostDateQueryControls { ...props } />
 					</InspectorControls>
@@ -55,6 +57,7 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 				<BlockEdit { ...props } />
 				<InspectorControls>
 					<PostCountControls { ...props } />
+					<PostOrderControls { ...props } />
 				</InspectorControls>
 			</>
 		);
