@@ -37,6 +37,18 @@ export const PostOrderControls = ( { attributes, setAttributes } ) => {
 						label: __( 'Title', 'advanced-query-loop' ),
 						value: 'title',
 					},
+					{
+						label: __( 'Meta Value', 'advanced-query-loop' ),
+						value: 'meta_value_',
+					},
+					{
+						label: __( 'Meta Value Num', 'advanced-query-loop' ),
+						value: 'meta_value_num',
+					},
+					{
+						label: __( 'Random', 'advanced-query-loop' ),
+						value: 'rand',
+					},
 				] }
 				onChange={ ( newOrderBy ) => {
 					setAttributes( {
