@@ -3,7 +3,7 @@ Contributors: welcher
 Tags: Query Loop, Custom Queries
 Requires at least: 6.2
 Tested up to: 6.1
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 Requires PHP: 7.2
 License: GPL v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -18,14 +18,20 @@ Please use the either the [support](https://wordpress.org/support/plugin/advance
 
 === Available Controls ===
 
-==== Post Count and Offset ====
-Set the number of items you want to display ( up to 10 ) and choose whether you want to start at the first or 100th!
+==== Post Count ====
+Set the number of items you want to display (up to 50).
+
+==== Offset ====
+Choose whether you want to start at the first or 100th!
 
 ==== Post Meta Query ====
 Generate complicated post meta queries using an interface that allows you to create a query based on `meta_key`, `meta_value` and the `compare` options. Combine multiple queries and determine if they combine results (OR) or narrow them down (AND).
 
 ==== Date Query ====
 Query items before a date, after a date or between two dates!
+
+==== Post Order controls ====
+Choose to order by Author, Date, Last Modified Date, or Title in ascending or descending order. **Please note that this is a slight duplication of the existing sorting controls. They both work interchangeably but it just looks a bit odd in the UI**
 
 == Screenshots ==
 
@@ -34,6 +40,9 @@ Query items before a date, after a date or between two dates!
 3. Query posts before a date, after a date or between two dates.
 
 == Changelog ==
+
+= 1.2.1 -
+* Fixes missing controls when no inheriting the query. Props to @cvladan for opening the support thread.
 
 = 1.2.0 =
 * Introduce Post Order controls to sort by Author, Date, Last Modified Date, or Title in ascending or descending order. Props to @asterix for the suggestion of adding Last Modified Date.
