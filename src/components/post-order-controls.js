@@ -19,12 +19,8 @@ export const PostOrderControls = ( { attributes, setAttributes } ) => {
 				value={ orderBy }
 				options={ [
 					{
-						label: __( 'Choose', 'advanced-query-loop' ),
-						value: '',
-					},
-					{
-						label: __( 'Title', 'advanced-query-loop' ),
-						value: 'title',
+						label: __( 'Author', 'advanced-query-loop' ),
+						value: 'author',
 					},
 					{
 						label: __( 'Date', 'advanced-query-loop' ),
@@ -36,6 +32,10 @@ export const PostOrderControls = ( { attributes, setAttributes } ) => {
 							'advanced-query-loop'
 						),
 						value: 'modified',
+					},
+					{
+						label: __( 'Title', 'advanced-query-loop' ),
+						value: 'title',
 					},
 				] }
 				onChange={ ( newOrderBy ) => {
