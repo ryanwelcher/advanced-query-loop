@@ -10,9 +10,13 @@ Please use the either the [support](https://wordpress.org/support/plugin/advance
 
 ### Available Controls
 
-#### Post Count and Offset
+#### Post Count
 
-Set the number of items you want to display ( up to 10 ) and choose whether you want to start at the first or 100th!
+Set the number of items you want to display (up to 50).
+
+#### Offset
+
+Choose whether you want to start at the first or 100th!
 
 #### Post Meta Query
 
@@ -21,3 +25,7 @@ Generate complicated post meta queries using an interface that allows you to cre
 #### Date Query
 
 Query item before a date, after a date or between two dates!
+
+#### Post Order controls
+
+Choose to order by Author, Date, Last Modified Date, or Title in ascending or descending order. **Please note that this is a slight duplication of the existing sorting controls. They both work interchangeably but it just looks a bit odd in the UI**
