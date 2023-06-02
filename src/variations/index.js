@@ -3,7 +3,6 @@
  */
 import { registerBlockVariation } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
-
 /**
  * Internal dependencies
  */
@@ -21,5 +20,5 @@ registerBlockVariation( 'core/query', {
 	attributes: {
 		namespace: AQL,
 	},
-	scope: [ 'inserter' ],
+	scope: [ 'inserter', 'transform' ],
 } );

@@ -31,7 +31,7 @@ export const PostMetaQueryControls = ( { attributes, setAttributes } ) => {
 
 	const [ selectedPostType ] = useState( postType );
 
-	const registeredMetaKeys = records?.[ 0 ]?.meta || {};
+	const registeredMeta = records?.[ 0 ]?.meta || {};
 
 	useEffect( () => {
 		// If the post type changes, reset the meta query.
@@ -47,103 +47,94 @@ export const PostMetaQueryControls = ( { attributes, setAttributes } ) => {
 
 	return (
 		<PanelBody title={ __( 'Post Meta Query', 'advanced-query-loop' ) }>
-			{ Object.keys( registeredMetaKeys ).length < 1 ? (
-				<p>
-					{ __(
-						'This post type has no registered post meta to query',
-						'advanced-query-loop'
-					) }
-				</p>
-			) : (
-				<>
-					{ queries.length > 1 && (
-						<SelectControl
-							label={ __(
-								'Query Relationship',
-								'advanced-query-loop'
-							) }
-							value={ relationFromQuery }
-							options={ [
-								{ label: 'Choose relationship', value: '' },
-								{ label: 'AND', value: 'AND' },
-								{ label: 'OR', value: 'OR' },
-							] }
-							onChange={ ( relation ) =>
-								setAttributes( {
-									query: {
-										...attributes.query,
-										meta_query: {
-											...attributes.query.meta_query,
-											relation,
-										},
-									},
-								} )
-							}
-						/>
-					) }
-
-					{ queries.length < 1 && (
-						<p>
-							{ __(
-								'Add a meta query to select post meta to query',
-								'advanced-query-loop'
-							) }
-						</p>
-					) }
-
-					{ queries.map(
-						( {
-							id,
-							meta_key: metaKey,
-							meta_value: metaValue,
-							compare,
-						} ) => {
-							return (
-								<PanelBody key={ id }>
-									<PostMetaControl
-										id={ id }
-										metaKey={ metaKey }
-										metaValue={ metaValue }
-										metaCompare={ compare }
-										registeredMetaKeys={
-											registeredMetaKeys
-										}
-										queries={ queries }
-										attributes={ attributes }
-										setAttributes={ setAttributes }
-									/>
-								</PanelBody>
-							);
-						}
-					) }
-					<Button
-						isSmall
-						variant="primary"
-						onClick={ () => {
-							const newQueries = [
-								...queries,
-								{
-									id: uuidv4(),
-									meta_key: '',
-									meta_value: '',
-									meta_compare: '',
-								},
-							];
+			<>
+				{ queries.length > 1 && (
+					<SelectControl
+						label={ __(
+							'Query Relationship',
+							'advanced-query-loop'
+						) }
+						value={ relationFromQuery }
+						options={ [
+							{ label: 'Choose relationship', value: '' },
+							{ label: 'AND', value: 'AND' },
+							{ label: 'OR', value: 'OR' },
+						] }
+						onChange={ ( relation ) =>
 							setAttributes( {
 								query: {
 									...attributes.query,
 									meta_query: {
 										...attributes.query.meta_query,
-										queries: newQueries,
+										relation,
 									},
 								},
-							} );
-						} }
-					>
-						{ __( 'Add meta query', 'advanced-query-loop' ) }
-					</Button>
-				</>
-			) }
+							} )
+						}
+					/>
+				) }
+
+				{ queries.length < 1 && (
+					<p>
+						{ __(
+							'Add a meta query to select post meta to query',
+							'advanced-query-loop'
+						) }
+					</p>
+				) }
+
+				{ queries.map(
+					( {
+						id,
+						meta_key: metaKey,
+						meta_value: metaValue,
+						compare,
+					} ) => {
+						return (
+							<PanelBody key={ id }>
+								<PostMetaControl
+									id={ id }
+									metaKey={ metaKey }
+									metaValue={ metaValue }
+									metaCompare={ compare }
+									registeredMetaKeys={ Object.keys(
+										registeredMeta
+									) }
+									queries={ queries }
+									attributes={ attributes }
+									setAttributes={ setAttributes }
+								/>
+							</PanelBody>
+						);
+					}
+				) }
+				<Button
+					isSmall
+					variant="primary"
+					onClick={ () => {
+						const newQueries = [
+							...queries,
+							{
+								id: uuidv4(),
+								meta_key: '',
+								meta_value: '',
+								meta_compare: '',
+							},
+						];
+						setAttributes( {
+							query: {
+								...attributes.query,
+								meta_query: {
+									...attributes.query.meta_query,
+									queries: newQueries,
+								},
+							},
+						} );
+					} }
+				>
+					{ __( 'Add meta query', 'advanced-query-loop' ) }
+				</Button>
+			</>
 		</PanelBody>
 	);
 };

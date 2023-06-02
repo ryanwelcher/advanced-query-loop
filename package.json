@@ -1,6 +1,6 @@
 {
 	"name": "query-loop-advanced",
-	"version": "1.0.5",
+	"version": "1.2.1",
 	"description": "",
 	"main": "index.js",
 	"scripts": {
@@ -8,7 +8,8 @@
 		"build": "wp-scripts build",
 		"plugin-zip": "wp-scripts plugin-zip",
 		"format": "wp-scripts format",
-		"env": "wp-env"
+		"env": "wp-env",
+		"release": "npm run build && npm run plugin-zip"
 	},
 	"files": [
 		"build",

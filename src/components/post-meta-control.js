@@ -1,7 +1,13 @@
 /**
  * WordPress dependencies
  */
-import { SelectControl, TextControl, Button } from '@wordpress/components';
+import {
+	SelectControl,
+	TextControl,
+	Button,
+	FormTokenField,
+	BaseControl,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 const compareMetaOptions = [
@@ -23,8 +29,6 @@ const compareMetaOptions = [
 	'RLIKE',
 ];
 
-const updateQueryParams = () => {};
-
 export const PostMetaControl = ( {
 	registeredMetaKeys,
 	id,
@@ -38,6 +42,7 @@ export const PostMetaControl = ( {
 	const activeQuery = queries.find( ( query ) => query.id === id );
 
 	/**
+	 * Update a query param.
 	 *
 	 * @param {*} queries
 	 * @param {*} queryId
@@ -59,37 +64,40 @@ export const PostMetaControl = ( {
 
 	return (
 		<>
-			<SelectControl
-				label={ __( 'Meta Key', 'advanced-query-loop' ) }
-				value={ activeQuery.meta_key }
-				options={ [
-					{ label: 'Choose Meta', value: '' },
-					...Object.keys( registeredMetaKeys ).map(
-						( selectedKey ) => {
-							return {
-								label: selectedKey,
-								value: selectedKey,
-							};
-						}
-					),
-				] }
-				onChange={ ( newMeta ) => {
-					setAttributes( {
-						query: {
-							...attributes.query,
-							meta_query: {
-								...attributes.query.meta_query,
-								queries: updateQueryParam(
-									queries,
-									id,
-									'meta_key',
-									newMeta
-								),
+			<BaseControl
+				help={ __(
+					'Start typing to search for a meta key or manually enter one.',
+					'advanced-query-loop'
+				) }
+			>
+				<FormTokenField
+					label={ __( 'Meta Key', 'advanced-query-loop' ) }
+					value={
+						activeQuery?.meta_key?.length
+							? [ activeQuery.meta_key ]
+							: []
+					}
+					__experimentalShowHowTo={ false }
+					suggestions={ registeredMetaKeys }
+					maxLength={ 1 }
+					onChange={ ( newMeta ) => {
+						setAttributes( {
+							query: {
+								...attributes.query,
+								meta_query: {
+									...attributes.query.meta_query,
+									queries: updateQueryParam(
+										queries,
+										id,
+										'meta_key',
+										newMeta[ 0 ]
+									),
+								},
 							},
-						},
-					} );
-				} }
-			/>
+						} );
+					} }
+				/>
+			</BaseControl>
 			<TextControl
 				label={ __( 'Meta Value', 'advanced-query-loop' ) }
 				value={ activeQuery.meta_value }

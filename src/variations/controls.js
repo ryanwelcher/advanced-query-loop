@@ -9,9 +9,11 @@ import { InspectorControls } from '@wordpress/block-editor';
  */
 import { AQL } from '.';
 import { PostCountControls } from '../components/post-count-controls';
+import { PostOffsetControls } from '../components/post-offset-controls';
 import { PostMetaQueryControls } from '../components/post-meta-query-controls';
 import { PostDateQueryControls } from '../components/post-date-query-controls';
 import { MultiplePostSelect } from '../components/multiple-post-select';
+import { PostOrderControls } from '../components/post-order-controls';
 
 /**
  * Determines if the active variation is this one
@@ -21,9 +23,9 @@ import { MultiplePostSelect } from '../components/multiple-post-select';
  */
 const isAdvancedQueryLoop = ( props ) => {
 	const {
-		attributes: { namespace, query: { inherit } = {} },
+		attributes: { namespace },
 	} = props;
-	return namespace && namespace === AQL && inherit === false;
+	return namespace && namespace === AQL;
 };
 
 /**
@@ -34,19 +36,36 @@ const isAdvancedQueryLoop = ( props ) => {
  */
 const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 	// If the is the correct variation, add the custom controls.
-	return isAdvancedQueryLoop( props ) ? (
-		<>
-			<BlockEdit { ...props } />
-			<InspectorControls>
-				<MultiplePostSelect { ...props } />
-				<PostCountControls { ...props } />
-				<PostMetaQueryControls { ...props } />
-				<PostDateQueryControls { ...props } />
-			</InspectorControls>
-		</>
-	) : (
-		<BlockEdit { ...props } />
-	);
+	if ( isAdvancedQueryLoop( props ) ) {
+		// If the inherit prop is false, add all the controls.
+		const { attributes } = props;
+		if ( attributes.query.inherit === false ) {
+			return (
+				<>
+					<BlockEdit { ...props } />
+					<InspectorControls>
+						<MultiplePostSelect { ...props } />
+						<PostCountControls { ...props } />
+						<PostOffsetControls { ...props } />
+						<PostOrderControls { ...props } />
+						<PostMetaQueryControls { ...props } />
+						<PostDateQueryControls { ...props } />
+					</InspectorControls>
+				</>
+			);
+		}
+		// Add some controls if the inherit prop is true.
+		return (
+			<>
+				<BlockEdit { ...props } />
+				<InspectorControls>
+					<PostCountControls { ...props } />
+					<PostOrderControls { ...props } />
+				</InspectorControls>
+			</>
+		);
+	}
+	return <BlockEdit { ...props } />;
 };
 
 addFilter( 'editor.BlockEdit', 'core/query', withAdvancedQueryControls );
