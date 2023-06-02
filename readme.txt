@@ -41,7 +41,7 @@ Choose to order by Author, Date, Last Modified Date, or Title in ascending or de
 
 == Changelog ==
 
-= 1.2.1 -
+= 1.2.1 =
 * Fixes missing controls when no inheriting the query. Props to @cvladan for opening the support thread.
 
 = 1.2.0 =
