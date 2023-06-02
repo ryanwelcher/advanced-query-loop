@@ -12,6 +12,7 @@ import { PostCountControls } from '../components/post-count-controls';
 import { PostOffsetControls } from '../components/post-offset-controls';
 import { PostMetaQueryControls } from '../components/post-meta-query-controls';
 import { PostDateQueryControls } from '../components/post-date-query-controls';
+import { MultiplePostSelect } from '../components/multiple-post-select';
 import { PostOrderControls } from '../components/post-order-controls';
 
 /**
@@ -43,6 +44,7 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 				<>
 					<BlockEdit { ...props } />
 					<InspectorControls>
+						<MultiplePostSelect { ...props } />
 						<PostCountControls { ...props } />
 						<PostOffsetControls { ...props } />
 						<PostOrderControls { ...props } />
