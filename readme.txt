@@ -43,6 +43,8 @@ Choose to order by Author, Date, Last Modified Date, or Title in ascending or de
 
 = 1.3.0 =
 * Adds support for sorting by Meta Value, Meta Value Num, and Random.
+* Adds transform to convert existing Query Loop instances into Advanced Query Loop blocks.
+* Adds a release command.
 
 = 1.2.1 =
 * Fixes missing controls when not inheriting the query. Props to @cvladan for opening the support thread.
