@@ -28,4 +28,14 @@ Query item before a date, after a date or between two dates!
 
 #### Post Order controls
 
-Choose to order by Author, Date, Last Modified Date, or Title in ascending or descending order. **Please note that this is a slight duplication of the existing sorting controls. They both work interchangeably but it just looks a bit odd in the UI**
+Sort in ascending or descending order by:
+
+-   Author
+-   Date
+-   Last Modified Date
+-   Title
+-   Meta Value
+-   Meta Value Num
+-   Random
+
+**Please note that this is a slight duplication of the existing sorting controls. They both work interchangeably but it just looks a bit odd in the UI**
