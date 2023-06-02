@@ -10,6 +10,10 @@ Please use the either the [support](https://wordpress.org/support/plugin/advance
 
 ### Available Controls
 
+#### Multiple post types
+
+Select additional post types for your query!
+
 #### Post Count
 
 Set the number of items you want to display (up to 50).
