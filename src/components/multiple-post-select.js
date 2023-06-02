@@ -19,22 +19,23 @@ export const MultiplePostSelect = ( { attributes, setAttributes } ) => {
 
 	return (
 		<PanelBody
-			title={ __( 'Multiple Post Select', 'advanced-query-loop' ) }
+			title={ __( 'Additional Post Types', 'advanced-query-loop' ) }
 		>
 			<BaseControl
 				help={ __(
-					'This field will always include the post type selected via Post Type above. ',
+					'These post types will be queried in addition to the main post type.',
 					'advanced-query-loop'
 				) }
 			>
 				<FormTokenField
 					value={ [
-						postType,
 						...multiplePosts.filter(
 							( type ) => type !== postType
 						),
 					] }
-					suggestions={ postTypes }
+					suggestions={ [
+						...postTypes.filter( ( type ) => type !== postType ),
+					] }
 					onChange={ ( posts ) => {
 						// filter the tokens to remove wrong items.
 						setAttributes( {
@@ -45,6 +46,7 @@ export const MultiplePostSelect = ( { attributes, setAttributes } ) => {
 						} );
 					} }
 					__experimentalExpandOnFocus
+					__experimentalShowHowTo={ false }
 				/>
 			</BaseControl>
 		</PanelBody>
