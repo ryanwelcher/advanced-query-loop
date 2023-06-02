@@ -17,6 +17,14 @@ export const PostOrderControls = ( { attributes, setAttributes } ) => {
 			<SelectControl
 				label={ __( 'Order By', 'advanced-query-loop' ) }
 				value={ orderBy }
+				help={
+					orderBy === 'meta_value' || orderBy === 'meta_value_num'
+						? __(
+								'Meta Value and Meta Value Num require that Meta Key is set in the Meta Query section.',
+								'advanced-query-loop'
+						  )
+						: ''
+				}
 				options={ [
 					{
 						label: __( 'Author', 'advanced-query-loop' ),
@@ -36,6 +44,18 @@ export const PostOrderControls = ( { attributes, setAttributes } ) => {
 					{
 						label: __( 'Title', 'advanced-query-loop' ),
 						value: 'title',
+					},
+					{
+						label: __( 'Meta Value', 'advanced-query-loop' ),
+						value: 'meta_value',
+					},
+					{
+						label: __( 'Meta Value Num', 'advanced-query-loop' ),
+						value: 'meta_value_num',
+					},
+					{
+						label: __( 'Random', 'advanced-query-loop' ),
+						value: 'rand',
 					},
 				] }
 				onChange={ ( newOrderBy ) => {

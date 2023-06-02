@@ -3,7 +3,7 @@ Contributors: welcher
 Tags: Query Loop, Custom Queries
 Requires at least: 6.2
 Tested up to: 6.1
-Stable tag: 1.2.1
+Stable tag: 1.3.0
 Requires PHP: 7.2
 License: GPL v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -41,8 +41,13 @@ Choose to order by Author, Date, Last Modified Date, or Title in ascending or de
 
 == Changelog ==
 
-= 1.2.1 -
-* Fixes missing controls when no inheriting the query. Props to @cvladan for opening the support thread.
+= 1.3.0 =
+* Adds support for sorting by Meta Value, Meta Value Num, and Random.
+* Adds transform to convert existing Query Loop instances into Advanced Query Loop blocks.
+* Adds a release command.
+
+= 1.2.1 =
+* Fixes missing controls when not inheriting the query. Props to @cvladan for opening the support thread.
 
 = 1.2.0 =
 * Introduce Post Order controls to sort by Author, Date, Last Modified Date, or Title in ascending or descending order. Props to @asterix for the suggestion of adding Last Modified Date.

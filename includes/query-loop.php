@@ -145,11 +145,32 @@ function parse_meta_query( $meta_query_data ) {
 		$registered_post_types = \get_post_types( array( 'public' => true ) );
 		foreach ( $registered_post_types as $registered_post_type ) {
 			\add_filter( 'rest_' . $registered_post_type . '_query', __NAMESPACE__ . '\add_custom_query_params', 10, 2 );
+
+			// We need more sortBy options.
+			\add_filter( 'rest_' . $registered_post_type . '_collection_params', __NAMESPACE__ . '\add_more_sort_by', 10, 2 );
 		}
 
 	},
 	PHP_INT_MAX
 );
+
+
+/**
+ * Override the allowed items
+ *
+ * @see https://developer.wordpress.org/reference/classes/wp_rest_posts_controller/get_collection_params/
+ *
+ * @param array $query_params The query params.
+ * @param array $post_type    The post type.
+ *
+ * @return array
+ */
+function add_more_sort_by( $query_params, $post_type ) {
+	$query_params['orderby']['enum'][] = 'meta_value';
+	$query_params['orderby']['enum'][] = 'meta_value_num';
+	$query_params['orderby']['enum'][] = 'rand';
+	return $query_params;
+}
 
 /**
  * Callback to handle the custom query params. Updates the block editor.
