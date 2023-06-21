@@ -57,6 +57,10 @@ export const PostOrderControls = ( { attributes, setAttributes } ) => {
 						label: __( 'Random', 'advanced-query-loop' ),
 						value: 'rand',
 					},
+					{
+						label: __( 'Menu Order', 'advanced-query-loop' ),
+						value: 'menu_order',
+					},
 				] }
 				onChange={ ( newOrderBy ) => {
 					setAttributes( {
