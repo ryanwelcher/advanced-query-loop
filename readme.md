@@ -41,6 +41,6 @@ Sort in ascending or descending order by:
 -   Meta Value
 -   Meta Value Num
 -   Random
--   Menu Order (for sorting plugins such as [Post Type Order](https://wordpress.org/plugins/post-types-order/))
+-   Menu Order -- for sorting plugins such as [Post Type Order](https://wordpress.org/plugins/post-types-order/). ( props to @jvanja )
 
 **Please note that this is a slight duplication of the existing sorting controls. They both work interchangeably but it just looks a bit odd in the UI**
