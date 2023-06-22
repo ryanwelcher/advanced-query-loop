@@ -18,6 +18,9 @@ Please use the either the [support](https://wordpress.org/support/plugin/advance
 
 === Available Controls ===
 
+==== Multiple post types ====
+Select additional post types for your query!
+
 ==== Post Count ====
 Set the number of items you want to display (up to 50).
 
@@ -31,7 +34,17 @@ Generate complicated post meta queries using an interface that allows you to cre
 Query items before a date, after a date or between two dates!
 
 ==== Post Order controls ====
-Choose to order by Author, Date, Last Modified Date, or Title in ascending or descending order. **Please note that this is a slight duplication of the existing sorting controls. They both work interchangeably but it just looks a bit odd in the UI**
+Sort in ascending or descending order by:
+
+-   Author
+-   Date
+-   Last Modified Date
+-   Title
+-   Meta Value
+-   Meta Value Num
+-   Menu Order ( props to @jvanja )
+
+**Please note that this is a slight duplication of the existing sorting controls. They both work interchangeably but it just looks a bit odd in the UI**
 
 == Screenshots ==
 
@@ -40,6 +53,9 @@ Choose to order by Author, Date, Last Modified Date, or Title in ascending or de
 3. Query posts before a date, after a date or between two dates.
 
 == Changelog ==
+
+= 1.3.1 =
+* Adds Menu Order to the sort by options. Props to @jvanja for the Pull Request *
 
 = 1.3.0 =
 * Adds support for sorting by Meta Value, Meta Value Num, and Random.
