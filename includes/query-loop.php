@@ -20,14 +20,16 @@ function parse_meta_query( $meta_query_data ) {
 			'relation' => isset( $meta_query_data['relation'] ) ? $meta_query_data['relation'] : '',
 		);
 
-		foreach ( $meta_query_data['queries'] as $query ) {
-			$meta_queries[] = array_filter(
-				array(
-					'key'     => $query['meta_key'],
-					'value'   => $query['meta_value'],
-					'compare' => $query['meta_compare'],
-				)
-			);
+		if ( isset($meta_query_data['queries'] ) ) {
+			foreach ( $meta_query_data['queries'] as $query ) {
+				$meta_queries[] = array_filter(
+					array(
+						'key'     => $query['meta_key'],
+						'value'   => $query['meta_value'],
+						'compare' => $query['meta_compare'],
+					)
+				);
+			}
 		}
 	}
 
@@ -67,9 +69,8 @@ function parse_meta_query( $meta_query_data ) {
 						$custom_args = array();
 
 						// Post Related.
-						$multiple_post_types = $custom_query['multiple_posts'];
-						if ( ! empty( $multiple_post_types ) ) {
-							$custom_args['post_type'] = array_merge( array( $default_query['post_type'] ), $multiple_post_types );
+						if ( isset( $custom_query['multiple_posts'] ) && ! empty( $multiple_post_types ) ) {
+							$custom_args['post_type'] = array_merge( array( $default_query['post_type'] ), $custom_query['multiple_posts'] );
 						}
 
 						// Check for meta queries.
