@@ -69,7 +69,7 @@ function parse_meta_query( $meta_query_data ) {
 						$custom_args = array();
 
 						// Post Related.
-						if ( isset( $custom_query['multiple_posts'] ) && ! empty( $multiple_post_types ) ) {
+						if ( isset( $custom_query['multiple_posts'] ) && ! empty( $custom_query['multiple_posts'] ) ) {
 							$custom_args['post_type'] = array_merge( array( $default_query['post_type'] ), $custom_query['multiple_posts'] );
 						}
 
