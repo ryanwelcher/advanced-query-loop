@@ -13,10 +13,19 @@ export const MultiplePostSelect = ( { attributes, setAttributes } ) => {
 	const postTypes = useSelect( ( select ) =>
 		select( coreStore )
 			.getPostTypes()
-			.filter( ( { viewable } ) => viewable )
-			.map( ( { slug } ) => slug )
+			?.filter( ( { viewable } ) => viewable )
+			?.map( ( { slug } ) => slug )
 	);
 
+	if ( ! postTypes ) {
+		return (
+			<PanelBody
+				title={ __( 'Additional Post Types', 'advanced-query-loop' ) }
+			>
+				{ __( 'Loading…', 'advanced-query-loop' ) }
+			</PanelBody>
+		);
+	}
 	return (
 		<PanelBody
 			title={ __( 'Additional Post Types', 'advanced-query-loop' ) }
@@ -34,14 +43,14 @@ export const MultiplePostSelect = ( { attributes, setAttributes } ) => {
 						),
 					] }
 					suggestions={ [
-						...postTypes.filter( ( type ) => type !== postType ),
+						...postTypes?.filter( ( type ) => type !== postType ),
 					] }
 					onChange={ ( posts ) => {
 						// filter the tokens to remove wrong items.
 						setAttributes( {
 							query: {
 								...attributes.query,
-								multiple_posts: posts,
+								multiple_posts: posts || [],
 							},
 						} );
 					} }
