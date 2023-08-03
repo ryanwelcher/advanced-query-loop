@@ -59,7 +59,7 @@ function parse_meta_query( $meta_query_data ) {
 					)
 				);
 
-				$wp_query = new \WP_Query( $query_args );
+				$wp_query = new \WP_Query( array_filter( $query_args ) );
 			} else {
 				\add_filter(
 					'query_loop_block_query_vars',
@@ -140,112 +140,112 @@ function parse_meta_query( $meta_query_data ) {
 	2
 );
 
-				/**
-				 * Updates the query vars for the Query Loop block in the block editor
-				 */
+/**
+ * Updates the query vars for the Query Loop block in the block editor
+ */
 
-				// Add a filter to each rest endpoint to add our custom query params.
-				\add_action(
-					'init',
-					function() {
-						$registered_post_types = \get_post_types( array( 'public' => true ) );
-						foreach ( $registered_post_types as $registered_post_type ) {
-							\add_filter( 'rest_' . $registered_post_type . '_query', __NAMESPACE__ . '\add_custom_query_params', 10, 2 );
+// Add a filter to each rest endpoint to add our custom query params.
+\add_action(
+	'init',
+	function() {
+		$registered_post_types = \get_post_types( array( 'public' => true ) );
+		foreach ( $registered_post_types as $registered_post_type ) {
+			\add_filter( 'rest_' . $registered_post_type . '_query', __NAMESPACE__ . '\add_custom_query_params', 10, 2 );
 
-							// We need more sortBy options.
-							\add_filter( 'rest_' . $registered_post_type . '_collection_params', __NAMESPACE__ . '\add_more_sort_by', 10, 2 );
-						}
+			// We need more sortBy options.
+			\add_filter( 'rest_' . $registered_post_type . '_collection_params', __NAMESPACE__ . '\add_more_sort_by', 10, 2 );
+		}
 
-					},
-					PHP_INT_MAX
-				);
+	},
+	PHP_INT_MAX
+);
 
 
-				/**
-				 * Override the allowed items
-				 *
-				 * @see https://developer.wordpress.org/reference/classes/wp_rest_posts_controller/get_collection_params/
-				 *
-				 * @param array $query_params The query params.
-				 * @param array $post_type    The post type.
-				 *
-				 * @return array
-				 */
-				function add_more_sort_by( $query_params, $post_type ) {
-					$query_params['orderby']['enum'][] = 'menu_order';
-					$query_params['orderby']['enum'][] = 'meta_value';
-					$query_params['orderby']['enum'][] = 'meta_value_num';
-					$query_params['orderby']['enum'][] = 'rand';
-					return $query_params;
-				}
+/**
+ * Override the allowed items
+ *
+ * @see https://developer.wordpress.org/reference/classes/wp_rest_posts_controller/get_collection_params/
+ *
+ * @param array $query_params The query params.
+ * @param array $post_type    The post type.
+ *
+ * @return array
+ */
+function add_more_sort_by( $query_params, $post_type ) {
+	$query_params['orderby']['enum'][] = 'menu_order';
+	$query_params['orderby']['enum'][] = 'meta_value';
+	$query_params['orderby']['enum'][] = 'meta_value_num';
+	$query_params['orderby']['enum'][] = 'rand';
+	return $query_params;
+}
 
-				/**
-				 * Callback to handle the custom query params. Updates the block editor.
-				 *
-				 * @param array           $args    The query args.
-				 * @param WP_REST_Request $request The request object.
-				 */
-				function add_custom_query_params( $args, $request ) {
-					// Generate a new custom query will all potential query vars.
-					$custom_args = array();
+/**
+ * Callback to handle the custom query params. Updates the block editor.
+ *
+ * @param array           $args    The query args.
+ * @param WP_REST_Request $request The request object.
+ */
+function add_custom_query_params( $args, $request ) {
+	// Generate a new custom query will all potential query vars.
+	$custom_args = array();
 
-					// Post Related.
-					$multiple_post_types = $request->get_param( 'multiple_posts' );
-					if ( $multiple_post_types ) {
-						$custom_args['post_type'] = array_merge( array( $args['post_type'] ), $multiple_post_types );
-					}
+	// Post Related.
+	$multiple_post_types = $request->get_param( 'multiple_posts' );
+	if ( $multiple_post_types ) {
+		$custom_args['post_type'] = array_merge( array( $args['post_type'] ), $multiple_post_types );
+	}
 
-					// Meta related.
-					$meta_query                = $request->get_param( 'meta_query' );
-					$custom_args['meta_query'] = parse_meta_query( $meta_query ); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+	// Meta related.
+	$meta_query                = $request->get_param( 'meta_query' );
+	$custom_args['meta_query'] = parse_meta_query( $meta_query ); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 
-					// Date related.
-					$date_query = $request->get_param( 'date_query' );
+	// Date related.
+	$date_query = $request->get_param( 'date_query' );
 
-					if ( $date_query ) {
-						$date_relationship = $date_query['relation'];
-						$date_is_inclusive = ( 'true' === $date_query['inclusive'] ) ? true : false;
-						$date_primary      = $date_query['date_primary'];
-						$date_secondary    = $date_query['date_secondary'];
+	if ( $date_query ) {
+		$date_relationship = $date_query['relation'];
+		$date_is_inclusive = ( 'true' === $date_query['inclusive'] ) ? true : false;
+		$date_primary      = $date_query['date_primary'];
+		$date_secondary    = $date_query['date_secondary'];
 
-						// Date format: 2022-12-27T11:14:21.
-						$primary_year    = substr( $date_primary, 0, 4 );
-						$primary_month   = substr( $date_primary, 5, 2 );
-						$primary_day     = substr( $date_primary, 8, 2 );
-						$secondary_year  = substr( $date_secondary, 0, 4 );
-						$secondary_month = substr( $date_secondary, 5, 2 );
-						$secondary_day   = substr( $date_secondary, 8, 2 );
+		// Date format: 2022-12-27T11:14:21.
+		$primary_year    = substr( $date_primary, 0, 4 );
+		$primary_month   = substr( $date_primary, 5, 2 );
+		$primary_day     = substr( $date_primary, 8, 2 );
+		$secondary_year  = substr( $date_secondary, 0, 4 );
+		$secondary_month = substr( $date_secondary, 5, 2 );
+		$secondary_day   = substr( $date_secondary, 8, 2 );
 
-						if ( 'between' === $date_relationship ) {
-							$date_queries = array(
-								'after'  => array(
-									'year'  => $primary_year,
-									'month' => $primary_month,
-									'day'   => $primary_day,
-								),
-								'before' => array(
-									'year'  => $secondary_year,
-									'month' => $secondary_month,
-									'day'   => $secondary_day,
-								),
-							);
-						} else {
-							$date_queries = array(
-								$date_relationship => array(
-									'year'  => $primary_year,
-									'month' => $primary_month,
-									'day'   => $primary_day,
-								),
-							);
-						}
-						$date_queries['inclusive'] = $date_is_inclusive;
+		if ( 'between' === $date_relationship ) {
+			$date_queries = array(
+				'after'  => array(
+					'year'  => $primary_year,
+					'month' => $primary_month,
+					'day'   => $primary_day,
+				),
+				'before' => array(
+					'year'  => $secondary_year,
+					'month' => $secondary_month,
+					'day'   => $secondary_day,
+				),
+			);
+		} else {
+			$date_queries = array(
+				$date_relationship => array(
+					'year'  => $primary_year,
+					'month' => $primary_month,
+					'day'   => $primary_day,
+				),
+			);
+		}
+		$date_queries['inclusive'] = $date_is_inclusive;
 
-						$custom_args['date_query'] = array_filter( $date_queries );
-					}
+		$custom_args['date_query'] = array_filter( $date_queries );
+	}
 
-					// Merge all queries.
-					return array_merge(
-						$args,
-						array_filter( $custom_args )
-					);
-				}
+	// Merge all queries.
+	return array_merge(
+		$args,
+		array_filter( $custom_args )
+	);
+}
