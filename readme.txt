@@ -3,7 +3,7 @@ Contributors: welcher
 Tags: Query Loop, Custom Queries
 Requires at least: 6.2
 Tested up to: 6.1
-Stable tag: 1.4.1
+Stable tag: 1.4.2
 Requires PHP: 7.2
 License: GPL v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -54,6 +54,10 @@ Sort in ascending or descending order by:
 3. Query posts before a date, after a date or between two dates.
 
 == Changelog ==
+
+= 1.4.2 =
+* Addresses an issue where `noindex` was being added incorrectly due to an empty parameter. Props to @pedjas for reporting.
+* Small fixes to address some PHP warnings.
 
 = 1.4.1 =
 * Small fixes to address some PHP warnings.
