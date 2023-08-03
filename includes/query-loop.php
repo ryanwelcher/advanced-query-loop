@@ -68,15 +68,17 @@ function parse_meta_query( $meta_query_data ) {
 						// Generate a new custom query will all potential query vars.
 						$custom_args = array();
 
-						// var_dump( print_r( $custom_query, 1 ) );
-							// Post Related.
+						// Post Related.
 						if ( isset( $custom_query['multiple_posts'] ) && ! empty( $custom_query['multiple_posts'] ) ) {
 							$custom_args['post_type'] = array_merge( array( $default_query['post_type'] ), $custom_query['multiple_posts'] );
 						}
 
-							// Check for meta queries.
+						// Check for meta queries.
+						if ( isset( $custom_query['meta_query'] ) && ! empty( $custom_query['meta_query'] ) ) {
 							$custom_args['meta_query'] = parse_meta_query( $custom_query['meta_query'] ); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
-							// Date queries.
+						}
+
+						// Date queries.
 						if ( ! empty( $custom_query['date_query'] ) ) {
 							$date_query        = $custom_query['date_query'];
 							$date_relationship = $date_query['relation'];
@@ -115,18 +117,18 @@ function parse_meta_query( $meta_query_data ) {
 								);
 							}
 
-								$date_queries['inclusive'] = $date_is_inclusive;
+							$date_queries['inclusive'] = $date_is_inclusive;
 
-								// Add the date queries to the custom query.
-								$custom_args['date_query'] = array_filter( $date_queries );
+							// Add the date queries to the custom query.
+							$custom_args['date_query'] = array_filter( $date_queries );
 
 						}
 
-							// Return the merged query.
-							return array_merge(
-								$default_query,
-								$custom_args
-							);
+						// Return the merged query.
+						return array_merge(
+							$default_query,
+							$custom_args
+						);
 					},
 					10,
 					2
@@ -134,7 +136,7 @@ function parse_meta_query( $meta_query_data ) {
 			}
 		}
 
-					return $pre_render;
+		return $pre_render;
 	},
 	10,
 	2
@@ -196,8 +198,10 @@ function add_custom_query_params( $args, $request ) {
 	}
 
 	// Meta related.
-	$meta_query                = $request->get_param( 'meta_query' );
-	$custom_args['meta_query'] = parse_meta_query( $meta_query ); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+	$meta_query = $request->get_param( 'meta_query' );
+	if ( $meta_query ) {
+		$custom_args['meta_query'] = parse_meta_query( $meta_query ); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+	}
 
 	// Date related.
 	$date_query = $request->get_param( 'date_query' );
