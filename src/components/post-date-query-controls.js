@@ -2,15 +2,11 @@
  * WordPress dependencies
  */
 import {
-	DateTimePicker,
 	DatePicker,
-	TimePicker,
 	SelectControl,
 	CheckboxControl,
 } from '@wordpress/components';
-import { PanelBody } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useState } from '@wordpress/element';
 
 export const PostDateQueryControls = ( { attributes, setAttributes } ) => {
 	const {
@@ -25,7 +21,8 @@ export const PostDateQueryControls = ( { attributes, setAttributes } ) => {
 	} = attributes;
 
 	return (
-		<PanelBody title={ __( 'Post Date Query', 'advanced-query-loop' ) }>
+		<>
+			<h2>{ __( 'Post Date Query', 'advanced-query-loop' ) }</h2>
 			<SelectControl
 				label={ __( 'Date Relationship', 'advanced-query-loop' ) }
 				value={ relationFromQuery }
@@ -115,6 +112,6 @@ export const PostDateQueryControls = ( { attributes, setAttributes } ) => {
 					/>
 				</>
 			) }
-		</PanelBody>
+		</>
 	);
 };

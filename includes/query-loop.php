@@ -59,7 +59,16 @@ function parse_meta_query( $meta_query_data ) {
 					)
 				);
 
-				$wp_query = new \WP_Query( array_filter( $query_args ) );
+				/**
+				 * Allow filtering the query vars.
+				 */
+				$filtered_query_args = \apply_filters(
+					'aql_query_vars_inherited',
+					$query_args,
+					$parsed_block['attrs']['query']
+				);
+
+				$wp_query = new \WP_Query( $filtered_query_args );
 			} else {
 				\add_filter(
 					'query_loop_block_query_vars',
@@ -123,12 +132,22 @@ function parse_meta_query( $meta_query_data ) {
 							$custom_args['date_query'] = array_filter( $date_queries );
 
 						}
+						/**
+						 * Allow filtering the query vars.
+						 */
+						$filtered_query_args = \apply_filters(
+							'aql_query_vars',
+							$custom_args,
+							$custom_query,
+							'front-end'
+						);
 
 						// Return the merged query.
 						return array_merge(
 							$default_query,
-							$custom_args
+							$filtered_query_args
 						);
+
 					},
 					10,
 					2
@@ -145,7 +164,6 @@ function parse_meta_query( $meta_query_data ) {
 /**
  * Updates the query vars for the Query Loop block in the block editor
  */
-
 // Add a filter to each rest endpoint to add our custom query params.
 \add_action(
 	'init',
@@ -247,9 +265,19 @@ function add_custom_query_params( $args, $request ) {
 		$custom_args['date_query'] = array_filter( $date_queries );
 	}
 
+	/**
+	 * Allow filtering the query vars.
+	 */
+	$filtered_query_args = \apply_filters(
+		'aql_query_vars',
+		$custom_args,
+		$request->get_params(),
+		'block-editor'
+	);
+
 	// Merge all queries.
 	return array_merge(
 		$args,
-		array_filter( $custom_args )
+		array_filter( $filtered_query_args )
 	);
 }

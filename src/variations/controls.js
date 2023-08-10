@@ -3,11 +3,14 @@
  */
 import { addFilter } from '@wordpress/hooks';
 import { InspectorControls } from '@wordpress/block-editor';
-
+import { PanelBody } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 /**
  *  Internal dependencies
  */
 import { AQL } from '.';
+import AQLControls from '../slots/aql-controls';
+import AQLNotInherited from '../slots/aql-not-inherited';
 import { PostCountControls } from '../components/post-count-controls';
 import { PostOffsetControls } from '../components/post-offset-controls';
 import { PostMetaQueryControls } from '../components/post-meta-query-controls';
@@ -44,12 +47,21 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 				<>
 					<BlockEdit { ...props } />
 					<InspectorControls>
-						<MultiplePostSelect { ...props } />
-						<PostCountControls { ...props } />
-						<PostOffsetControls { ...props } />
-						<PostOrderControls { ...props } />
-						<PostMetaQueryControls { ...props } />
-						<PostDateQueryControls { ...props } />
+						<PanelBody
+							title={ __(
+								'Advanced Query Settings',
+								'advanced-query-loop'
+							) }
+						>
+							<MultiplePostSelect { ...props } />
+							<PostCountControls { ...props } />
+							<PostOffsetControls { ...props } />
+							<PostOrderControls { ...props } />
+							<PostMetaQueryControls { ...props } />
+							<PostDateQueryControls { ...props } />
+							<AQLControls.Slot fillProps={ { ...props } } />
+							<AQLNotInherited.Slot fillProps={ { ...props } } />
+						</PanelBody>
 					</InspectorControls>
 				</>
 			);
@@ -59,8 +71,16 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 			<>
 				<BlockEdit { ...props } />
 				<InspectorControls>
-					<PostCountControls { ...props } />
-					<PostOrderControls { ...props } />
+					<PanelBody
+						title={ __(
+							'Advanced Query Settings',
+							'advanced-query-loop'
+						) }
+					>
+						<PostCountControls { ...props } />
+						<PostOrderControls { ...props } />
+						<AQLControls.Slot fillProps={ { ...props } } />
+					</PanelBody>
 				</InspectorControls>
 			</>
 		);

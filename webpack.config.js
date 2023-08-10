@@ -11,4 +11,8 @@ module.exports = {
 		...getWebpackEntryPoints(),
 		variations: './src/variations/index.js',
 	},
+	output: {
+		...defaultConfig.output,
+		library: [ 'wp', 'advancedQueryLoop' ],
+	},
 };
