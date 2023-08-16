@@ -36,6 +36,29 @@ function parse_meta_query( $meta_query_data ) {
 	return array_filter( $meta_queries );
 }
 
+/**
+ * Returns an array with Post IDs that should be excluded from the Query.
+ * 
+ * @param array
+ * @return array
+ */
+function get_exclude_ids( $attributes ) {
+	$exclude_ids = array();
+
+	// Exclude Posts by ID
+	if ( isset( $attributes['exclude_posts'] ) && ! empty( $attributes['exclude_posts'] ) ) {
+		$exclude_ids = $attributes['exclude_posts'];
+	}
+
+	// Exclude Current Post
+	if ( isset( $attributes['exclude_current'] ) && boolval($attributes['exclude_current']) ) {
+		if (!in_array($attributes['exclude_current'], $exclude_ids)) {
+			array_push( $exclude_ids, $attributes['exclude_current']);
+		}
+	}
+
+	return $exclude_ids;
+}
 
 
 
@@ -71,6 +94,12 @@ function parse_meta_query( $meta_query_data ) {
 						// Post Related.
 						if ( isset( $custom_query['multiple_posts'] ) && ! empty( $custom_query['multiple_posts'] ) ) {
 							$custom_args['post_type'] = array_merge( array( $default_query['post_type'] ), $custom_query['multiple_posts'] );
+						}
+
+						// Exclude Posts.
+						$exclude_ids = get_exclude_ids( $custom_query );
+						if (  ! empty( $exclude_ids ) ) {
+							$custom_args['post__not_in'] = $exclude_ids;
 						}
 
 						// Check for meta queries.
@@ -195,6 +224,18 @@ function add_custom_query_params( $args, $request ) {
 	$multiple_post_types = $request->get_param( 'multiple_posts' );
 	if ( $multiple_post_types ) {
 		$custom_args['post_type'] = array_merge( array( $args['post_type'] ), $multiple_post_types );
+	}
+
+	// Exclusion Related.
+	$exclude_posts = $request->get_param( 'exclude_posts' );
+	$exclude_current = $request->get_param( 'exclude_current' );
+	if ( $exclude_posts || $exclude_current ) {
+		$attributes = array(
+			'exclude_posts' => $exclude_posts,
+			'exclude_current' => $exclude_current,
+		);
+
+		$custom_args['post__not_in'] = get_exclude_ids($attributes);
 	}
 
 	// Meta related.
