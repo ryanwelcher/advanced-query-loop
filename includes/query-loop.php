@@ -48,7 +48,7 @@ function parse_meta_query( $meta_query_data ) {
 		if ( isset( $parsed_block['attrs']['namespace'] ) && 'advanced-query-loop' === $parsed_block['attrs']['namespace'] ) {
 
 			// Hijack the global query. It's a hack, but it works.
-			if ( true === $parsed_block['attrs']['query']['inherit'] ) {
+			if ( isset( $parsed_block['attrs']['query']['inherit'] ) && true === $parsed_block['attrs']['query']['inherit'] ) {
 				global $wp_query;
 				$query_args = array_merge(
 					$wp_query->query_vars,
