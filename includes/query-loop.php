@@ -60,12 +60,23 @@ function parse_meta_query( $meta_query_data ) {
 				);
 
 				/**
-				 * Allow filtering the query vars.
+				 * Filter the query vars.
+				 *
+				 * Allows filtering query params when the query is being inherited.
+				 *
+				 * @since 1.5
+				 *
+				 * @param array   $query_args  Arguments to be passed to WP_Query.
+				 * @param array   $block_query The query attribute retrieved from the block.
+				 * @param boolean $inherited   Whether the query is being inherited.
+				 *
+				 * @param array $filtered_query_args Final arguments list.
 				 */
 				$filtered_query_args = \apply_filters(
-					'aql_query_vars_inherited',
+					'aql_query_vars',
 					$query_args,
-					$parsed_block['attrs']['query']
+					$parsed_block['attrs']['query'],
+					true,
 				);
 
 				$wp_query = new \WP_Query( $filtered_query_args );
@@ -73,23 +84,23 @@ function parse_meta_query( $meta_query_data ) {
 				\add_filter(
 					'query_loop_block_query_vars',
 					function( $default_query ) use ( $parsed_block ) {
-						$custom_query = $parsed_block['attrs']['query'];
+						$block_query = $parsed_block['attrs']['query'];
 						// Generate a new custom query will all potential query vars.
-						$custom_args = array();
+						$query_args = array();
 
 						// Post Related.
-						if ( isset( $custom_query['multiple_posts'] ) && ! empty( $custom_query['multiple_posts'] ) ) {
-							$custom_args['post_type'] = array_merge( array( $default_query['post_type'] ), $custom_query['multiple_posts'] );
+						if ( isset( $block_query['multiple_posts'] ) && ! empty( $block_query['multiple_posts'] ) ) {
+							$query_args['post_type'] = array_merge( array( $default_query['post_type'] ), $block_query['multiple_posts'] );
 						}
 
 						// Check for meta queries.
-						if ( isset( $custom_query['meta_query'] ) && ! empty( $custom_query['meta_query'] ) ) {
-							$custom_args['meta_query'] = parse_meta_query( $custom_query['meta_query'] ); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+						if ( isset( $block_query['meta_query'] ) && ! empty( $block_query['meta_query'] ) ) {
+							$query_args['meta_query'] = parse_meta_query( $block_query['meta_query'] ); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 						}
 
 						// Date queries.
-						if ( ! empty( $custom_query['date_query'] ) ) {
-							$date_query        = $custom_query['date_query'];
+						if ( ! empty( $block_query['date_query'] ) ) {
+							$date_query        = $block_query['date_query'];
 							$date_relationship = $date_query['relation'];
 							$date_is_inclusive = $date_query['inclusive'];
 							$date_primary      = $date_query['date_primary'];
@@ -129,17 +140,15 @@ function parse_meta_query( $meta_query_data ) {
 							$date_queries['inclusive'] = $date_is_inclusive;
 
 							// Add the date queries to the custom query.
-							$custom_args['date_query'] = array_filter( $date_queries );
+							$query_args['date_query'] = array_filter( $date_queries );
 
 						}
-						/**
-						 * Allow filtering the query vars.
-						 */
+						/** This filter is documented in includes/query-loop.php */
 						$filtered_query_args = \apply_filters(
 							'aql_query_vars',
-							$custom_args,
-							$custom_query,
-							'front-end'
+							$query_args,
+							$block_query,
+							false
 						);
 
 						// Return the merged query.
@@ -265,14 +274,12 @@ function add_custom_query_params( $args, $request ) {
 		$custom_args['date_query'] = array_filter( $date_queries );
 	}
 
-	/**
-	 * Allow filtering the query vars.
-	 */
+	/** This filter is documented in includes/query-loop.php */
 	$filtered_query_args = \apply_filters(
 		'aql_query_vars',
 		$custom_args,
 		$request->get_params(),
-		'block-editor'
+		false,
 	);
 
 	// Merge all queries.
