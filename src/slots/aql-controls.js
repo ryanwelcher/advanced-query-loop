@@ -6,7 +6,7 @@ import { createSlotFill } from '@wordpress/components';
 /**
  * Create our Slot and Fill components
  */
-const { Fill, Slot } = createSlotFill( 'AQLCommon' );
+const { Fill, Slot } = createSlotFill( 'AQLControls' );
 
 const AQLControls = ( { children } ) => <Fill>{ children }</Fill>;
 

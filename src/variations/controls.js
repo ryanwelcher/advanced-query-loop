@@ -10,7 +10,7 @@ import { __ } from '@wordpress/i18n';
  */
 import { AQL } from '.';
 import AQLControls from '../slots/aql-controls';
-import AQLNotInherited from '../slots/aql-not-inherited';
+import AQLControlsInheritedQuery from '../slots/aql-controls-inherited-query';
 import { PostCountControls } from '../components/post-count-controls';
 import { PostOffsetControls } from '../components/post-offset-controls';
 import { PostMetaQueryControls } from '../components/post-meta-query-controls';
@@ -60,7 +60,6 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 							<PostMetaQueryControls { ...props } />
 							<PostDateQueryControls { ...props } />
 							<AQLControls.Slot fillProps={ { ...props } } />
-							<AQLNotInherited.Slot fillProps={ { ...props } } />
 						</PanelBody>
 					</InspectorControls>
 				</>
@@ -79,7 +78,9 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 					>
 						<PostCountControls { ...props } />
 						<PostOrderControls { ...props } />
-						<AQLControls.Slot fillProps={ { ...props } } />
+						<AQLControlsInheritedQuery.Slot
+							fillProps={ { ...props } }
+						/>
 					</PanelBody>
 				</InspectorControls>
 			</>

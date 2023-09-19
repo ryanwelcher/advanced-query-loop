@@ -9,7 +9,7 @@ import { __ } from '@wordpress/i18n';
 import './controls';
 import AQLIcon from '../components/icons';
 import AQLControls from '../slots/aql-controls';
-import AQLNotInherited from '../slots/aql-not-inherited';
+import AQLControlsInheritedQuery from '../slots/aql-controls-inherited-query';
 const AQL = 'advanced-query-loop';
 
 registerBlockVariation( 'core/query', {
@@ -24,4 +24,4 @@ registerBlockVariation( 'core/query', {
 	scope: [ 'inserter', 'transform' ],
 } );
 
-export { AQL, AQLControls, AQLNotInherited };
+export { AQL, AQLControls, AQLControlsInheritedQuery };
