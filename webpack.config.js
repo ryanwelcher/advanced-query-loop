@@ -13,6 +13,6 @@ module.exports = {
 	},
 	output: {
 		...defaultConfig.output,
-		library: [ 'wp', 'advancedQueryLoop' ],
+		library: [ 'aql' ],
 	},
 };

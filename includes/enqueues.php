@@ -20,7 +20,7 @@ namespace AdvancedQueryLoop;
 		if ( file_exists( $variations_assets_file ) ) {
 			$assets = include $variations_assets_file;
 			\wp_enqueue_script(
-				'wp-advanced-query-loop',
+				'advanced-query-loop',
 				BUILD_DIR_URL . 'variations.js',
 				$assets['dependencies'],
 				$assets['version'],
