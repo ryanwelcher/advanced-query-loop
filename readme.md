@@ -112,9 +112,11 @@ The filter provides three parameters:
 -   `$block_query` The query attribute retrieved from the block.
 -   `$inherited` Whether the query is being inherited.
 
+The example code below modifies the query based on the status of the control added above.
+
 ```php
 /**
- * Add a filter to update the query args passed to WP_Query
+ * Add a filter to only show logged-in user content.
  *
  * @param array   $query_args  Arguments to be passed to WP_Query.
  * @param array   $block_query The query attribute retrieved from the block.
