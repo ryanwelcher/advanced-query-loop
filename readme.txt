@@ -55,6 +55,11 @@ Sort in ascending or descending order by:
 
 == Changelog ==
 
+= 1.5 =
+* Moves all controls into a single panel titled "Advanced Query Settings".
+* Exposes SlotFills and filters to allow extension of plugin to add any featured you want.
+* Minor PHP warning fixes.
+
 = 1.4.2 =
 * Addresses an issue where `noindex` was being added incorrectly due to an empty parameter. Props to @pedjas for reporting.
 * Small fixes to address some PHP warnings.
