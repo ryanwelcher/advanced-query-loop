@@ -53,6 +53,9 @@ Since version 1.5, AQL is now completely extendable. Using the SlotFills and fil
 
 There are two SlotFills available to extend the UI of AQL that are exposed based the value of the `Inherit query from template` setting of the block.
 
+The purpose of having two options is to be able to customize when a UI element is added. There may be cases that a particular control doesn't make sense to be shown when the query is being inherited.
+For example, a control that makes changes to the content types being displayed may not make sense when used in an archive template and so that control would only be added using the `<AQLControls` SlotFill so that it doesn't appear when `Inherit query from template` is enabled.
+
 -   AQLControls
 -   AQLControlsInheritedQuery
 
