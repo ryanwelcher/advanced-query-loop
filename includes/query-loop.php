@@ -24,7 +24,7 @@ function parse_meta_query( $meta_query_data ) {
 			foreach ( $meta_query_data['queries'] as $query ) {
 				$meta_queries[] = array_filter(
 					array(
-						'key'     => $query['meta_key'],
+						'key'     => $query['meta_key'] ?? '',
 						'value'   => $query['meta_value'],
 						'compare' => $query['meta_compare'],
 					)
