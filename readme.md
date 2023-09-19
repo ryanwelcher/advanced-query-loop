@@ -56,7 +56,7 @@ There are two SlotFills available to extend the UI of AQL that are exposed based
 -   AQLControls
 -   AQLControlsInheritedQuery
 
-These SlotFills are available on the `window.aql` object for import.
+These SlotFills are available on the `window.aql` object for use.
 
 The example below adds a new control to only show content from the from currently logged in user regardless of the status of `Inherit query from template`.
 
