@@ -93,7 +93,7 @@ function parse_meta_query( $meta_query_data ) {
 							$date_relationship = $date_query['relation'];
 							$date_is_inclusive = $date_query['inclusive'];
 							$date_primary      = $date_query['date_primary'];
-							$date_secondary    = $date_query['date_secondary'];
+							$date_secondary    = ! empty( $date_query['date_secondary'] ) ? $date_query['date_secondary'] : '';
 
 							// Date format: 2022-12-27T11:14:21.
 							$primary_year    = substr( $date_primary, 0, 4 );
@@ -228,7 +228,7 @@ function add_custom_query_params( $args, $request ) {
 		$date_relationship = $date_query['relation'];
 		$date_is_inclusive = ( 'true' === $date_query['inclusive'] ) ? true : false;
 		$date_primary      = $date_query['date_primary'];
-		$date_secondary    = $date_query['date_secondary'];
+		$date_secondary    = ! empty( $date_query['date_secondary'] ) ? $date_query['date_secondary'] : '';
 
 		// Date format: 2022-12-27T11:14:21.
 		$primary_year    = substr( $date_primary, 0, 4 );
