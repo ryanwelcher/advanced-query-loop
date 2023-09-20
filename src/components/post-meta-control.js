@@ -23,6 +23,7 @@ const compareMetaOptions = [
 	'NOT IN',
 	'BETWEEN',
 	'NOT BETWEEN',
+	'EXISTS',
 	'NOT EXISTS',
 	'REGEXP',
 	'NOT REGEXP',
