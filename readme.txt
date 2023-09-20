@@ -3,7 +3,7 @@ Contributors: welcher
 Tags: Query Loop, Custom Queries
 Requires at least: 6.2
 Tested up to: 6.3
-Stable tag: 1.5
+Stable tag: 1.5.1
 Requires PHP: 7.2
 License: GPL v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -54,6 +54,8 @@ Sort in ascending or descending order by:
 3. Query posts before a date, after a date or between two dates.
 
 == Changelog ==
+= 1.5.1 =
+* Adds EXISTS as a compare option for Post Meta Queries.
 
 = 1.5 =
 * Moves all controls into a single panel titled "Advanced Query Settings".
