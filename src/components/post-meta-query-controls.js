@@ -31,7 +31,7 @@ export const PostMetaQueryControls = ( { attributes, setAttributes } ) => {
 
 	const [ selectedPostType ] = useState( postType );
 
-	const registeredMeta = records?.[ 0 ]?.meta || {};
+	const registeredMeta = records?.[ 0 ]?.meta || records?.[ 0 ]?.acf || {};
 
 	useEffect( () => {
 		// If the post type changes, reset the meta query.
