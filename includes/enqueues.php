@@ -12,7 +12,7 @@ namespace AdvancedQueryLoop;
 */
 \add_action(
 	'enqueue_block_editor_assets',
-	function() {
+	function () {
 		// Variations.
 		$variations_assets_file = BUILD_DIR_PATH . 'variations.asset.php';
 
@@ -28,6 +28,5 @@ namespace AdvancedQueryLoop;
 			// Allow for translation.
 			wp_set_script_translations( 'advanced-query-loop', 'advanced-query-loop' );
 		}
-
 	}
 );
