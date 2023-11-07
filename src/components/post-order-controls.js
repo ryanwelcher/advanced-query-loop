@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { PanelBody, SelectControl, ToggleControl } from '@wordpress/components';
+import { SelectControl, ToggleControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -13,9 +13,9 @@ import { __ } from '@wordpress/i18n';
 export const PostOrderControls = ( { attributes, setAttributes } ) => {
 	const { query: { order, orderBy } = {} } = attributes;
 	return (
-		<PanelBody title={ __( 'Post Order', 'advanced-query-loop' ) }>
+		<>
 			<SelectControl
-				label={ __( 'Order By', 'advanced-query-loop' ) }
+				label={ __( 'Post Order Order By', 'advanced-query-loop' ) }
 				value={ orderBy }
 				help={
 					orderBy === 'meta_value' || orderBy === 'meta_value_num'
@@ -83,6 +83,6 @@ export const PostOrderControls = ( { attributes, setAttributes } ) => {
 					} );
 				} }
 			/>
-		</PanelBody>
+		</>
 	);
 };

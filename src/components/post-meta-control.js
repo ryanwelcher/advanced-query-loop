@@ -23,6 +23,7 @@ const compareMetaOptions = [
 	'NOT IN',
 	'BETWEEN',
 	'NOT BETWEEN',
+	'EXISTS',
 	'NOT EXISTS',
 	'REGEXP',
 	'NOT REGEXP',
@@ -33,9 +34,6 @@ export const PostMetaControl = ( {
 	registeredMetaKeys,
 	id,
 	queries,
-	metaKey,
-	metaValue,
-	metaCompare,
 	attributes,
 	setAttributes,
 } ) => {

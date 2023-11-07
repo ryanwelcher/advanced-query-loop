@@ -46,7 +46,8 @@ export const PostMetaQueryControls = ( { attributes, setAttributes } ) => {
 	}, [ postType ] );
 
 	return (
-		<PanelBody title={ __( 'Post Meta Query', 'advanced-query-loop' ) }>
+		<>
+			<h2>{ __( 'Post Meta Query', 'advanced-query-loop' ) }</h2>
 			<>
 				{ queries.length > 1 && (
 					<SelectControl
@@ -135,6 +136,6 @@ export const PostMetaQueryControls = ( { attributes, setAttributes } ) => {
 					{ __( 'Add meta query', 'advanced-query-loop' ) }
 				</Button>
 			</>
-		</PanelBody>
+		</>
 	);
 };

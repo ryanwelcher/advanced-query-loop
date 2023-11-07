@@ -24,7 +24,7 @@ function parse_meta_query( $meta_query_data ) {
 			foreach ( $meta_query_data['queries'] as $query ) {
 				$meta_queries[] = array_filter(
 					array(
-						'key'     => $query['meta_key'],
+						'key'     => $query['meta_key'] ?? '',
 						'value'   => $query['meta_value'],
 						'compare' => $query['meta_compare'],
 					)
@@ -71,7 +71,7 @@ function get_exclude_ids( $attributes ) {
 		if ( isset( $parsed_block['attrs']['namespace'] ) && 'advanced-query-loop' === $parsed_block['attrs']['namespace'] ) {
 
 			// Hijack the global query. It's a hack, but it works.
-			if ( true === $parsed_block['attrs']['query']['inherit'] ) {
+			if ( isset( $parsed_block['attrs']['query']['inherit'] ) && true === $parsed_block['attrs']['query']['inherit'] ) {
 				global $wp_query;
 				$query_args = array_merge(
 					$wp_query->query_vars,
@@ -82,38 +82,58 @@ function get_exclude_ids( $attributes ) {
 					)
 				);
 
-				$wp_query = new \WP_Query( array_filter( $query_args ) );
+				/**
+				 * Filter the query vars.
+				 *
+				 * Allows filtering query params when the query is being inherited.
+				 *
+				 * @since 1.5
+				 *
+				 * @param array   $query_args  Arguments to be passed to WP_Query.
+				 * @param array   $block_query The query attribute retrieved from the block.
+				 * @param boolean $inherited   Whether the query is being inherited.
+				 *
+				 * @param array $filtered_query_args Final arguments list.
+				 */
+				$filtered_query_args = \apply_filters(
+					'aql_query_vars',
+					$query_args,
+					$parsed_block['attrs']['query'],
+					true,
+				);
+
+				$wp_query = new \WP_Query( $filtered_query_args );
 			} else {
 				\add_filter(
 					'query_loop_block_query_vars',
 					function( $default_query ) use ( $parsed_block ) {
-						$custom_query = $parsed_block['attrs']['query'];
+						$block_query = $parsed_block['attrs']['query'];
 						// Generate a new custom query will all potential query vars.
-						$custom_args = array();
+						$query_args = array();
 
 						// Post Related.
-						if ( isset( $custom_query['multiple_posts'] ) && ! empty( $custom_query['multiple_posts'] ) ) {
-							$custom_args['post_type'] = array_merge( array( $default_query['post_type'] ), $custom_query['multiple_posts'] );
+						if ( isset( $block_query['multiple_posts'] ) && ! empty( $block_query['multiple_posts'] ) ) {
+							$query_args['post_type'] = array_merge( array( $default_query['post_type'] ), $block_query['multiple_posts'] );
 						}
 
 						// Exclude Posts.
-						$exclude_ids = get_exclude_ids( $custom_query );
+						$exclude_ids = get_exclude_ids( $block_query );
 						if (  ! empty( $exclude_ids ) ) {
-							$custom_args['post__not_in'] = $exclude_ids;
+							$query_args['post__not_in'] = $exclude_ids;
 						}
 
 						// Check for meta queries.
-						if ( isset( $custom_query['meta_query'] ) && ! empty( $custom_query['meta_query'] ) ) {
-							$custom_args['meta_query'] = parse_meta_query( $custom_query['meta_query'] ); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+						if ( isset( $block_query['meta_query'] ) && ! empty( $block_query['meta_query'] ) ) {
+							$query_args['meta_query'] = parse_meta_query( $block_query['meta_query'] ); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 						}
 
 						// Date queries.
-						if ( ! empty( $custom_query['date_query'] ) ) {
-							$date_query        = $custom_query['date_query'];
+						if ( ! empty( $block_query['date_query'] ) ) {
+							$date_query        = $block_query['date_query'];
 							$date_relationship = $date_query['relation'];
 							$date_is_inclusive = $date_query['inclusive'];
 							$date_primary      = $date_query['date_primary'];
-							$date_secondary    = $date_query['date_secondary'];
+							$date_secondary    = ! empty( $date_query['date_secondary'] ) ? $date_query['date_secondary'] : '';
 
 							// Date format: 2022-12-27T11:14:21.
 							$primary_year    = substr( $date_primary, 0, 4 );
@@ -149,15 +169,23 @@ function get_exclude_ids( $attributes ) {
 							$date_queries['inclusive'] = $date_is_inclusive;
 
 							// Add the date queries to the custom query.
-							$custom_args['date_query'] = array_filter( $date_queries );
+							$query_args['date_query'] = array_filter( $date_queries );
 
 						}
+						/** This filter is documented in includes/query-loop.php */
+						$filtered_query_args = \apply_filters(
+							'aql_query_vars',
+							$query_args,
+							$block_query,
+							false
+						);
 
 						// Return the merged query.
 						return array_merge(
 							$default_query,
-							$custom_args
+							$filtered_query_args
 						);
+
 					},
 					10,
 					2
@@ -174,7 +202,6 @@ function get_exclude_ids( $attributes ) {
 /**
  * Updates the query vars for the Query Loop block in the block editor
  */
-
 // Add a filter to each rest endpoint to add our custom query params.
 \add_action(
 	'init',
@@ -251,7 +278,7 @@ function add_custom_query_params( $args, $request ) {
 		$date_relationship = $date_query['relation'];
 		$date_is_inclusive = ( 'true' === $date_query['inclusive'] ) ? true : false;
 		$date_primary      = $date_query['date_primary'];
-		$date_secondary    = $date_query['date_secondary'];
+		$date_secondary    = ! empty( $date_query['date_secondary'] ) ? $date_query['date_secondary'] : '';
 
 		// Date format: 2022-12-27T11:14:21.
 		$primary_year    = substr( $date_primary, 0, 4 );
@@ -288,9 +315,17 @@ function add_custom_query_params( $args, $request ) {
 		$custom_args['date_query'] = array_filter( $date_queries );
 	}
 
+	/** This filter is documented in includes/query-loop.php */
+	$filtered_query_args = \apply_filters(
+		'aql_query_vars',
+		$custom_args,
+		$request->get_params(),
+		false,
+	);
+
 	// Merge all queries.
 	return array_merge(
 		$args,
-		array_filter( $custom_args )
+		array_filter( $filtered_query_args )
 	);
 }

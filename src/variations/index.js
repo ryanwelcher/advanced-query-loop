@@ -8,8 +8,9 @@ import { __ } from '@wordpress/i18n';
  */
 import './controls';
 import AQLIcon from '../components/icons';
-
-export const AQL = 'advanced-query-loop';
+import AQLControls from '../slots/aql-controls';
+import AQLControlsInheritedQuery from '../slots/aql-controls-inherited-query';
+const AQL = 'advanced-query-loop';
 
 registerBlockVariation( 'core/query', {
 	name: AQL,
@@ -22,3 +23,5 @@ registerBlockVariation( 'core/query', {
 	},
 	scope: [ 'inserter', 'transform' ],
 } );
+
+export { AQL, AQLControls, AQLControlsInheritedQuery };

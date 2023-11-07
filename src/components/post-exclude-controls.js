@@ -69,7 +69,8 @@ export const PostExcludeControls = ( { attributes, setAttributes } ) => {
 	}
 
 	return (
-		<PanelBody title={ __( 'Exclude Posts', 'advanced-query-loop' ) }>
+		<>
+			<h2> { __( 'Exclude Posts', 'advanced-query-loop' ) }</h2>
 			<BaseControl
 				help={ __(
 					'Start typing to search for a post title or manually enter one.',
@@ -108,6 +109,6 @@ export const PostExcludeControls = ( { attributes, setAttributes } ) => {
 					} );
 				} }
 			/>
-		</PanelBody>
+		</>
 	);
 };

@@ -2,8 +2,8 @@
 Contributors: welcher
 Tags: Query Loop, Custom Queries
 Requires at least: 6.2
-Tested up to: 6.1
-Stable tag: 1.4.2
+Tested up to: 6.3
+Stable tag: 1.5.1
 Requires PHP: 7.2
 License: GPL v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -54,6 +54,17 @@ Sort in ascending or descending order by:
 3. Query posts before a date, after a date or between two dates.
 
 == Changelog ==
+= 1.5.1 =
+* Adds EXISTS as a compare option for Post Meta Queries.
+
+= 1.5 =
+* Moves all controls into a single panel titled "Advanced Query Settings".
+* Exposes SlotFills and filters to allow extension of plugin to add any featured you want.
+* Minor PHP warning fixes.
+
+= 1.4.3 =
+* Addresses translations from https://translate.wordpress.org/ not loading. HUGE thank you to @himaartwp for opening the issue and to everyone that helped with the Japanese translation!
+* Fixes minor php warnings in the editor
 
 = 1.4.2 =
 * Addresses an issue where `noindex` was being added incorrectly due to an empty parameter. Props to @pedjas for reporting.

@@ -1,6 +1,6 @@
 {
-	"name": "query-loop-advanced",
-	"version": "1.4.2",
+	"name": "advanced-query-loop",
+	"version": "1.5.1",
 	"description": "",
 	"main": "index.js",
 	"scripts": {
