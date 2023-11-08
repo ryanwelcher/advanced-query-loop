@@ -18,6 +18,10 @@ Select additional post types for your query!
 
 Set the number of items you want to display (up to 50).
 
+#### Exclude current post
+
+Remove the current post from the query.
+
 #### Offset
 
 Choose whether you want to start at the first or 100th!
