@@ -17,6 +17,7 @@ import { PostMetaQueryControls } from '../components/post-meta-query-controls';
 import { PostDateQueryControls } from '../components/post-date-query-controls';
 import { MultiplePostSelect } from '../components/multiple-post-select';
 import { PostOrderControls } from '../components/post-order-controls';
+import { PostExcludeControls } from '../components/post-exclude-controls';
 
 /**
  * Determines if the active variation is this one
@@ -57,6 +58,7 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 							<PostCountControls { ...props } />
 							<PostOffsetControls { ...props } />
 							<PostOrderControls { ...props } />
+							<PostExcludeControls { ...props } />
 							<PostMetaQueryControls { ...props } />
 							<PostDateQueryControls { ...props } />
 							<AQLControls.Slot fillProps={ { ...props } } />
