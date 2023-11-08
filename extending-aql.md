@@ -1,6 +1,6 @@
 ## Extending AQL
 
-Since version 1.5, AQL is now completely extendable. Using the SlotFills and filter outlined below, you can add any custom control you may need!
+Since version 1.5, AQL is now completely extendable. Using the SlotFills and filter outlined below, you can add any custom control you may need! The code below can be seen in my [advanced-query-loop-extension plugin here](https://github.com/ryanwelcher/advanced-query-loop-extension)
 
 #### SlotFills
 
