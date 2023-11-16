@@ -18,6 +18,7 @@ import { PostDateQueryControls } from '../components/post-date-query-controls';
 import { MultiplePostSelect } from '../components/multiple-post-select';
 import { PostOrderControls } from '../components/post-order-controls';
 import { PostExcludeControls } from '../components/post-exclude-controls';
+import { TaxonomySelect } from '../components/taxonomy-select';
 
 /**
  * Determines if the active variation is this one
@@ -54,6 +55,7 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 								'advanced-query-loop'
 							) }
 						>
+							<TaxonomySelect { ...props } />
 							<MultiplePostSelect { ...props } />
 							<PostCountControls { ...props } />
 							<PostOffsetControls { ...props } />

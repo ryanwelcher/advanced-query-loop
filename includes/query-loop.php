@@ -7,6 +7,8 @@
 
 namespace AdvancedQueryLoop;
 
+use function AdvancedQueryLoop\Taxonomy\parse_taxonomy_query;
+
 /**
  * Adds the custom query attributes to the Query Loop block.
  *
@@ -38,7 +40,7 @@ function parse_meta_query( $meta_query_data ) {
 
 /**
  * Returns an array with Post IDs that should be excluded from the Query.
- * 
+ *
  * @param array
  * @return array
  */
@@ -227,6 +229,7 @@ function add_more_sort_by( $query_params, $post_type ) {
 	$query_params['orderby']['enum'][] = 'meta_value';
 	$query_params['orderby']['enum'][] = 'meta_value_num';
 	$query_params['orderby']['enum'][] = 'rand';
+	// die( '<pre>' .print_r( $query_params , 1 ) .'</pre>' );
 	return $query_params;
 }
 
@@ -239,6 +242,12 @@ function add_more_sort_by( $query_params, $post_type ) {
 function add_custom_query_params( $args, $request ) {
 	// Generate a new custom query will all potential query vars.
 	$custom_args = array();
+
+	// Taxonomy Related
+	$tax_query = $request->get_param( 'tax_query' );
+	if ( $tax_query ) {
+		$custom_args['tax_query'] = parse_taxonomy_query( $tax_query );
+	}
 
 	// Post Related.
 	$multiple_post_types = $request->get_param( 'multiple_posts' );
@@ -313,10 +322,13 @@ function add_custom_query_params( $args, $request ) {
 		$request->get_params(),
 		false,
 	);
-
 	// Merge all queries.
-	return array_merge(
+	$merged = array_merge(
 		$args,
 		array_filter( $filtered_query_args )
 	);
+
+	// die( var_dump( $request->get_params() ) );
+
+	return $merged;
 }
