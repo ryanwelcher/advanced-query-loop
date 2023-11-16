@@ -55,6 +55,7 @@ Sort in ascending or descending order by:
 
 == Changelog ==
 = 1.6.1 =
+* Due to a change in core, Post Count can no longer be overridden when the block is set to inherit the query.
 * Adds Exclude current post option. Props to @Pulsar-X
 * Bump Tested Up To for 6.4
 * Adds better instructions for creating extension plugins.
