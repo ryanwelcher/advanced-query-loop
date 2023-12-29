@@ -38,7 +38,7 @@ function parse_meta_query( $meta_query_data ) {
 
 /**
  * Returns an array with Post IDs that should be excluded from the Query.
- * 
+ *
  * @param array
  * @return array
  */
@@ -104,6 +104,10 @@ function get_exclude_ids( $attributes ) {
 						// Generate a new custom query will all potential query vars.
 						$query_args = array();
 
+						if ( count( $query_args ) )  {
+							die( var_dump( $parsed_block['attrs']['query'] , $query_args)  );
+						}
+
 						// Post Related.
 						if ( isset( $block_query['multiple_posts'] ) && ! empty( $block_query['multiple_posts'] ) ) {
 							$query_args['post_type'] = array_merge( array( $default_query['post_type'] ), $block_query['multiple_posts'] );
@@ -116,6 +120,8 @@ function get_exclude_ids( $attributes ) {
 						}
 
 						// Check for meta queries.
+						// Ensure any old meta is removed @see https://github.com/ryanwelcher/advanced-query-loop/issues/29
+						$query_args['meta_query'] = array();
 						if ( isset( $block_query['meta_query'] ) && ! empty( $block_query['meta_query'] ) ) {
 							$query_args['meta_query'] = parse_meta_query( $block_query['meta_query'] ); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 						}
