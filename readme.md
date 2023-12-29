@@ -46,6 +46,7 @@ Sort in ascending or descending order by:
 -   Meta Value Num
 -   Random
 -   Menu Order ( props to @jvanja )
+-   Post ID ( props to @markhowellsmead )
 
 **Please note that this is a slight duplication of the existing sorting controls. They both work interchangeably but it just looks a bit odd in the UI**
 
