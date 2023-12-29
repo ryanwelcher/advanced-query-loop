@@ -3,7 +3,7 @@ Contributors: welcher
 Tags: Query Loop, Custom Queries
 Requires at least: 6.2
 Tested up to: 6.4
-Stable tag: 2.0.0
+Stable tag: 2.1.0
 Requires PHP: 7.2
 License: GPL v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -44,6 +44,7 @@ Sort in ascending or descending order by:
 -   Meta Value Num
 -   Random
 -   Menu Order ( props to @jvanja )
+-   Post ID ( props to @markhowellsmead )
 
 **Please note that this is a slight duplication of the existing sorting controls. They both work interchangeably but it just looks a bit odd in the UI**
 
@@ -54,6 +55,12 @@ Sort in ascending or descending order by:
 3. Query posts before a date, after a date or between two dates.
 
 == Changelog ==
+= 2.0.0 =
+* ACF custom fields now show in the auto-complete dropdown list for Post Meta Queries ( props to @jvanja  )
+* Adds sort by Post ID ( props to @markhowellsmead )
+* Fixes a typo in the Order By label.
+* Fixes a bug where a second AQL instances was getting post meta query values from the first.
+
 = 2.0.0 =
 * Due to a change in core, Post Count can no longer be overridden when the block is set to inherit the query.
 * Adds Exclude current post option. Props to @Pulsar-X
