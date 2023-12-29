@@ -55,7 +55,7 @@ Sort in ascending or descending order by:
 3. Query posts before a date, after a date or between two dates.
 
 == Changelog ==
-= 2.0.0 =
+= 2.1.0 =
 * ACF custom fields now show in the auto-complete dropdown list for Post Meta Queries ( props to @jvanja  )
 * Adds sort by Post ID ( props to @markhowellsmead )
 * Fixes a typo in the Order By label.
