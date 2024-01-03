@@ -4,6 +4,7 @@
 import { FormTokenField, BaseControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
+import { useEffect, useState } from '@wordpress/element';
 import { store as coreStore } from '@wordpress/core-data';
 
 export const MultiplePostSelect = ( { attributes, setAttributes } ) => {
@@ -16,6 +17,19 @@ export const MultiplePostSelect = ( { attributes, setAttributes } ) => {
 			?.filter( ( { viewable } ) => viewable )
 			?.map( ( { slug } ) => slug )
 	);
+
+	const [ multiplePostsState ] = useState( multiplePosts );
+
+	useEffect( () => {
+		if ( multiplePosts !== multiplePostsState ) {
+			setAttributes( {
+				query: {
+					...attributes.query,
+					include_posts: [],
+				},
+			} );
+		}
+	}, [ multiplePosts ] );
 
 	if ( ! postTypes ) {
 		return <div>{ __( 'Loading…', 'advanced-query-loop' ) }</div>;

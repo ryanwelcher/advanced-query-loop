@@ -119,6 +119,11 @@ function get_exclude_ids( $attributes ) {
 							$query_args['post__not_in'] = $exclude_ids;
 						}
 
+						// Include Posts.
+						if ( isset( $block_query['include_posts'] ) && ! empty( $block_query['include_posts'] ) ) {
+							$query_args['post__in'] = $block_query['include_posts'];
+						}
+
 						// Check for meta queries.
 						// Ensure any old meta is removed @see https://github.com/ryanwelcher/advanced-query-loop/issues/29
 						$query_args['meta_query'] = array();
@@ -260,6 +265,12 @@ function add_custom_query_params( $args, $request ) {
 		);
 
 		$custom_args['post__not_in'] = get_exclude_ids( $attributes );
+	}
+
+	// Inclusion Related.
+	$include_posts = $request->get_param( 'include_posts' );
+	if ( $include_posts ) {
+		$custom_args['post__in'] =  $include_posts;
 	}
 
 	// Meta related.
