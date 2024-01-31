@@ -3,7 +3,6 @@
  */
 import { ToggleControl } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
-import { useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -18,19 +17,6 @@ export const PostExcludeControls = ( { attributes, setAttributes } ) => {
 	const currentPost = useSelect( ( select ) => {
 		return select( 'core/editor' ).getCurrentPost();
 	}, [] );
-
-	const [ excludeCurrentState ] = useState( excludeCurrent );
-
-	useEffect( () => {
-		if ( excludeCurrent !== excludeCurrentState ) {
-			setAttributes( {
-				query: {
-					...attributes.query,
-					include_posts: [],
-				},
-			} );
-		}
-	}, [ excludeCurrent ] );
 
 	if ( ! currentPost ) {
 		return <div>{ __( 'Loading…', 'advanced-query-loop' ) }</div>;

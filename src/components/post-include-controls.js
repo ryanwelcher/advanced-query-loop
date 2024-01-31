@@ -3,6 +3,7 @@
  */
 import { FormTokenField, BaseControl } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
+import { useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -20,6 +21,9 @@ export const PostIncludeControls = ( { attributes, setAttributes } ) => {
 			exclude_current: excludeCurrent = 0,
 		} = {},
 	} = attributes;
+	const [ searchArg, setSearchArg ] = useState( '' );
+	const [ multiplePostsState ] = useState( multiplePosts );
+	const [ excludeCurrentState ] = useState( excludeCurrent );
 
 	const posts = useSelect(
 		( select ) => {
@@ -31,7 +35,8 @@ export const PostIncludeControls = ( { attributes, setAttributes } ) => {
 						'postType',
 						currentPostType,
 						{
-							per_page: -1,
+							per_page: 1,
+							search: searchArg,
 							exclude: excludeCurrent ? [ excludeCurrent ] : [],
 						}
 					);
@@ -40,8 +45,30 @@ export const PostIncludeControls = ( { attributes, setAttributes } ) => {
 				[]
 			);
 		},
-		[ postType, multiplePosts, excludeCurrent ]
+		[ postType, multiplePosts, excludeCurrent, searchArg ]
 	);
+
+	console.log( posts );
+	console.log(includePosts);
+
+	/**
+	 * This useEffect hook is triggered whenever the multiplePosts variable changes.
+	 * It checks if the value of multiplePosts is different from the value of multiplePostsState.
+	 * If the condition is true, it updates the query attribute using the setAttributes function, setting include_posts to an empty array.
+	 */
+	useEffect( () => {
+		if (
+			multiplePosts !== multiplePostsState ||
+			excludeCurrent !== excludeCurrentState
+		) {
+			setAttributes( {
+				query: {
+					...attributes.query,
+					include_posts: [],
+				},
+			} );
+		}
+	}, [ multiplePosts, excludeCurrent ] );
 
 	/**
 	 * Retrieves the title of a post based on its ID.
@@ -84,6 +111,9 @@ export const PostIncludeControls = ( { attributes, setAttributes } ) => {
 					label={ __( 'Posts', 'advanced-query-loop' ) }
 					value={ includePosts.map( ( id ) => getPostTitle( id ) ) }
 					suggestions={ posts.map( ( post ) => post.title.rendered ) }
+					onInputChange={ ( searchPost ) =>
+						setSearchArg( searchPost )
+					}
 					onChange={ ( titles ) => {
 						setAttributes( {
 							query: {
@@ -94,6 +124,7 @@ export const PostIncludeControls = ( { attributes, setAttributes } ) => {
 									) || [],
 							},
 						} );
+						setSearchArg( '' );
 					} }
 					__experimentalExpandOnFocus
 					__experimentalShowHowTo={ false }
