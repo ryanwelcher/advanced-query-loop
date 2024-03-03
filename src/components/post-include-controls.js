@@ -22,8 +22,10 @@ export const PostIncludeControls = ( { attributes, setAttributes } ) => {
 		} = {},
 	} = attributes;
 	const [ searchArg, setSearchArg ] = useState( '' );
-	const [ multiplePostsState ] = useState( multiplePosts );
-	const [ excludeCurrentState ] = useState( excludeCurrent );
+	const [ multiplePostsState, setMultiplePostsState ] =
+		useState( multiplePosts );
+	const [ excludeCurrentState, setExcludeCurrentState ] =
+		useState( excludeCurrent );
 
 	const posts = useSelect(
 		( select ) => {
@@ -35,7 +37,7 @@ export const PostIncludeControls = ( { attributes, setAttributes } ) => {
 						'postType',
 						currentPostType,
 						{
-							per_page: 1,
+							per_page: 10,
 							search: searchArg,
 							exclude: excludeCurrent ? [ excludeCurrent ] : [],
 						}
@@ -48,9 +50,6 @@ export const PostIncludeControls = ( { attributes, setAttributes } ) => {
 		[ postType, multiplePosts, excludeCurrent, searchArg ]
 	);
 
-	console.log( posts );
-	console.log(includePosts);
-
 	/**
 	 * This useEffect hook is triggered whenever the multiplePosts variable changes.
 	 * It checks if the value of multiplePosts is different from the value of multiplePostsState.
@@ -58,7 +57,8 @@ export const PostIncludeControls = ( { attributes, setAttributes } ) => {
 	 */
 	useEffect( () => {
 		if (
-			multiplePosts !== multiplePostsState ||
+			JSON.stringify( multiplePosts ) !==
+				JSON.stringify( multiplePostsState ) ||
 			excludeCurrent !== excludeCurrentState
 		) {
 			setAttributes( {
@@ -71,27 +71,19 @@ export const PostIncludeControls = ( { attributes, setAttributes } ) => {
 	}, [ multiplePosts, excludeCurrent ] );
 
 	/**
-	 * Retrieves the title of a post based on its ID.
-	 *
-	 * @param {number} id - The ID of the post.
-	 * @return {Array} - An array containing the title of the post, or an empty array if the post is not found.
-	 */
-	const getPostTitle = ( id ) => {
-		const foundPost = posts.find( ( post ) => post.id === id );
-		return foundPost ? foundPost.title.rendered : '';
-	};
-
-	/**
 	 * Retrieves the ID of a post based on its title.
 	 *
 	 * @param {string} postTitle - The title of the post.
 	 * @return {Array} An array containing the ID of the post.
 	 */
 	const getPostId = ( postTitle ) => {
-		const foundPost = posts.find(
-			( post ) => post.title.rendered === postTitle
-		);
-		return foundPost ? foundPost.id : '';
+		const foundPost =
+			includePosts.find( ( post ) => post.title === postTitle ) ||
+			posts.find( ( post ) => post.title.rendered === postTitle );
+
+		return foundPost.title.rendered
+			? { id: foundPost.id, title: foundPost.title.rendered }
+			: foundPost;
 	};
 
 	if ( ! posts ) {
@@ -109,7 +101,7 @@ export const PostIncludeControls = ( { attributes, setAttributes } ) => {
 			>
 				<FormTokenField
 					label={ __( 'Posts', 'advanced-query-loop' ) }
-					value={ includePosts.map( ( id ) => getPostTitle( id ) ) }
+					value={ includePosts.map( ( item ) => item.title ) }
 					suggestions={ posts.map( ( post ) => post.title.rendered ) }
 					onInputChange={ ( searchPost ) =>
 						setSearchArg( searchPost )
