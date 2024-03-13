@@ -38,7 +38,7 @@ function parse_meta_query( $meta_query_data ) {
 
 /**
  * Returns an array with Post IDs that should be excluded from the Query.
- * 
+ *
  * @param array
  * @return array
  */
@@ -47,7 +47,7 @@ function get_exclude_ids( $attributes ) {
 
 	// Exclude Current Post.
 	if ( isset( $attributes['exclude_current'] ) && boolval( $attributes['exclude_current'] ) ) {
-		array_push( $exclude_ids, $attributes['exclude_current']);
+		array_push( $exclude_ids, $attributes['exclude_current'] );
 	}
 
 	return $exclude_ids;
@@ -99,8 +99,10 @@ function get_exclude_ids( $attributes ) {
 			} else {
 				\add_filter(
 					'query_loop_block_query_vars',
-					function( $default_query ) use ( $parsed_block ) {
-						$block_query = $parsed_block['attrs']['query'];
+					function( $default_query, $block ) {
+						// Retrieve the query from the passed block context.
+						$block_query = $block->context['query'];
+
 						// Generate a new custom query will all potential query vars.
 						$query_args = array();
 
@@ -111,11 +113,13 @@ function get_exclude_ids( $attributes ) {
 
 						// Exclude Posts.
 						$exclude_ids = get_exclude_ids( $block_query );
-						if (  ! empty( $exclude_ids ) ) {
+						if ( ! empty( $exclude_ids ) ) {
 							$query_args['post__not_in'] = $exclude_ids;
 						}
 
 						// Check for meta queries.
+						// Ensure any old meta is removed @see https://github.com/ryanwelcher/advanced-query-loop/issues/29
+						$query_args['meta_query'] = array();
 						if ( isset( $block_query['meta_query'] ) && ! empty( $block_query['meta_query'] ) ) {
 							$query_args['meta_query'] = parse_meta_query( $block_query['meta_query'] ); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 						}

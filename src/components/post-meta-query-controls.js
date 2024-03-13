@@ -16,6 +16,19 @@ import { useEffect, useState } from '@wordpress/element';
  */
 import { PostMetaControl } from './post-meta-control';
 
+/**
+ * Converts the meta keys from the all sources into a single array.
+ *
+ * @param {Array} records
+ * @return {Array} meta keys
+ */
+const combineMetaKeys = ( records ) => {
+	return {
+		...records?.[ 0 ]?.meta,
+		...records?.[ 0 ]?.acf,
+	};
+};
+
 // A component to render a select control for the post meta query.
 export const PostMetaQueryControls = ( { attributes, setAttributes } ) => {
 	const {
@@ -31,7 +44,7 @@ export const PostMetaQueryControls = ( { attributes, setAttributes } ) => {
 
 	const [ selectedPostType ] = useState( postType );
 
-	const registeredMeta = records?.[ 0 ]?.meta || {};
+	const registeredMeta = combineMetaKeys( records );
 
 	useEffect( () => {
 		// If the post type changes, reset the meta query.
