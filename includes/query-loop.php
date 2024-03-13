@@ -49,7 +49,7 @@ function get_exclude_ids( $attributes ) {
 
 	// Exclude Current Post.
 	if ( isset( $attributes['exclude_current'] ) && boolval( $attributes['exclude_current'] ) ) {
-		array_push( $exclude_ids, $attributes['exclude_current']);
+		array_push( $exclude_ids, $attributes['exclude_current'] );
 	}
 
 	return $exclude_ids;
@@ -101,14 +101,12 @@ function get_exclude_ids( $attributes ) {
 			} else {
 				\add_filter(
 					'query_loop_block_query_vars',
-					function( $default_query ) use ( $parsed_block ) {
-						$block_query = $parsed_block['attrs']['query'];
+					function( $default_query, $block ) {
+						// Retrieve the query from the passed block context.
+						$block_query = $block->context['query'];
+
 						// Generate a new custom query will all potential query vars.
 						$query_args = array();
-
-						if ( count( $query_args ) )  {
-							die( var_dump( $parsed_block['attrs']['query'] , $query_args)  );
-						}
 
 						// Post Related.
 						if ( isset( $block_query['multiple_posts'] ) && ! empty( $block_query['multiple_posts'] ) ) {
@@ -117,7 +115,7 @@ function get_exclude_ids( $attributes ) {
 
 						// Exclude Posts.
 						$exclude_ids = get_exclude_ids( $block_query );
-						if (  ! empty( $exclude_ids ) ) {
+						if ( ! empty( $exclude_ids ) ) {
 							$query_args['post__not_in'] = $exclude_ids;
 						}
 
