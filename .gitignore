@@ -8,3 +8,4 @@ DNU
 /vendor/
 composer.lock
 .phpunit.*
+artifacts

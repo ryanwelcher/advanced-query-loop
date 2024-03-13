@@ -8,8 +8,10 @@
 		"build": "wp-scripts build",
 		"plugin-zip": "wp-scripts plugin-zip",
 		"format": "wp-scripts format",
-		"env": "wp-env",
-		"release": "npm run build && npm run plugin-zip"
+		"wp-env": "wp-env",
+		"release": "npm run build && npm run plugin-zip",
+		"test:e2e": "wp-scripts test-playwright",
+		"test:e2e:debug": "wp-scripts test-playwright --debug"
 	},
 	"files": [
 		"build",
@@ -22,8 +24,8 @@
 	"author": "",
 	"license": "GPLv2 or later",
 	"devDependencies": {
-		"@wordpress/env": "^5.7.0",
-		"@wordpress/scripts": "^24.6.0"
+		"@wordpress/env": "^8.11.0",
+		"@wordpress/scripts": "^26.16.0"
 	},
 	"dependencies": {
 		"uuid": "^9.0.0"
