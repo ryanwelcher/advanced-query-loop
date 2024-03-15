@@ -52,6 +52,7 @@ export const PostMetaQueryControls = ( { attributes, setAttributes } ) => {
 			setAttributes( {
 				query: {
 					...attributes.query,
+					include_posts: [],
 					meta_query: {},
 				},
 			} );
