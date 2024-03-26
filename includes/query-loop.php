@@ -90,11 +90,11 @@ function get_exclude_ids( $attributes ) {
 				 */
 				$filtered_query_args = \apply_filters(
 					'aql_query_vars',
-					array_filter( $query_args ),
+					$query_args,
 					$parsed_block['attrs']['query'],
 					true,
 				);
-				
+
 				$wp_query = new \WP_Query( array_filter( $filtered_query_args ) );
 			} else {
 				\add_filter(
