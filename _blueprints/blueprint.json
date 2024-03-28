@@ -23,7 +23,7 @@
 		{
 			"step": "login",
 			"username": "admin",
-			"password": "password"
+			"password": "password2"
 		},
 		{
 			"step": "writeFile",
