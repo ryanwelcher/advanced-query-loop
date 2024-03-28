@@ -26,6 +26,14 @@
 			}
 		},
 		{
+			"step": "writeFile",
+			"path": "/wordpress/wp-content/plugins/cpts/cpt-demo-plugin.php",
+			"data": {
+				"resource": "url",
+				"url": "https://raw.githubusercontent.com/ryanwelcher/advanced-query-loop/trunk/_blueprints/cpt-demo.php"
+			}
+		},
+		{
 			"step": "importFile",
 			"file": {
 				"resource": "url",
