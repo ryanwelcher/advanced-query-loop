@@ -6,16 +6,26 @@ import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 import { store as coreStore } from '@wordpress/core-data';
 
+const usePublicPostTypes = () => {
+	const postTypes = useSelect(
+		( select ) => select( coreStore ).getPostTypes( { per_page: -1 } ),
+		[]
+	);
+	return useMemo( () => {
+		const excludedPostTypes = [ 'attachment' ];
+		return postTypes?.filter(
+			( { viewable, slug } ) =>
+				viewable && ! excludedPostTypes.includes( slug )
+		);
+	}, [ postTypes ] );
+};
+
 export const MultiplePostSelect = ( { attributes, setAttributes } ) => {
 	const { query: { multiple_posts: multiplePosts = [], postType } = {} } =
 		attributes;
 
-	const postTypes = useSelect( ( select ) =>
-		select( coreStore )
-			.getPostTypes()
-			?.filter( ( { viewable } ) => viewable )
-			?.map( ( { slug } ) => slug )
-	);
+	
+	const postTypes = usePublicPostTypes();
 
 	if ( ! postTypes ) {
 		return <div>{ __( 'Loading…', 'advanced-query-loop' ) }</div>;
