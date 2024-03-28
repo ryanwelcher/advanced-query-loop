@@ -27,7 +27,7 @@
 		},
 		{
 			"step": "writeFile",
-			"path": "/wordpress/wp-content/plugins/cpt-demo-plugin.php",
+			"path": "/wordpress/wp-content/plugins/cpts/cpt-demo-plugin.php",
 			"data": {
 				"resource": "url",
 				"url": "https://raw.githubusercontent.com/ryanwelcher/advanced-query-loop/trunk/_blueprints/cpt-demo.php"
@@ -35,8 +35,7 @@
 		},
 		{
 			"step": "activatePlugin",
-			"pluginName": "Custom Post Type and Meta to AQL preview",
-			"pluginPath": "/wordpress/wp-content/plugins/cpt-demo-plugin.php"
+			"pluginPath": "/wordpress/wp-content/plugins/cpts/"
 		},
 		{
 			"step": "importFile",
