@@ -34,6 +34,11 @@
 			}
 		},
 		{
+			"step": "activatePlugin",
+			"pluginName": "Custom Post Type and Meta to AQL preview",
+			"pluginPath": "/wordpress/wp-content/plugins/cpt-demo-plugin.php"
+		},
+		{
 			"step": "importFile",
 			"file": {
 				"resource": "url",
