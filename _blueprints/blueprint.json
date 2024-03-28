@@ -38,6 +38,10 @@
 			"pluginPath": "/wordpress/wp-content/plugins/cpts/"
 		},
 		{
+			"step": "wp-cli",
+			"command": "wp post generate --post_type=twitch-stream --format=ids | xargs -d ' ' -I % wp post meta add % stream-duration %00"
+		},
+		{
 			"step": "importFile",
 			"file": {
 				"resource": "url",
