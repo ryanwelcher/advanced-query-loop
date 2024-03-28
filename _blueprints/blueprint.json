@@ -26,14 +26,10 @@
 			"password": "password"
 		},
 		{
-			"step": "wp-cli",
-			"command": "wp post generate --count=50"
-		},
-		{
 			"step": "importFile",
 			"file": {
 				"resource": "url",
-				"url": "https://your-site.com/starter-content.wxz"
+				"url": "https://raw.githubusercontent.com/ryanwelcher/advanced-query-loop/trunk/_blueprints/demo-content.xml"
 			}
 		}
 	]
