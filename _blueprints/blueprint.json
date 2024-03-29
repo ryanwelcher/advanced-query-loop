@@ -1,6 +1,6 @@
 {
 	"$schema": "https://playground.wordpress.net/blueprint-schema.json",
-	"landingPage": "/wp-admin/post.php?post=57&action=edit",
+	"landingPage": "/wp-admin/post.php?post=60&action=edit",
 	"preferredVersions": {
 		"php": "8.0",
 		"wp": "latest"
@@ -36,6 +36,10 @@
 				"resource": "url",
 				"url": "https://raw.githubusercontent.com/ryanwelcher/advanced-query-loop/trunk/_blueprints/cpt-demo.php"
 			}
+		},
+		{
+			"step": "activatePlugin",
+			"pluginPath": "/wordpress/wp-content/plugins/cpts/"
 		},
 		{
 			"step": "importFile",
