@@ -26,6 +26,10 @@
 			}
 		},
 		{
+			"step": "mkdir",
+			"path": "/wordpress/wp-content/plugins/cpts/"
+		},
+		{
 			"step": "writeFile",
 			"path": "/wordpress/wp-content/plugins/cpts/cpt-demo-plugin.php",
 			"data": {
