@@ -12,7 +12,7 @@ export const MultiplePostSelect = ( { attributes, setAttributes } ) => {
 
 	const postTypes = useSelect( ( select ) =>
 		select( coreStore )
-			.getPostTypes({ per_page: -1 })
+			.getPostTypes({ per_page: 50 })
 			?.filter( ( { viewable } ) => viewable )
 			?.map( ( { slug } ) => slug )
 	);
