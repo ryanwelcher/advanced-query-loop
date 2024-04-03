@@ -3,7 +3,7 @@ Contributors: welcher
 Tags: Query Loop, Custom Queries
 Requires at least: 6.2
 Tested up to: 6.4
-Stable tag: 2.1.1
+Stable tag: 2.1.2
 Requires PHP: 7.2
 License: GPL v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -55,6 +55,11 @@ Sort in ascending or descending order by:
 3. Query posts before a date, after a date or between two dates.
 
 == Changelog ==
+
+= 2.1.2 =
+* Fixes issue with empty search parameter causing incorrect template to load (props @StreetDog71)
+* Fixes issue with all post type not being loaded ( props @aaronware)
+
 = 2.1.1 =
 * Fixes issue with multiple AQL instances having settings leaked to each other.
 
