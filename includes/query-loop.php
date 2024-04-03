@@ -95,7 +95,7 @@ function get_exclude_ids( $attributes ) {
 					true,
 				);
 
-				$wp_query = new \WP_Query( $filtered_query_args );
+				$wp_query = new \WP_Query( array_filter( $filtered_query_args ) );
 			} else {
 				\add_filter(
 					'query_loop_block_query_vars',
