@@ -68,9 +68,10 @@ export const PostIncludeControls = ( { attributes, setAttributes } ) => {
 				},
 			} );
 			setMultiplePostsState( multiplePosts );
+			setExcludeCurrentState( excludeCurrent );
 		}
 	}, [ multiplePosts, excludeCurrent ] );
-
+	
 	/**
 	 * Retrieves the ID of a post based on its title.
 	 *
