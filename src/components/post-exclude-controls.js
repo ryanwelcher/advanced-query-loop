@@ -10,7 +10,6 @@ import { __ } from '@wordpress/i18n';
  *
  * @return {Element} PostExcludeControls
  */
-
 export const PostExcludeControls = ( { attributes, setAttributes } ) => {
 	const { query: { exclude_current: excludeCurrent } = {} } = attributes;
 

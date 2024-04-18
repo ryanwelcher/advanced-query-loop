@@ -67,6 +67,7 @@ export const PostIncludeControls = ( { attributes, setAttributes } ) => {
 					include_posts: [],
 				},
 			} );
+			setMultiplePostsState( multiplePosts );
 		}
 	}, [ multiplePosts, excludeCurrent ] );
 
