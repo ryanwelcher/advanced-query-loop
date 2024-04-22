@@ -59,8 +59,8 @@ function get_exclude_ids( $attributes ) {
  * @param array
  * @return array
  */
-function get_include_ids( $include_posts) {
-	return array_column($include_posts, 'id');
+function get_include_ids( $include_posts ) {
+	return array_column( $include_posts, 'id' );
 }
 
 /**
