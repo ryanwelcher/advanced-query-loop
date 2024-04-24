@@ -53,7 +53,15 @@ function get_exclude_ids( $attributes ) {
 	return $exclude_ids;
 }
 
-
+/**
+ * Returns an array with Post IDs to be included on the Query
+ *
+ * @param array
+ * @return array
+ */
+function get_include_ids( $include_posts ) {
+	return array_column( $include_posts, 'id' );
+}
 
 /**
  * Updates the query on the front end based on custom query attributes.
@@ -115,6 +123,12 @@ function get_exclude_ids( $attributes ) {
 						$exclude_ids = get_exclude_ids( $block_query );
 						if ( ! empty( $exclude_ids ) ) {
 							$query_args['post__not_in'] = $exclude_ids;
+						}
+
+						// Include Posts.
+						if ( isset( $block_query['include_posts'] ) && ! empty( $block_query['include_posts'] ) ) {
+							$include_ids = get_include_ids( $block_query['include_posts'] );
+							$query_args['post__in'] = $include_ids;
 						}
 
 						// Check for meta queries.
@@ -259,6 +273,13 @@ function add_custom_query_params( $args, $request ) {
 		);
 
 		$custom_args['post__not_in'] = get_exclude_ids( $attributes );
+	}
+
+	// Inclusion Related.
+	$include_posts = $request->get_param( 'include_posts' );
+	if ( $include_posts ) {
+		$include_ids = get_include_ids( $include_posts );
+		$custom_args['post__in'] = $include_ids;
 	}
 
 	// Meta related.
