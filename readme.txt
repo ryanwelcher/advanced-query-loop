@@ -24,6 +24,14 @@ Select additional post types for your query!
 ==== Post Count ====
 Set the number of items you want to display (up to 50).
 
+==== Include Posts ====
+
+Choose the posts you want to display manually.
+
+==== Exclude current post ====
+
+Remove the current post from the query.
+
 ==== Offset ====
 Choose whether you want to start at the first or 100th!
 
