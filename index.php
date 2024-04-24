@@ -3,7 +3,7 @@
  * Plugin Name:       Advanced Query Loop
  * Description:       Query loop block variations to create custom queries.
  * Plugin URI:        https://github.com/ryanwelcher/advanced-query-loop/
- * Version:           2.1.3
+ * Version:           2.2.3
  * Requires at least: 6.1
  * Requires PHP:      7.2
  * Author:            Ryan Welcher
