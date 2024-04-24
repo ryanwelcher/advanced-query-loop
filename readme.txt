@@ -2,7 +2,7 @@
 Contributors: welcher
 Tags: Query Loop, Custom Queries
 Requires at least: 6.2
-Tested up to: 6.4
+Tested up to: 6.5.2
 Stable tag: 2.2.3
 Requires PHP: 7.2
 License: GPL v2 or later
