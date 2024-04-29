@@ -24,8 +24,6 @@ export const PostIncludeControls = ( { attributes, setAttributes } ) => {
 	const [ searchArg, setSearchArg ] = useState( '' );
 	const [ multiplePostsState, setMultiplePostsState ] =
 		useState( multiplePosts );
-	const [ excludeCurrentState, setExcludeCurrentState ] =
-		useState( excludeCurrent );
 
 	const posts = useSelect(
 		( select ) => {
@@ -58,8 +56,7 @@ export const PostIncludeControls = ( { attributes, setAttributes } ) => {
 	useEffect( () => {
 		if (
 			JSON.stringify( multiplePosts ) !==
-				JSON.stringify( multiplePostsState ) ||
-			excludeCurrent !== excludeCurrentState
+			JSON.stringify( multiplePostsState )
 		) {
 			setAttributes( {
 				query: {
@@ -68,10 +65,9 @@ export const PostIncludeControls = ( { attributes, setAttributes } ) => {
 				},
 			} );
 			setMultiplePostsState( multiplePosts );
-			setExcludeCurrentState( excludeCurrent );
 		}
-	}, [ multiplePosts, excludeCurrent ] );
-	
+	}, [ multiplePosts ] );
+
 	/**
 	 * Retrieves the ID of a post based on its title.
 	 *
