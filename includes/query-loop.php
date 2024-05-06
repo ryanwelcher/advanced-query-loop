@@ -39,15 +39,21 @@ function parse_meta_query( $meta_query_data ) {
 /**
  * Returns an array with Post IDs that should be excluded from the Query.
  *
- * @param array
+ * @param array $attributes The block attributes.
  * @return array
  */
 function get_exclude_ids( $attributes ) {
 	$exclude_ids = array();
 
 	// Exclude Current Post.
-	if ( isset( $attributes['exclude_current'] ) && boolval( $attributes['exclude_current'] ) ) {
-		array_push( $exclude_ids, $attributes['exclude_current'] );
+	if ( isset( $attributes['exclude_current'] ) ) {
+		if ( is_int( $attributes['exclude_current'] ) ) {
+			array_push( $exclude_ids, $attributes['exclude_current'] );
+		} else {
+			// This is usually when this was set on a template.
+			global $post;
+			array_push( $exclude_ids, $post->ID );
+		}
 	}
 
 	return $exclude_ids;
