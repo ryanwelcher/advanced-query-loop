@@ -7,6 +7,11 @@
 
 namespace AdvancedQueryLoop;
 
+// Bail on unit tests.
+if ( ! function_exists( 'add_action' ) ) {
+	return;
+}
+
 /**
  * Enqueue our variations.
 */
