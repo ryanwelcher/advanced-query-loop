@@ -4,20 +4,22 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
+		"setup": "composer run dev",
 		"start": "wp-scripts start",
 		"build": "wp-scripts build",
 		"plugin-zip": "wp-scripts plugin-zip",
 		"format": "wp-scripts format",
 		"wp-env": "wp-env",
-		"release": "npm run build && npm run plugin-zip",
-		"composer": "wp-env run cli --env-cwd=wp-content/plugins/advanced-query-loop composer",
-		"test:unit": "wp-env run tests-cli --env-cwd=wp-content/plugins/advanced-query-loop ./vendor/bin/phpunit"
+		"release": "composer run build && npm run build && npm run plugin-zip",
+		"test:unit": "./vendor/bin/phpunit"
 	},
 	"files": [
 		"build",
 		"index.php",
 		"readme.txt",
-		"includes"
+		"includes",
+		"vendor/autoload.php",
+		"vendor/composer"
 	],
 	"prettier": "@wordpress/prettier-config",
 	"keywords": [],
