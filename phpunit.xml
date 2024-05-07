@@ -1,16 +1,28 @@
-<?xml version="1.0"?>
-<phpunit
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  bootstrap="tests/unit/bootstrap.php"
-  backupGlobals="false"
-  colors="true"
-  xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd">
-  <php>
-    <env name="WORDPRESS_TABLE_PREFIX" value="wp_"/>
-  </php>
-  <testsuites>
-    <testsuite name="default">
-      <directory prefix="test-" suffix=".php">tests/unit</directory>
-    </testsuite>
-  </testsuites>
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/8.5/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         cacheResultFile=".phpunit.cache/test-results"
+         executionOrder="depends,defects"
+         forceCoversAnnotation="true"
+         beStrictAboutCoversAnnotation="true"
+         beStrictAboutOutputDuringTests="true"
+         beStrictAboutTodoAnnotatedTests="true"
+         convertDeprecationsToExceptions="true"
+         verbose="true">
+	<php>
+		<const name="foo" value="bar"/>
+	</php>
+    <testsuites>
+         <testsuite name="default">
+			<directory suffix=".php">tests/unit</directory>
+		</testsuite>
+    </testsuites>
+
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">src</directory>
+        </whitelist>
+    </filter>
+
 </phpunit>
