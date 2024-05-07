@@ -2,8 +2,8 @@
 Contributors: welcher
 Tags: Query Loop, Custom Queries
 Requires at least: 6.2
-Tested up to: 6.4
-Stable tag: 2.1.1
+Tested up to: 6.5.2
+Stable tag: 2.2.4
 Requires PHP: 7.2
 License: GPL v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -23,6 +23,14 @@ Select additional post types for your query!
 
 ==== Post Count ====
 Set the number of items you want to display (up to 50).
+
+==== Include Posts ====
+
+Choose the posts you want to display manually.
+
+==== Exclude current post ====
+
+Remove the current post from the query.
 
 ==== Offset ====
 Choose whether you want to start at the first or 100th!
@@ -55,6 +63,19 @@ Sort in ascending or descending order by:
 3. Query posts before a date, after a date or between two dates.
 
 == Changelog ==
+= 2.2.4 =
+* Fixes an issue with the Exclude Current Post toggle causing the block to crash in some circumstances
+
+= 2.2.3 =
+* Adds a Include Posts tool to allow manual curation of content to display (@props jenniferfarhat)
+
+= 2.1.3 =
+* Fixes issues in PHP 8 and the date query. (props @krokodok)
+
+= 2.1.2 =
+* Fixes issue with empty search parameter causing incorrect template to load (props @StreetDog71)
+* Fixes issue with all post type not being loaded ( props @aaronware)
+
 = 2.1.1 =
 * Fixes issue with multiple AQL instances having settings leaked to each other.
 
