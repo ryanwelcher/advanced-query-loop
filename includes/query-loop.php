@@ -7,6 +7,12 @@
 
 namespace AdvancedQueryLoop;
 
+// Bail on unit tests.
+if ( ! function_exists( 'add_filter' ) ) {
+	return;
+}
+
+
 /**
  * Adds the custom query attributes to the Query Loop block.
  *
@@ -280,7 +286,6 @@ function add_custom_query_params( $args, $request ) {
 		$attributes = array(
 			'exclude_current' => $exclude_current,
 		);
-
 		$custom_args['post__not_in'] = get_exclude_ids( $attributes );
 	}
 
