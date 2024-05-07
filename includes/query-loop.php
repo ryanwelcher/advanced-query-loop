@@ -39,7 +39,7 @@ function parse_meta_query( $meta_query_data ) {
 /**
  * Returns an array with Post IDs that should be excluded from the Query.
  *
- * @param array
+ * @param array $attributes The block attributes
  * @return array
  */
 function get_exclude_ids( $attributes ) {

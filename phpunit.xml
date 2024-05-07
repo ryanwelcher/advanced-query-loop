@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<phpunit
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  bootstrap="tests/unit/bootstrap.php"
+  backupGlobals="false"
+  colors="true"
+  xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd">
+  <php>
+    <env name="WORDPRESS_TABLE_PREFIX" value="wp_"/>
+  </php>
+  <testsuites>
+    <testsuite name="default">
+      <directory prefix="test-" suffix=".php">tests/unit</directory>
+    </testsuite>
+  </testsuites>
+</phpunit>
