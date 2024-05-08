@@ -81,7 +81,7 @@ class Multiple_Post_Types_Tests extends TestCase {
 				// Expected results
 				array( 'post_type' => array( 'posts', 'pages' ) ),
 			),
-			// Test for duplicates. The UI shouldn't allow this.
+			// Test for duplicates. The UI shouldn't allow this but worth doing anyways.
 			array(
 				// Test data
 				array(
