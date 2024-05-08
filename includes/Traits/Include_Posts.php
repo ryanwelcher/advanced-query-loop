@@ -12,26 +12,10 @@ trait Include_Posts {
 	}
 
 	/**
-	 * Returns an array with Post IDs that should be excluded from the Query.
-	 *
-	 * @param array $attributes
-	 * @return array
-	 */
-	protected function get_exclude_ids( $attributes ) {
-		$exclude_ids = array();
-
-		// Exclude Current Post.
-		if ( isset( $attributes['exclude_current'] ) && boolval( $attributes['exclude_current'] ) ) {
-			array_push( $exclude_ids, $attributes['exclude_current'] );
-		}
-
-		return $exclude_ids;
-	}
-
-	/**
 	 * Returns an array with Post IDs to be included on the Query
 	 *
-	 * @param array
+	 * @param array $include_posts Array of posts to include.
+	 *
 	 * @return array
 	 */
 	protected function get_include_ids( $include_posts ) {

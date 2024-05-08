@@ -51,6 +51,64 @@ class Exclude_Current_Tests extends TestCase {
 		$qpg->process_all();
 
 		// Empty arrays return empty.
-		$this->assertEmpty( $qpg->get_query_params() );
+		$this->assertEmpty( $qpg->get_query_args() );
+	}
+
+
+	/**
+	 * Data provider for the empty array tests
+	 *
+	 * @return array
+	 */
+	public function data_basic_exclude_current() {
+		return array(
+			array(
+				// Default values.
+				array(),
+				// Custom data.
+				array( 'exclude_current' => '1' ),
+			),
+			array(
+				// Default values.
+				array(),
+				// Custom data.
+				array(
+					'exclude_current' => 1,
+				),
+			),
+		);
+	}
+
+	/**
+	 * Test that basics of setting an ID
+	 *
+	 * @param array $default_data The params coming from the default block.
+	 * @param array $custom_data  The params coming from AQL.
+	 *
+	 * @dataProvider data_basic_exclude_current
+	 */
+	public function test_basic_exclude_current( $default_data, $custom_data ) {
+		$qpg = new Query_Params_Generator( $default_data, $custom_data );
+		$qpg->process_all();
+
+		$this->assertEquals( array( 'post__not_in' => array( 1 ) ), $qpg->get_query_args() );
+	}
+
+
+	/**
+	 * When Exclude current post is set on a template, it receives a string of the template name.
+	 */
+	public function test_exclude_current_receives_a_string() {
+
+		// We need to mock a global post object
+		$GLOBALS['post'] = (object) array( 'ID' => '1337' );
+
+		$default_data = array();
+		$custom_data  = array( 'exclude_current' => 'twentytwentyfour//single' );
+
+		$qpg = new Query_Params_Generator( $default_data, $custom_data );
+		$qpg->process_all();
+
+		$this->assertEquals( array( 'post__not_in' => array( 1337 ) ), $qpg->get_query_args() );
 	}
 }

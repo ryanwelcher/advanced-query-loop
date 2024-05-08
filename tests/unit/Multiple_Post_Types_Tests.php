@@ -53,7 +53,7 @@ class Multiple_Post_Types_Tests extends TestCase {
 		$qpg->process_all();
 
 		// Empty arrays return empty.
-		$this->assertEmpty( $qpg->get_query_params() );
+		$this->assertEmpty( $qpg->get_query_args() );
 	}
 
 
@@ -113,6 +113,6 @@ class Multiple_Post_Types_Tests extends TestCase {
 		$qpg = new Query_Params_Generator( $data['default_data'], $data['custom_data'] );
 		$qpg->process_all();
 
-		$this->assertEquals( $expected, $qpg->get_query_params() );
+		$this->assertEquals( $expected, $qpg->get_query_args() );
 	}
 }
