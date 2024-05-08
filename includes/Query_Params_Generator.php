@@ -99,7 +99,7 @@ class Query_Params_Generator {
 	/**
 	 * Retrieve the custom args
 	 */
-	public function get_query_params(): array {
+	public function get_query_args(): array {
 		return $this->custom_args;
 	}
 
