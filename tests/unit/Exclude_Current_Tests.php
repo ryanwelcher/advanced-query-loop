@@ -45,7 +45,7 @@ class Exclude_Current_Tests extends TestCase {
 	 *
 	 * @dataProvider data_returns_empty_array
 	 */
-	public function test_meta_query_returns_empty( $default_data, $custom_data ) {
+	public function test_exclude_current_returns_empty( $default_data, $custom_data ) {
 
 		$qpg = new Query_Params_Generator( $default_data, $custom_data );
 		$qpg->process_all();
