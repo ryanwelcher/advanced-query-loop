@@ -9,7 +9,6 @@ namespace AdvancedQueryLoop\Traits;
  * Trait
  */
 trait Multiple_Posts {
-
 	/**
 	 * Main processing function.
 	 */
