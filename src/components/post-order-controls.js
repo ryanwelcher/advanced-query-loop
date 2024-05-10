@@ -65,6 +65,10 @@ export const PostOrderControls = ( { attributes, setAttributes } ) => {
 						label: __( 'Post ID', 'advanced-query-loop' ),
 						value: 'id',
 					},
+					{
+						label: __( 'Comment Count', 'advanced-query-loop' ),
+						value: 'comment_count',
+					},
 				] }
 				onChange={ ( newOrderBy ) => {
 					setAttributes( {
