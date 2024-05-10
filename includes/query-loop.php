@@ -47,12 +47,15 @@ function get_exclude_ids( $attributes ) {
 
 	// Exclude Current Post.
 	if ( isset( $attributes['exclude_current'] ) ) {
-		if ( is_int( $attributes['exclude_current'] ) ) {
-			array_push( $exclude_ids, $attributes['exclude_current'] );
+		if ( is_int( $attributes['exclude_current'] ) || ! preg_match( '/[a-z\-]+\/\/[a-z\-]+/', $attributes['exclude_current'] ) ) {
+			array_push( $exclude_ids, intval( $attributes['exclude_current'] ) );
 		} else {
-			// This is usually when this was set on a template.
-			global $post;
-			array_push( $exclude_ids, $post->ID );
+			// This means that `exclude_current` was probably set from a template.
+			// If is_singular is true, we'll be able to exclude the actual post id. Otherwise, it may not be excluding the correct one.
+			if ( is_singular() ) {
+				global $post;
+				array_push( $exclude_ids, $post->ID );
+			}
 		}
 	}
 
@@ -133,7 +136,7 @@ function get_include_ids( $include_posts ) {
 
 						// Include Posts.
 						if ( isset( $block_query['include_posts'] ) && ! empty( $block_query['include_posts'] ) ) {
-							$include_ids = get_include_ids( $block_query['include_posts'] );
+							$include_ids            = get_include_ids( $block_query['include_posts'] );
 							$query_args['post__in'] = $include_ids;
 						}
 
@@ -284,7 +287,7 @@ function add_custom_query_params( $args, $request ) {
 	// Inclusion Related.
 	$include_posts = $request->get_param( 'include_posts' );
 	if ( $include_posts ) {
-		$include_ids = get_include_ids( $include_posts );
+		$include_ids             = get_include_ids( $include_posts );
 		$custom_args['post__in'] = $include_ids;
 	}
 
