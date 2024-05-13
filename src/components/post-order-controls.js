@@ -15,7 +15,7 @@ export const PostOrderControls = ( { attributes, setAttributes } ) => {
 	return (
 		<>
 			<SelectControl
-				label={ __( 'Post Order Order By', 'advanced-query-loop' ) }
+				label={ __( 'Post Order By', 'advanced-query-loop' ) }
 				value={ orderBy }
 				help={
 					orderBy === 'meta_value' || orderBy === 'meta_value_num'
@@ -60,6 +60,10 @@ export const PostOrderControls = ( { attributes, setAttributes } ) => {
 					{
 						label: __( 'Menu Order', 'advanced-query-loop' ),
 						value: 'menu_order',
+					},
+					{
+						label: __( 'Post ID', 'advanced-query-loop' ),
+						value: 'id',
 					},
 				] }
 				onChange={ ( newOrderBy ) => {

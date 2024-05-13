@@ -38,8 +38,8 @@ function parse_meta_query( $meta_query_data ) {
 
 /**
  * Returns an array with Post IDs that should be excluded from the Query.
- * 
- * @param array
+ *
+ * @param array $attributes The block attributes.
  * @return array
  */
 function get_exclude_ids( $attributes ) {
@@ -51,16 +51,31 @@ function get_exclude_ids( $attributes ) {
 	}
 
 	// Exclude Current Post.
-	if ( isset( $attributes['exclude_current'] ) && boolval( $attributes['exclude_current'] ) ) {
-		if ( ! in_array( $attributes['exclude_current'], $exclude_ids ) ) {
-			array_push( $exclude_ids, $attributes['exclude_current']);
+	if ( isset( $attributes['exclude_current'] ) ) {
+		if ( is_int( $attributes['exclude_current'] ) || ! preg_match( '/[a-z\-]+\/\/[a-z\-]+/', $attributes['exclude_current'] ) ) {
+			array_push( $exclude_ids, intval( $attributes['exclude_current'] ) );
+		} else {
+			// This means that `exclude_current` was probably set from a template.
+			// If is_singular is true, we'll be able to exclude the actual post id. Otherwise, it may not be excluding the correct one.
+			if ( is_singular() ) {
+				global $post;
+				array_push( $exclude_ids, $post->ID );
+			}
 		}
 	}
 
 	return $exclude_ids;
 }
 
-
+/**
+ * Returns an array with Post IDs to be included on the Query
+ *
+ * @param array
+ * @return array
+ */
+function get_include_ids( $include_posts ) {
+	return array_column( $include_posts, 'id' );
+}
 
 /**
  * Updates the query on the front end based on custom query attributes.
@@ -102,12 +117,14 @@ function get_exclude_ids( $attributes ) {
 					true,
 				);
 
-				$wp_query = new \WP_Query( $filtered_query_args );
+				$wp_query = new \WP_Query( array_filter( $filtered_query_args ) );
 			} else {
 				\add_filter(
 					'query_loop_block_query_vars',
-					function( $default_query ) use ( $parsed_block ) {
-						$block_query = $parsed_block['attrs']['query'];
+					function( $default_query, $block ) {
+						// Retrieve the query from the passed block context.
+						$block_query = $block->context['query'];
+
 						// Generate a new custom query will all potential query vars.
 						$query_args = array();
 
@@ -118,32 +135,41 @@ function get_exclude_ids( $attributes ) {
 
 						// Exclude Posts.
 						$exclude_ids = get_exclude_ids( $block_query );
-						if (  ! empty( $exclude_ids ) ) {
+						if ( ! empty( $exclude_ids ) ) {
 							$query_args['post__not_in'] = $exclude_ids;
 						}
 
+						// Include Posts.
+						if ( isset( $block_query['include_posts'] ) && ! empty( $block_query['include_posts'] ) ) {
+							$include_ids            = get_include_ids( $block_query['include_posts'] );
+							$query_args['post__in'] = $include_ids;
+						}
+
 						// Check for meta queries.
+						// Ensure any old meta is removed @see https://github.com/ryanwelcher/advanced-query-loop/issues/29
+						$query_args['meta_query'] = array();
 						if ( isset( $block_query['meta_query'] ) && ! empty( $block_query['meta_query'] ) ) {
 							$query_args['meta_query'] = parse_meta_query( $block_query['meta_query'] ); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 						}
 
 						// Date queries.
-						if ( ! empty( $block_query['date_query'] ) ) {
-							$date_query        = $block_query['date_query'];
-							$date_relationship = $date_query['relation'];
-							$date_is_inclusive = $date_query['inclusive'];
-							$date_primary      = $date_query['date_primary'];
-							$date_secondary    = ! empty( $date_query['date_secondary'] ) ? $date_query['date_secondary'] : '';
+						$date_query        = $block_query['date_query'] ?? null;
+						$date_relationship = $date_query['relation'] ?? null;
+						$date_primary      = $date_query['date_primary'] ?? null;
+						if ( $date_query && $date_relationship && $date_primary ) {
+							$date_is_inclusive = $date_query['inclusive'] ?? false;
+							$date_secondary    = $date_query['date_secondary'] ?? null;
 
 							// Date format: 2022-12-27T11:14:21.
-							$primary_year    = substr( $date_primary, 0, 4 );
-							$primary_month   = substr( $date_primary, 5, 2 );
-							$primary_day     = substr( $date_primary, 8, 2 );
-							$secondary_year  = substr( $date_secondary, 0, 4 );
-							$secondary_month = substr( $date_secondary, 5, 2 );
-							$secondary_day   = substr( $date_secondary, 8, 2 );
+							$primary_year  = substr( $date_primary, 0, 4 );
+							$primary_month = substr( $date_primary, 5, 2 );
+							$primary_day   = substr( $date_primary, 8, 2 );
 
-							if ( 'between' === $date_relationship ) {
+							if ( 'between' === $date_relationship && $date_secondary ) {
+								$secondary_year  = substr( $date_secondary, 0, 4 );
+								$secondary_month = substr( $date_secondary, 5, 2 );
+								$secondary_day   = substr( $date_secondary, 8, 2 );
+
 								$date_queries = array(
 									'after'  => array(
 										'year'  => $primary_year,
@@ -265,6 +291,13 @@ function add_custom_query_params( $args, $request ) {
 		$custom_args['post__not_in'] = get_exclude_ids( $attributes );
 	}
 
+	// Inclusion Related.
+	$include_posts = $request->get_param( 'include_posts' );
+	if ( $include_posts ) {
+		$include_ids             = get_include_ids( $include_posts );
+		$custom_args['post__in'] = $include_ids;
+	}
+
 	// Meta related.
 	$meta_query = $request->get_param( 'meta_query' );
 	if ( $meta_query ) {
@@ -272,23 +305,24 @@ function add_custom_query_params( $args, $request ) {
 	}
 
 	// Date related.
-	$date_query = $request->get_param( 'date_query' );
+	$date_query        = $request->get_param( 'date_query' );
+	$date_relationship = $date_query['relation'] ?? null;
+	$date_primary      = $date_query['date_primary'] ?? null;
 
-	if ( $date_query ) {
-		$date_relationship = $date_query['relation'];
-		$date_is_inclusive = ( 'true' === $date_query['inclusive'] ) ? true : false;
-		$date_primary      = $date_query['date_primary'];
-		$date_secondary    = ! empty( $date_query['date_secondary'] ) ? $date_query['date_secondary'] : '';
+	if ( $date_query && $date_relationship && $date_primary ) {
+		$date_is_inclusive = 'true' === $date_query['inclusive'] ?? false;
+		$date_secondary    = $date_query['date_secondary'] ?? null;
 
 		// Date format: 2022-12-27T11:14:21.
-		$primary_year    = substr( $date_primary, 0, 4 );
-		$primary_month   = substr( $date_primary, 5, 2 );
-		$primary_day     = substr( $date_primary, 8, 2 );
-		$secondary_year  = substr( $date_secondary, 0, 4 );
-		$secondary_month = substr( $date_secondary, 5, 2 );
-		$secondary_day   = substr( $date_secondary, 8, 2 );
+		$primary_year  = substr( $date_primary, 0, 4 );
+		$primary_month = substr( $date_primary, 5, 2 );
+		$primary_day   = substr( $date_primary, 8, 2 );
 
-		if ( 'between' === $date_relationship ) {
+		if ( 'between' === $date_relationship && $date_secondary ) {
+			$secondary_year  = substr( $date_secondary, 0, 4 );
+			$secondary_month = substr( $date_secondary, 5, 2 );
+			$secondary_day   = substr( $date_secondary, 8, 2 );
+
 			$date_queries = array(
 				'after'  => array(
 					'year'  => $primary_year,
