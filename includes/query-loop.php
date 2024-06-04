@@ -125,6 +125,7 @@ function add_more_sort_by( $query_params ) {
 	$query_params['orderby']['enum'][] = 'meta_value';
 	$query_params['orderby']['enum'][] = 'meta_value_num';
 	$query_params['orderby']['enum'][] = 'rand';
+	$query_params['orderby']['enum'][] = 'comment_count';
 	return $query_params;
 }
 

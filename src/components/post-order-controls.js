@@ -31,6 +31,10 @@ export const PostOrderControls = ( { attributes, setAttributes } ) => {
 						value: 'author',
 					},
 					{
+						label: __( 'Comment Count', 'advanced-query-loop' ),
+						value: 'comment_count',
+					},
+					{
 						label: __( 'Date', 'advanced-query-loop' ),
 						value: 'date',
 					},
@@ -42,8 +46,8 @@ export const PostOrderControls = ( { attributes, setAttributes } ) => {
 						value: 'modified',
 					},
 					{
-						label: __( 'Title', 'advanced-query-loop' ),
-						value: 'title',
+						label: __( 'Menu Order', 'advanced-query-loop' ),
+						value: 'menu_order',
 					},
 					{
 						label: __( 'Meta Value', 'advanced-query-loop' ),
@@ -54,16 +58,16 @@ export const PostOrderControls = ( { attributes, setAttributes } ) => {
 						value: 'meta_value_num',
 					},
 					{
+						label: __( 'Post ID', 'advanced-query-loop' ),
+						value: 'id',
+					},
+					{
 						label: __( 'Random', 'advanced-query-loop' ),
 						value: 'rand',
 					},
 					{
-						label: __( 'Menu Order', 'advanced-query-loop' ),
-						value: 'menu_order',
-					},
-					{
-						label: __( 'Post ID', 'advanced-query-loop' ),
-						value: 'id',
+						label: __( 'Title', 'advanced-query-loop' ),
+						value: 'title',
 					},
 				] }
 				onChange={ ( newOrderBy ) => {
