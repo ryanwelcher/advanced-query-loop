@@ -39,6 +39,10 @@ export const PostOrderControls = ( { attributes, setAttributes } ) => {
 						value: 'date',
 					},
 					{
+						label: __( 'Included Posts', 'advanced-query-loop' ),
+						value: 'post__in',
+					},
+					{
 						label: __(
 							'Last Modified Date',
 							'advanced-query-loop'
@@ -68,10 +72,6 @@ export const PostOrderControls = ( { attributes, setAttributes } ) => {
 					{
 						label: __( 'Title', 'advanced-query-loop' ),
 						value: 'title',
-					},
-					{
-						label: __( 'Included Posts', 'advanced-query-loop' ),
-						value: 'post__in',
 					},
 				] }
 				onChange={ ( newOrderBy ) => {
