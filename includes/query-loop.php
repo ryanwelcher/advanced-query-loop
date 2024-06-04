@@ -45,6 +45,11 @@ function parse_meta_query( $meta_query_data ) {
 function get_exclude_ids( $attributes ) {
 	$exclude_ids = array();
 
+	// Exclude Posts by ID.
+	if ( isset( $attributes['exclude_posts'] ) && ! empty( $attributes['exclude_posts'] ) ) {
+		$exclude_ids = $attributes['exclude_posts'];
+	}
+
 	// Exclude Current Post.
 	if ( isset( $attributes['exclude_current'] ) ) {
 		if ( is_int( $attributes['exclude_current'] ) || ! preg_match( '/[a-z\-]+\/\/[a-z\-]+/', $attributes['exclude_current'] ) ) {
@@ -275,9 +280,11 @@ function add_custom_query_params( $args, $request ) {
 	}
 
 	// Exclusion Related.
+	$exclude_posts = $request->get_param( 'exclude_posts' );
 	$exclude_current = $request->get_param( 'exclude_current' );
-	if ( $exclude_current ) {
+	if ( $exclude_posts || $exclude_current ) {
 		$attributes = array(
+			'exclude_posts' => $exclude_posts,
 			'exclude_current' => $exclude_current,
 		);
 
