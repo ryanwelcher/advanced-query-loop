@@ -1,0 +1,17 @@
+name-template: 'v$NEXT_PATCH_VERSION'
+tag-template: 'v$NEXT_PATCH_VERSION'
+template: |
+    ## What’s Changed
+
+    $CHANGES
+
+categories:
+    - title: '🚀 Features'
+      collapse-after: 3
+      label: 'enhancement'
+    - title: '🐛 Bug Fixes'
+      collapse-after: 3
+      labels:
+          - 'fix'
+          - 'bugfix'
+          - 'bug'
