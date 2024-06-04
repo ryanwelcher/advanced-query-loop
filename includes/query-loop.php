@@ -255,6 +255,7 @@ function add_more_sort_by( $query_params, $post_type ) {
 	$query_params['orderby']['enum'][] = 'meta_value';
 	$query_params['orderby']['enum'][] = 'meta_value_num';
 	$query_params['orderby']['enum'][] = 'rand';
+	$query_params['orderby']['enum'][] = 'post__in';
 	return $query_params;
 }
 

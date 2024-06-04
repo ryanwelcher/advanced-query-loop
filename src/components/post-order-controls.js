@@ -65,6 +65,10 @@ export const PostOrderControls = ( { attributes, setAttributes } ) => {
 						label: __( 'Post ID', 'advanced-query-loop' ),
 						value: 'id',
 					},
+					{
+						label: __( 'Included Posts', 'advanced-query-loop' ),
+						value: 'post__in',
+					},
 				] }
 				onChange={ ( newOrderBy ) => {
 					setAttributes( {
