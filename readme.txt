@@ -3,8 +3,8 @@ Contributors: welcher
 Tags: Query Loop, Custom Queries
 Requires at least: 6.2
 Tested up to: 6.5.2
-Stable tag: 2.2.5
-Requires PHP: 7.2
+Stable tag: 3.0.0
+Requires PHP: 7.4
 License: GPL v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -63,6 +63,12 @@ Sort in ascending or descending order by:
 3. Query posts before a date, after a date or between two dates.
 
 == Changelog ==
+= 3.0.0 =
+* Add Sorting by Included Posts IDs.
+* Add sorting by Comment Count.
+* Major restructure for processing the query params.
+* Add release-drafter workflow.
+
 = 2.2.5 =
 * Fixes issue with Exclude Current Post not being correctly set on templates.
 
