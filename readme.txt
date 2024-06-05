@@ -45,14 +45,16 @@ Query items before a date, after a date or between two dates!
 Sort in ascending or descending order by:
 
 -   Author
+-   Comment Count
 -   Date
+-   Included Posts
 -   Last Modified Date
--   Title
+-   Menu Order ( props to @jvanja )
 -   Meta Value
 -   Meta Value Num
--   Random
--   Menu Order ( props to @jvanja )
 -   Post ID ( props to @markhowellsmead )
+-   Random
+-   Title
 
 **Please note that this is a slight duplication of the existing sorting controls. They both work interchangeably but it just looks a bit odd in the UI**
 
