@@ -1,7 +1,6 @@
 # Advanced Query Loop
 
-![Unit Tests]
-(https://github.com/ryanwelcher/advanced-query-loop/actions/workflows/phpunit.yml/badge.svg?branch=trunk)
+![Unit Tests](https://github.com/ryanwelcher/advanced-query-loop/actions/workflows/phpunit.yml/badge.svg?branch=trunk)
 
 ## Description
 
