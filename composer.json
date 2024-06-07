@@ -1,6 +1,6 @@
 {
 	"name": "ryanwelcher/advanced-query-loop",
-	"version": "3.0.0",
+	"description": "Query loop block variations to create custom queries.",
 	"authors": [
 		{
 			"name": "Ryan Welcher",
@@ -12,7 +12,7 @@
 	],
 	"type": "wordpress-plugin",
 	"homepage": "https://github.com/ryanwelcher/advanced-query-loop",
-	"license": "GPL-2.0+",
+	"license": "GPL-2.0-or-later",
 	"support": {
 		"issues": "https://github.com/ryanwelcher/advanced-query-loop/issues",
 		"source": "https://github.com/ryanwelcher/advanced-query-loop/"
@@ -54,6 +54,7 @@
 		"dev": [
 			"composer update",
 			"composer dump-autoload"
-		]
+		],
+		"phpunit": "vendor/bin/phpunit"
 	}
 }
