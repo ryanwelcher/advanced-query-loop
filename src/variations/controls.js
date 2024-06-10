@@ -113,6 +113,7 @@ function addAQLTransforms( settings, name ) {
 
 	return {
 		...settings,
+		keywords: [ ...settings.keywords, 'AQL', 'aql' ],
 		transforms: {
 			to: settings?.transforms?.to || [],
 			from: [
