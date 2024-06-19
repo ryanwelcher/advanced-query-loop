@@ -58,7 +58,7 @@ if ( ! function_exists( 'add_filter' ) ) {
 					'query_loop_block_query_vars',
 					function ( $default_query, $block ) {
 						// Retrieve the query from the passed block context.
-						$block_query = $block->context['query'];
+						$block_query = $block->context['query'] ?? [];
 
 						// Process all of the params
 						$qpg = new Query_Params_Generator( $default_query, $block_query );
