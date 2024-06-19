@@ -57,9 +57,9 @@ class Query_Params_Generator {
 	 * @param array $default_params Default values from the default block.
 	 * @param array $custom_params  Custom values from AQL.
 	 */
-	public function __construct( array $default_params, array $custom_params ) {
-		$this->default_params = $default_params;
-		$this->custom_params  = $custom_params;
+	public function __construct( $default_params, $custom_params ) {
+		$this->default_params = is_array( $default_params ) ? $default_params : [];
+		$this->custom_params  = is_array( $custom_params ) ? $custom_params : [];
 	}
 
 	/**
@@ -76,9 +76,11 @@ class Query_Params_Generator {
 	 *
 	 * @param string $name The param to retrieve.
 	 *
+	 * @todo Return mixed type hint for 8.0
+	 *
 	 * @return mixed
 	 */
-	public function get_custom_param( string $name ): mixed {
+	public function get_custom_param( string $name ) {
 		if ( $this->has_custom_param( $name ) ) {
 			return $this->custom_params[ $name ];
 		}

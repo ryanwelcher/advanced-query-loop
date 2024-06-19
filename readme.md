@@ -1,5 +1,7 @@
 # Advanced Query Loop
 
+![Unit Tests](https://github.com/ryanwelcher/advanced-query-loop/actions/workflows/phpunit.yml/badge.svg?branch=trunk)
+
 ## Description
 
 This plugin introduces a Query Loop block variation that will empower users to be able to do much more complicated queries with the Query Loop block, such number of posts to display and post meta
