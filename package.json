@@ -1,6 +1,6 @@
 {
 	"name": "advanced-query-loop",
-	"version": "3.0.0",
+	"version": "3.0.1",
 	"description": "Query loop block variations to create custom queries.",
 	"main": "index.js",
 	"scripts": {
