@@ -16,6 +16,7 @@ export const PostDateQueryControls = ( { attributes, setAttributes } ) => {
 				date_primary: datePrimary = new Date(),
 				date_secondary: dateSecondary = new Date(),
 				inclusive: isInclusive = false,
+				range = '',
 			} = {},
 		} = {},
 	} = attributes;
@@ -24,8 +25,55 @@ export const PostDateQueryControls = ( { attributes, setAttributes } ) => {
 		<>
 			<h2>{ __( 'Post Date Query', 'advanced-query-loop' ) }</h2>
 			<SelectControl
+				label={ __( 'Dynamic Range', 'advanced-query-loop' ) }
+				help={ __(
+					'Show posts from the last month, 3 months, 6 months, or 12 months. Posts are shown from the 1st of the month.',
+					'advanced-query-loop'
+				) }
+				value={ range }
+				disabled={ relationFromQuery !== '' }
+				options={ [
+					{
+						label: __( 'None', 'advanced-query-loop' ),
+						value: '',
+					},
+					{
+						label: __( 'Last month', 'advanced-query-loop' ),
+						value: 'last-month',
+					},
+					{
+						label: __( 'Last 3 months', 'advanced-query-loop' ),
+						value: 'three-months',
+					},
+					{
+						label: __( 'Last 6 months', 'advanced-query-loop' ),
+						value: 'six-months',
+					},
+					{
+						label: __( 'Last 12 months', 'advanced-query-loop' ),
+						value: 'twelve-months',
+					},
+				] }
+				onChange={ ( newRange ) => {
+					setAttributes( {
+						query: {
+							...attributes.query,
+							date_query: {
+								...attributes.query.date_query,
+								range: newRange,
+							},
+						},
+					} );
+				} }
+			/>
+			<SelectControl
 				label={ __( 'Date Relationship', 'advanced-query-loop' ) }
+				help={ __(
+					'Show posts before, after, or between the selected date(s).',
+					'advanced-query-loop'
+				) }
 				value={ relationFromQuery }
+				disabled={ range !== '' }
 				options={ [
 					{
 						label: __( 'None', 'advanced-query-loop' ),
