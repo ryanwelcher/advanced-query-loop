@@ -75,7 +75,10 @@ export const PostDateQueryControls = ( { attributes, setAttributes } ) => {
 				value={ relationFromQuery }
 				disabled={ range !== '' }
 				options={ [
-					{ label: __( 'None', 'advanced-query-loop' ), value: '' },
+					{
+						label: __( 'None', 'advanced-query-loop' ),
+						value: '',
+					},
 					{
 						label: __( 'Before', 'advanced-query-loop' ),
 						value: 'before',

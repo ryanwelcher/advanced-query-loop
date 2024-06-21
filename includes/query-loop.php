@@ -58,7 +58,7 @@ if ( ! function_exists( 'add_filter' ) ) {
 					'query_loop_block_query_vars',
 					function ( $default_query, $block ) {
 						// Retrieve the query from the passed block context.
-						$block_query = $block->context['query'] ?? [];
+						$block_query = $block->context['query'] ?? array();
 
 						// Process all of the params
 						$qpg = new Query_Params_Generator( $default_query, $block_query );
@@ -127,6 +127,7 @@ function add_more_sort_by( $query_params ) {
 	$query_params['orderby']['enum'][] = 'rand';
 	$query_params['orderby']['enum'][] = 'post__in';
 	$query_params['orderby']['enum'][] = 'comment_count';
+	$query_params['orderby']['enum'][] = 'name';
 	return $query_params;
 }
 
