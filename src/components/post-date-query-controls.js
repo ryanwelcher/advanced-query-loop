@@ -27,10 +27,22 @@ export const PostDateQueryControls = ( { attributes, setAttributes } ) => {
 				label={ __( 'Date Relationship', 'advanced-query-loop' ) }
 				value={ relationFromQuery }
 				options={ [
-					{ label: 'None', value: '' },
-					{ label: 'Before', value: 'before' },
-					{ label: 'After', value: 'after' },
-					{ label: 'Between', value: 'between' },
+					{
+						label: __( 'None', 'advanced-query-loop' ),
+						value: '',
+					},
+					{
+						label: __( 'Before', 'advanced-query-loop' ),
+						value: 'before',
+					},
+					{
+						label: __( 'After', 'advanced-query-loop' ),
+						value: 'after',
+					},
+					{
+						label: __( 'Between', 'advanced-query-loop' ),
+						value: 'between',
+					},
 				] }
 				onChange={ ( relation ) => {
 					setAttributes( {
