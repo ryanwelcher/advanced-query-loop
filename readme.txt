@@ -65,6 +65,13 @@ Sort in ascending or descending order by:
 3. Query posts before a date, after a date or between two dates.
 
 == Changelog ==
+
+= 3.1.0 =
+* Add dynamic date ranges to see posts from the last 1, 3, 6 and 12 months.
+* Insert a new instance by typing "AQL" or "aql" and pressing enter.
+* Adds sorting by Name (props @philbee).
+* Bug fixes.
+
 = 3.0.1 =
 * Addresses some PHP fatal errors caused by type hinting.
 
