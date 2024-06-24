@@ -21,8 +21,8 @@ trait Date_Query {
 		$range = $date_query['range'] ?? false;
 		if ( $date_query && $range && ! empty( $range ) ) {
 			$date_queries = $this->process_date_range( $range );
-
 		} else {
+			$date_queries      = array();
 			$date_relationship = $date_query['relation'] ?? null;
 			$date_primary      = $date_query['date_primary'] ?? null;
 			if ( $date_query && $date_relationship && $date_primary ) {
