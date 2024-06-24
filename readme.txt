@@ -3,7 +3,7 @@ Contributors: welcher
 Tags: Query Loop, Custom Queries
 Requires at least: 6.2
 Tested up to: 6.5.2
-Stable tag: 3.0.1
+Stable tag: 3.1.0
 Requires PHP: 7.4
 License: GPL v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -39,22 +39,21 @@ Choose whether you want to start at the first or 100th!
 Generate complicated post meta queries using an interface that allows you to create a query based on `meta_key`, `meta_value` and the `compare` options. Combine multiple queries and determine if they combine results (OR) or narrow them down (AND).
 
 ==== Date Query ====
-Query items before a date, after a date or between two dates!
+Query items before a date, after a date or between two dates or choose to show the post from the last 1, 3, 6 and 12 months.
 
 ==== Post Order controls ====
 Sort in ascending or descending order by:
 
 -   Author
--   Comment Count
 -   Date
--   Included Posts
 -   Last Modified Date
--   Menu Order ( props to @jvanja )
+-   Title
 -   Meta Value
 -   Meta Value Num
--   Post ID ( props to @markhowellsmead )
 -   Random
--   Title
+-   Menu Order (props to @jvanja)
+-   Name (props @philbee)
+-   Post ID (props to @markhowellsmead)
 
 **Please note that this is a slight duplication of the existing sorting controls. They both work interchangeably but it just looks a bit odd in the UI**
 
@@ -65,7 +64,6 @@ Sort in ascending or descending order by:
 3. Query posts before a date, after a date or between two dates.
 
 == Changelog ==
-
 = 3.1.0 =
 * Add dynamic date ranges to see posts from the last 1, 3, 6 and 12 months.
 * Insert a new instance by typing "AQL" or "aql" and pressing enter.
