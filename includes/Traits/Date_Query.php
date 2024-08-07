@@ -19,8 +19,11 @@ trait Date_Query {
 
 		// Ranges and Relationships can't co-exist.
 		$range = $date_query['range'] ?? false;
+
+
 		if ( $date_query && $range && ! empty( $range ) ) {
-			$date_queries = $this->process_date_range( $range );
+			$inclusive_range = isset( $date_query['current_date_in_range'] ) ? ( true === $date_query['current_date_in_range'] || 'true' === $date_query['current_date_in_range'] ) : false;
+			$date_queries    = $this->process_date_range( $range, $inclusive_range );
 		} else {
 			$date_queries      = array();
 			$date_relationship = $date_query['relation'] ?? null;
@@ -71,33 +74,47 @@ trait Date_Query {
 	/**
 	 * Generate the date ranges data
 	 *
-	 * @param string $range The range as provided by the UI.
+	 * @param string $range           The range as provided by the UI.
+	 * @param bool   $inclusive_range Does the range end at the current date.
 	 */
-	public function process_date_range( string $range ) {
+	public function process_date_range( string $range, bool $inclusive_range = false ) {
 
 		switch ( $range ) {
 			case 'last-month':
-				return array(
-					'before' => 'today',
-					'after'  => 'first day of -1 months',
-				);
+				$months_offset = '-1';
+				break;
 			case 'three-months':
-				return array(
-					'before' => 'today',
-					'after'  => 'first day of -3 months',
-				);
-
+				$months_offset = '-3';
+				break;
 			case 'six-months':
-				return array(
-					'before' => 'today',
-					'after'  => 'first day of -6 months',
-				);
-
+				$months_offset = '-6';
+				break;
 			case 'twelve-months':
-				return array(
-					'before' => 'today',
-					'after'  => 'first day of -12 months',
-				);
+				$months_offset = '-12';
+				break;
 		}
+		// Get the dates for the first and last day of the month offset.
+		$today  = strtotime( 'today' );
+		$after  = strtotime( "first day of {$months_offset} months" );
+		$before = strtotime( 'last day of last month' );
+
+		// Are we add the current date?
+		$range_to_use = $inclusive_range ? $today : $before;
+
+		// Return the date query.
+		$date_query = array(
+			'before' => array(
+				'year'  => gmdate( 'Y', $range_to_use ),
+				'month' => gmdate( 'm', $range_to_use ),
+				'day'   => gmdate( 'd', $range_to_use ),
+			),
+			'after'  => array(
+				'year'  => gmdate( 'Y', $after ),
+				'month' => gmdate( 'm', $after ),
+				'day'   => gmdate( 'd', $after ),
+			),
+		);
+
+		return $date_query;
 	}
 }
