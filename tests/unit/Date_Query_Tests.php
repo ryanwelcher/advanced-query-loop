@@ -26,8 +26,16 @@ class Date_Query_Tests extends TestCase {
 				],
 				[
 					'date_query' => [
-						'before' => 'today',
-						'after'  => 'first day of -1 months',
+						'before' => [
+							'year'  => gmdate( 'Y', strtotime( 'last day of last month' ) ),
+							'month' => gmdate( 'm', strtotime( 'last day of last month' ) ),
+							'day'   => gmdate( 'd', strtotime( 'last day of last month' ) ),
+						],
+						'after'  => [
+							'year'  => gmdate( 'Y', strtotime( 'first day of -1 months' ) ),
+							'month' => gmdate( 'm', strtotime( 'first day of -1 months' ) ),
+							'day'   => gmdate( 'd', strtotime( 'first day of -1 months' ) ),
+						],
 					],
 				],
 			],
@@ -92,6 +100,12 @@ class Date_Query_Tests extends TestCase {
 	 * Data provider
 	 */
 	public function data_all_ranges_return_expected() {
+
+		$today  = strtotime( 'today' );
+		$last_month = strtotime( 'first day of -1 months' );
+
+		$after  = strtotime( "first day of {$months_offset} months" );
+		$before = strtotime( 'last day of last month' );
 		return [
 			// Month
 			[
@@ -102,8 +116,16 @@ class Date_Query_Tests extends TestCase {
 				],
 				[
 					'date_query' => [
-						'before' => 'today',
-						'after'  => 'first day of -1 months',
+						'before' => [
+							'year'  => gmdate( 'Y', strtotime( 'last day of last month' ) ),
+							'month' => gmdate( 'm', strtotime( 'last day of last month' ) ),
+							'day'   => gmdate( 'd', strtotime( 'last day of last month' ) ),
+						],
+						'after'  => [
+							'year'  => gmdate( 'Y', strtotime( 'first day of -1 months' ) ),
+							'month' => gmdate( 'm', strtotime( 'first day of -1 months' ) ),
+							'day'   => gmdate( 'd', strtotime( 'first day of -1 months' ) ),
+						],
 					],
 				],
 			],
@@ -115,8 +137,16 @@ class Date_Query_Tests extends TestCase {
 				],
 				[
 					'date_query' => [
-						'before' => 'today',
-						'after'  => 'first day of -3 months',
+						'before' => [
+							'year'  => gmdate( 'Y', strtotime( 'last day of last month' ) ),
+							'month' => gmdate( 'm', strtotime( 'last day of last month' ) ),
+							'day'   => gmdate( 'd', strtotime( 'last day of last month' ) ),
+						],
+						'after'  => [
+							'year'  => gmdate( 'Y', strtotime( 'first day of -3 months' ) ),
+							'month' => gmdate( 'm', strtotime( 'first day of -3 months' ) ),
+							'day'   => gmdate( 'd', strtotime( 'first day of -3 months' ) ),
+						],
 					],
 				],
 			],
@@ -128,8 +158,16 @@ class Date_Query_Tests extends TestCase {
 				],
 				[
 					'date_query' => [
-						'before' => 'today',
-						'after'  => 'first day of -6 months',
+						'before' => [
+							'year'  => gmdate( 'Y', strtotime( 'last day of last month' ) ),
+							'month' => gmdate( 'm', strtotime( 'last day of last month' ) ),
+							'day'   => gmdate( 'd', strtotime( 'last day of last month' ) ),
+						],
+						'after'  => [
+							'year'  => gmdate( 'Y', strtotime( 'first day of -6 months' ) ),
+							'month' => gmdate( 'm', strtotime( 'first day of -6 months' ) ),
+							'day'   => gmdate( 'd', strtotime( 'first day of -6 months' ) ),
+						],
 					],
 				],
 			],
@@ -141,8 +179,16 @@ class Date_Query_Tests extends TestCase {
 				],
 				[
 					'date_query' => [
-						'before' => 'today',
-						'after'  => 'first day of -12 months',
+						'before' => [
+							'year'  => gmdate( 'Y', strtotime( 'last day of last month' ) ),
+							'month' => gmdate( 'm', strtotime( 'last day of last month' ) ),
+							'day'   => gmdate( 'd', strtotime( 'last day of last month' ) ),
+						],
+						'after'  => [
+							'year'  => gmdate( 'Y', strtotime( 'first day of -12 months' ) ),
+							'month' => gmdate( 'm', strtotime( 'first day of -12 months' ) ),
+							'day'   => gmdate( 'd', strtotime( 'first day of -12 months' ) ),
+						],
 					],
 				],
 			],

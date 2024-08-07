@@ -17,6 +17,7 @@ export const PostDateQueryControls = ( { attributes, setAttributes } ) => {
 				date_secondary: dateSecondary = new Date(),
 				inclusive: isInclusive = false,
 				range = '',
+				current_date_in_range: currentDateInRange = false,
 			} = {},
 		} = {},
 	} = attributes;
@@ -66,6 +67,33 @@ export const PostDateQueryControls = ( { attributes, setAttributes } ) => {
 					} );
 				} }
 			/>
+			{ range !== '' && (
+				<CheckboxControl
+					label={ __(
+						'Include up to current date',
+						'advanced-query-loop'
+					) }
+					help={ __(
+						'Should the dynamic range include up to the current date?',
+						'advanced-query-loop'
+					) }
+					disabled={ range === '' }
+					checked={ currentDateInRange }
+					onChange={ ( newCurrentDateInRange ) => {
+						setAttributes( {
+							query: {
+								...attributes.query,
+								date_query: {
+									...attributes.query.date_query,
+									current_date_in_range:
+										newCurrentDateInRange,
+								},
+							},
+						} );
+					} }
+				/>
+			) }
+
 			<SelectControl
 				label={ __( 'Date Relationship', 'advanced-query-loop' ) }
 				help={ __(
