@@ -3,7 +3,7 @@ Contributors: welcher
 Tags: Query Loop, Custom Queries
 Requires at least: 6.2
 Tested up to: 6.5.2
-Stable tag: 3.1.0
+Stable tag: 3.1.1
 Requires PHP: 7.4
 License: GPL v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -64,6 +64,11 @@ Sort in ascending or descending order by:
 3. Query posts before a date, after a date or between two dates.
 
 == Changelog ==
+= 3.1.1=
+* Add better SVG that works in all usages
+* Change ranges to allow to not include the current date
+* Trim whitespace from title.rendered
+
 = 3.1.0 =
 * Add dynamic date ranges to see posts from the last 1, 3, 6 and 12 months.
 * Insert a new instance by typing "AQL" or "aql" and pressing enter.
