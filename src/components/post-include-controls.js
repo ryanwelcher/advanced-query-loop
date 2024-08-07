@@ -77,7 +77,7 @@ export const PostIncludeControls = ( { attributes, setAttributes } ) => {
 	const getPostId = ( postTitle ) => {
 		const foundPost =
 			includePosts.find( ( post ) => post.title === postTitle ) ||
-			posts.find( ( post ) => post.title.rendered === postTitle );
+			posts.find( ( post ) => post.title.rendered.trim() === postTitle );
 
 		return foundPost.title.rendered
 			? { id: foundPost.id, title: foundPost.title.rendered }
