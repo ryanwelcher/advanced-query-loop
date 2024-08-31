@@ -1,0 +1,63 @@
+{
+	"name": "ryanwelcher/advanced-query-loop",
+	"description": "Query loop block variations to create custom queries.",
+	"authors": [
+		{
+			"name": "Ryan Welcher",
+			"email": "me@ryanwelcher.com"
+		}
+	],
+	"keywords": [
+		"wordpress"
+	],
+	"type": "wordpress-plugin",
+	"homepage": "https://github.com/ryanwelcher/advanced-query-loop",
+	"license": "GPL-2.0-or-later",
+	"support": {
+		"issues": "https://github.com/ryanwelcher/advanced-query-loop/issues",
+		"source": "https://github.com/ryanwelcher/advanced-query-loop/"
+	},
+	"autoload": {
+		"psr-4": {
+			"AdvancedQueryLoop\\": "includes/"
+		},
+		"files": [
+			"includes/enqueues.php",
+			"includes/query-loop.php"
+		]
+	},
+	"require-dev": {
+		"dealerdirect/phpcodesniffer-composer-installer": "*",
+		"object-calisthenics/phpcs-calisthenics-rules": "*",
+		"phpcompatibility/php-compatibility": "*",
+		"wp-coding-standards/wpcs": "*",
+		"phpunit/phpunit": "^8.5",
+		"yoast/phpunit-polyfills": "^2.0"
+	},
+	"require": {
+		"php": ">=7.4"
+	},
+	"config": {
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true,
+			"composer/installers": true
+		}
+	},
+	"scripts": {
+		"install-codestandards": [
+			"PHPCSStandards\\Composer\\Plugin\\Installers\\PHPCodeSniffer\\Plugin::run"
+		],
+		"post-install-cmd": [
+			"@install-codestandards"
+		],
+		"build": [
+			"composer update --no-dev",
+			"composer dump-autoload -o --no-dev"
+		],
+		"dev": [
+			"composer update",
+			"composer dump-autoload"
+		],
+		"phpunit": "vendor/bin/phpunit"
+	}
+}

@@ -2,9 +2,9 @@
 Contributors: welcher
 Tags: Query Loop, Custom Queries
 Requires at least: 6.2
-Tested up to: 6.4
-Stable tag: 2.1.1
-Requires PHP: 7.2
+Tested up to: 6.5.2
+Stable tag: 3.1.1
+Requires PHP: 7.4
 License: GPL v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -24,6 +24,14 @@ Select additional post types for your query!
 ==== Post Count ====
 Set the number of items you want to display (up to 50).
 
+==== Include Posts ====
+
+Choose the posts you want to display manually.
+
+==== Exclude current post ====
+
+Remove the current post from the query.
+
 ==== Offset ====
 Choose whether you want to start at the first or 100th!
 
@@ -31,7 +39,7 @@ Choose whether you want to start at the first or 100th!
 Generate complicated post meta queries using an interface that allows you to create a query based on `meta_key`, `meta_value` and the `compare` options. Combine multiple queries and determine if they combine results (OR) or narrow them down (AND).
 
 ==== Date Query ====
-Query items before a date, after a date or between two dates!
+Query items before a date, after a date or between two dates or choose to show the post from the last 1, 3, 6 and 12 months.
 
 ==== Post Order controls ====
 Sort in ascending or descending order by:
@@ -43,8 +51,9 @@ Sort in ascending or descending order by:
 -   Meta Value
 -   Meta Value Num
 -   Random
--   Menu Order ( props to @jvanja )
--   Post ID ( props to @markhowellsmead )
+-   Menu Order (props to @jvanja)
+-   Name (props @philbee)
+-   Post ID (props to @markhowellsmead)
 
 **Please note that this is a slight duplication of the existing sorting controls. They both work interchangeably but it just looks a bit odd in the UI**
 
@@ -55,6 +64,42 @@ Sort in ascending or descending order by:
 3. Query posts before a date, after a date or between two dates.
 
 == Changelog ==
+= 3.1.1=
+* Add better SVG that works in all usages
+* Change ranges to allow to not include the current date
+* Trim whitespace from title.rendered
+
+= 3.1.0 =
+* Add dynamic date ranges to see posts from the last 1, 3, 6 and 12 months.
+* Insert a new instance by typing "AQL" or "aql" and pressing enter.
+* Adds sorting by Name (props @philbee).
+* Bug fixes.
+
+= 3.0.1 =
+* Addresses some PHP fatal errors caused by type hinting.
+
+= 3.0.0 =
+* Add Sorting by Included Posts IDs.
+* Add sorting by Comment Count.
+* Major restructure for processing the query params.
+* Add release-drafter workflow.
+
+= 2.2.5 =
+* Fixes issue with Exclude Current Post not being correctly set on templates.
+
+= 2.2.4 =
+* Fixes an issue with the Exclude Current Post toggle causing the block to crash in some circumstances
+
+= 2.2.3 =
+* Adds a Include Posts tool to allow manual curation of content to display (@props jenniferfarhat)
+
+= 2.1.3 =
+* Fixes issues in PHP 8 and the date query. (props @krokodok)
+
+= 2.1.2 =
+* Fixes issue with empty search parameter causing incorrect template to load (props @StreetDog71)
+* Fixes issue with all post type not being loaded ( props @aaronware)
+
 = 2.1.1 =
 * Fixes issue with multiple AQL instances having settings leaked to each other.
 

@@ -7,62 +7,17 @@
 
 namespace AdvancedQueryLoop;
 
-use function AdvancedQueryLoop\Taxonomy\parse_taxonomy_query;
-
-/**
- * Adds the custom query attributes to the Query Loop block.
- *
- * @param array $meta_query_data Post meta query data.
- * @return array
- */
-function parse_meta_query( $meta_query_data ) {
-	$meta_queries = array();
-	if ( isset( $meta_query_data ) ) {
-		$meta_queries = array(
-			'relation' => isset( $meta_query_data['relation'] ) ? $meta_query_data['relation'] : '',
-		);
-
-		if ( isset( $meta_query_data['queries'] ) ) {
-			foreach ( $meta_query_data['queries'] as $query ) {
-				$meta_queries[] = array_filter(
-					array(
-						'key'     => $query['meta_key'] ?? '',
-						'value'   => $query['meta_value'],
-						'compare' => $query['meta_compare'],
-					)
-				);
-			}
-		}
-	}
-
-	return array_filter( $meta_queries );
+// Bail on unit tests.
+if ( ! function_exists( 'add_filter' ) ) {
+	return;
 }
-
-/**
- * Returns an array with Post IDs that should be excluded from the Query.
- *
- * @param array
- * @return array
- */
-function get_exclude_ids( $attributes ) {
-	$exclude_ids = array();
-
-	// Exclude Current Post.
-	if ( isset( $attributes['exclude_current'] ) && boolval( $attributes['exclude_current'] ) ) {
-		array_push( $exclude_ids, $attributes['exclude_current'] );
-	}
-
-	return $exclude_ids;
-}
-
-
 
 /**
  * Updates the query on the front end based on custom query attributes.
  */
 \add_filter(
 	'pre_render_block',
-	function( $pre_render, $parsed_block ) {
+	function ( $pre_render, $parsed_block ) {
 		if ( isset( $parsed_block['attrs']['namespace'] ) && 'advanced-query-loop' === $parsed_block['attrs']['namespace'] ) {
 
 			// Hijack the global query. It's a hack, but it works.
@@ -97,80 +52,19 @@ function get_exclude_ids( $attributes ) {
 					true,
 				);
 
-				$wp_query = new \WP_Query( $filtered_query_args );
+				$wp_query = new \WP_Query( array_filter( $filtered_query_args ) );
 			} else {
 				\add_filter(
 					'query_loop_block_query_vars',
-					function( $default_query, $block ) {
+					function ( $default_query, $block ) {
 						// Retrieve the query from the passed block context.
-						$block_query = $block->context['query'];
+						$block_query = $block->context['query'] ?? array();
 
-						// Generate a new custom query will all potential query vars.
-						$query_args = array();
+						// Process all of the params
+						$qpg = new Query_Params_Generator( $default_query, $block_query );
+						$qpg->process_all();
+						$query_args = $qpg->get_query_args();
 
-						// Post Related.
-						if ( isset( $block_query['multiple_posts'] ) && ! empty( $block_query['multiple_posts'] ) ) {
-							$query_args['post_type'] = array_merge( array( $default_query['post_type'] ), $block_query['multiple_posts'] );
-						}
-
-						// Exclude Posts.
-						$exclude_ids = get_exclude_ids( $block_query );
-						if ( ! empty( $exclude_ids ) ) {
-							$query_args['post__not_in'] = $exclude_ids;
-						}
-
-						// Check for meta queries.
-						// Ensure any old meta is removed @see https://github.com/ryanwelcher/advanced-query-loop/issues/29
-						$query_args['meta_query'] = array();
-						if ( isset( $block_query['meta_query'] ) && ! empty( $block_query['meta_query'] ) ) {
-							$query_args['meta_query'] = parse_meta_query( $block_query['meta_query'] ); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
-						}
-
-						// Date queries.
-						if ( ! empty( $block_query['date_query'] ) ) {
-							$date_query        = $block_query['date_query'];
-							$date_relationship = $date_query['relation'];
-							$date_is_inclusive = $date_query['inclusive'];
-							$date_primary      = $date_query['date_primary'];
-							$date_secondary    = ! empty( $date_query['date_secondary'] ) ? $date_query['date_secondary'] : '';
-
-							// Date format: 2022-12-27T11:14:21.
-							$primary_year    = substr( $date_primary, 0, 4 );
-							$primary_month   = substr( $date_primary, 5, 2 );
-							$primary_day     = substr( $date_primary, 8, 2 );
-							$secondary_year  = substr( $date_secondary, 0, 4 );
-							$secondary_month = substr( $date_secondary, 5, 2 );
-							$secondary_day   = substr( $date_secondary, 8, 2 );
-
-							if ( 'between' === $date_relationship ) {
-								$date_queries = array(
-									'after'  => array(
-										'year'  => $primary_year,
-										'month' => $primary_month,
-										'day'   => $primary_day,
-									),
-									'before' => array(
-										'year'  => $secondary_year,
-										'month' => $secondary_month,
-										'day'   => $secondary_day,
-									),
-								);
-							} else {
-								$date_queries = array(
-									$date_relationship => array(
-										'year'  => $primary_year,
-										'month' => $primary_month,
-										'day'   => $primary_day,
-									),
-								);
-							}
-
-							$date_queries['inclusive'] = $date_is_inclusive;
-
-							// Add the date queries to the custom query.
-							$query_args['date_query'] = array_filter( $date_queries );
-
-						}
 						/** This filter is documented in includes/query-loop.php */
 						$filtered_query_args = \apply_filters(
 							'aql_query_vars',
@@ -184,7 +78,6 @@ function get_exclude_ids( $attributes ) {
 							$default_query,
 							$filtered_query_args
 						);
-
 					},
 					10,
 					2
@@ -204,7 +97,7 @@ function get_exclude_ids( $attributes ) {
 // Add a filter to each rest endpoint to add our custom query params.
 \add_action(
 	'init',
-	function() {
+	function () {
 		$registered_post_types = \get_post_types( array( 'public' => true ) );
 		foreach ( $registered_post_types as $registered_post_type ) {
 			\add_filter( 'rest_' . $registered_post_type . '_query', __NAMESPACE__ . '\add_custom_query_params', 10, 2 );
@@ -212,7 +105,6 @@ function get_exclude_ids( $attributes ) {
 			// We need more sortBy options.
 			\add_filter( 'rest_' . $registered_post_type . '_collection_params', __NAMESPACE__ . '\add_more_sort_by', 10, 2 );
 		}
-
 	},
 	PHP_INT_MAX
 );
@@ -228,12 +120,14 @@ function get_exclude_ids( $attributes ) {
  *
  * @return array
  */
-function add_more_sort_by( $query_params, $post_type ) {
+function add_more_sort_by( $query_params ) {
 	$query_params['orderby']['enum'][] = 'menu_order';
 	$query_params['orderby']['enum'][] = 'meta_value';
 	$query_params['orderby']['enum'][] = 'meta_value_num';
 	$query_params['orderby']['enum'][] = 'rand';
-	// die( '<pre>' .print_r( $query_params , 1 ) .'</pre>' );
+	$query_params['orderby']['enum'][] = 'post__in';
+	$query_params['orderby']['enum'][] = 'comment_count';
+	$query_params['orderby']['enum'][] = 'name';
 	return $query_params;
 }
 
@@ -244,85 +138,16 @@ function add_more_sort_by( $query_params, $post_type ) {
  * @param WP_REST_Request $request The request object.
  */
 function add_custom_query_params( $args, $request ) {
-	// Generate a new custom query will all potential query vars.
-	$custom_args = array();
 
-	// Taxonomy Related
-	$tax_query = $request->get_param( 'tax_query' );
-	if ( $tax_query ) {
-		$custom_args['tax_query'] = parse_taxonomy_query( $tax_query );
-	}
-
-	// Post Related.
-	$multiple_post_types = $request->get_param( 'multiple_posts' );
-	if ( $multiple_post_types ) {
-		$custom_args['post_type'] = array_merge( array( $args['post_type'] ), $multiple_post_types );
-	}
-
-	// Exclusion Related.
-	$exclude_current = $request->get_param( 'exclude_current' );
-	if ( $exclude_current ) {
-		$attributes = array(
-			'exclude_current' => $exclude_current,
-		);
-
-		$custom_args['post__not_in'] = get_exclude_ids( $attributes );
-	}
-
-	// Meta related.
-	$meta_query = $request->get_param( 'meta_query' );
-	if ( $meta_query ) {
-		$custom_args['meta_query'] = parse_meta_query( $meta_query ); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
-	}
-
-	// Date related.
-	$date_query = $request->get_param( 'date_query' );
-
-	if ( $date_query ) {
-		$date_relationship = $date_query['relation'];
-		$date_is_inclusive = ( 'true' === $date_query['inclusive'] ) ? true : false;
-		$date_primary      = $date_query['date_primary'];
-		$date_secondary    = ! empty( $date_query['date_secondary'] ) ? $date_query['date_secondary'] : '';
-
-		// Date format: 2022-12-27T11:14:21.
-		$primary_year    = substr( $date_primary, 0, 4 );
-		$primary_month   = substr( $date_primary, 5, 2 );
-		$primary_day     = substr( $date_primary, 8, 2 );
-		$secondary_year  = substr( $date_secondary, 0, 4 );
-		$secondary_month = substr( $date_secondary, 5, 2 );
-		$secondary_day   = substr( $date_secondary, 8, 2 );
-
-		if ( 'between' === $date_relationship ) {
-			$date_queries = array(
-				'after'  => array(
-					'year'  => $primary_year,
-					'month' => $primary_month,
-					'day'   => $primary_day,
-				),
-				'before' => array(
-					'year'  => $secondary_year,
-					'month' => $secondary_month,
-					'day'   => $secondary_day,
-				),
-			);
-		} else {
-			$date_queries = array(
-				$date_relationship => array(
-					'year'  => $primary_year,
-					'month' => $primary_month,
-					'day'   => $primary_day,
-				),
-			);
-		}
-		$date_queries['inclusive'] = $date_is_inclusive;
-
-		$custom_args['date_query'] = array_filter( $date_queries );
-	}
+	// Process all of the params
+	$qpg = new Query_Params_Generator( $args, $request->get_params() );
+	$qpg->process_all();
+	$query_args = $qpg->get_query_args();
 
 	/** This filter is documented in includes/query-loop.php */
 	$filtered_query_args = \apply_filters(
 		'aql_query_vars',
-		$custom_args,
+		$query_args,
 		$request->get_params(),
 		false,
 	);

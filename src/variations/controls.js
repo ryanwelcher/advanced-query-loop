@@ -5,6 +5,7 @@ import { addFilter } from '@wordpress/hooks';
 import { InspectorControls } from '@wordpress/block-editor';
 import { PanelBody } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { createBlock } from '@wordpress/blocks';
 /**
  *  Internal dependencies
  */
@@ -19,6 +20,7 @@ import { MultiplePostSelect } from '../components/multiple-post-select';
 import { PostOrderControls } from '../components/post-order-controls';
 import { PostExcludeControls } from '../components/post-exclude-controls';
 import { TaxonomySelect } from '../components/taxonomy-select';
+import { PostIncludeControls } from '../components/post-include-controls';
 
 /**
  * Determines if the active variation is this one
@@ -61,6 +63,7 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 							<PostOffsetControls { ...props } />
 							<PostOrderControls { ...props } />
 							<PostExcludeControls { ...props } />
+							<PostIncludeControls { ...props } />
 							<PostMetaQueryControls { ...props } />
 							<PostDateQueryControls { ...props } />
 							<AQLControls.Slot fillProps={ { ...props } } />
@@ -92,4 +95,51 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 	return <BlockEdit { ...props } />;
 };
 
-addFilter( 'editor.BlockEdit', 'core/query', withAdvancedQueryControls );
+addFilter(
+	'editor.BlockEdit',
+	'aql/add-add-controls/core/query',
+	withAdvancedQueryControls
+);
+
+/**
+ * Filter to add AQL transform to core/query block
+ *
+ * @param {Object} settings
+ * @param {string} name
+ * @return {Object} settings
+ */
+function addAQLTransforms( settings, name ) {
+	if ( name !== 'core/query' ) {
+		return settings;
+	}
+
+	return {
+		...settings,
+		keywords: [ ...settings.keywords, 'AQL', 'aql' ],
+		transforms: {
+			to: settings?.transforms?.to || [],
+			from: [
+				...( settings?.transforms?.from || [] ),
+				{
+					type: 'enter',
+					regExp: /^(AQL|aql)$/,
+					transform: () => {
+						return createBlock(
+							'core/query',
+							{
+								namespace: 'advanced-query-loop',
+							},
+							[]
+						);
+					},
+				},
+			],
+		},
+	};
+}
+
+addFilter(
+	'blocks.registerBlockType',
+	'aql/add-transforms/query-block',
+	addAQLTransforms
+);

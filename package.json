@@ -1,31 +1,36 @@
 {
 	"name": "advanced-query-loop",
-	"version": "2.1.1",
-	"description": "",
+	"version": "3.1.1",
+	"description": "Query loop block variations to create custom queries.",
 	"main": "index.js",
 	"scripts": {
+		"setup": "composer run dev",
 		"start": "wp-scripts start",
 		"build": "wp-scripts build",
 		"plugin-zip": "wp-scripts plugin-zip",
 		"format": "wp-scripts format",
-		"env": "wp-env",
-		"release": "npm run build && npm run plugin-zip"
+		"wp-env": "wp-env",
+		"release": "composer run build && npm run build && npm run plugin-zip",
+		"test:unit": "./vendor/bin/phpunit"
 	},
 	"files": [
 		"build",
 		"index.php",
 		"readme.txt",
-		"includes"
+		"includes",
+		"vendor/autoload.php",
+		"vendor/composer"
 	],
 	"prettier": "@wordpress/prettier-config",
 	"keywords": [],
 	"author": "",
 	"license": "GPLv2 or later",
 	"devDependencies": {
-		"@wordpress/env": "^5.7.0",
+		"@wordpress/env": "^9.4.0",
 		"@wordpress/scripts": "^24.6.0"
 	},
 	"dependencies": {
+		"19": "^0.0.0",
 		"uuid": "^9.0.0"
 	}
 }
