@@ -8,8 +8,10 @@ import { v4 as uuidv4 } from 'uuid';
  */
 import { Button, SelectControl, PanelBody } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useEntityRecords } from '@wordpress/core-data';
+import { useEntityRecords, store as coreStore } from '@wordpress/core-data';
 import { useEffect, useState } from '@wordpress/element';
+import { useSelect } from '@wordpress/data';
+import { store as editorStore } from '@wordpress/editor';
 
 /**
  * Internal dependencies
@@ -38,6 +40,13 @@ export const PostMetaQueryControls = ( { attributes, setAttributes } ) => {
 		} = {},
 	} = attributes;
 
+	const { currentPostId, currentAuthorId } = useSelect( ( select ) => {
+		return {
+			currentPostId: select( editorStore ).getCurrentPostId(),
+			currentAuthorId: select( coreStore ).getCurrentUser()?.id,
+		};
+	}, [] );
+
 	const { records } = useEntityRecords( 'postType', postType, {
 		per_page: 1,
 	} );
@@ -58,7 +67,6 @@ export const PostMetaQueryControls = ( { attributes, setAttributes } ) => {
 			} );
 		}
 	}, [ postType ] );
-
 	return (
 		<>
 			<h2>{ __( 'Post Meta Query', 'advanced-query-loop' ) }</h2>
@@ -108,6 +116,7 @@ export const PostMetaQueryControls = ( { attributes, setAttributes } ) => {
 						return (
 							<PanelBody key={ id }>
 								<PostMetaControl
+									postId={ currentPostId }
 									id={ id }
 									metaKey={ metaKey }
 									metaValue={ metaValue }

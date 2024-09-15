@@ -61,7 +61,7 @@ if ( ! function_exists( 'add_filter' ) ) {
 						$block_query = $block->context['query'] ?? array();
 
 						// Process all of the params
-						$qpg = new Query_Params_Generator( $default_query, $block_query );
+						$qpg = new Query_Params_Generator( $default_query, $block_query, 'front-end' );
 						$qpg->process_all();
 						$query_args = $qpg->get_query_args();
 
@@ -140,7 +140,7 @@ function add_more_sort_by( $query_params ) {
 function add_custom_query_params( $args, $request ) {
 
 	// Process all of the params
-	$qpg = new Query_Params_Generator( $args, $request->get_params() );
+	$qpg = new Query_Params_Generator( $args, $request->get_params(), 'backend' );
 	$qpg->process_all();
 	$query_args = $qpg->get_query_args();
 

@@ -31,6 +31,11 @@ class Query_Params_Generator {
 	);
 
 	/**
+	 * Context
+	 */
+	private string $context;
+
+	/**
 	 * Default values from the default block.
 	 *
 	 * @var array
@@ -57,9 +62,10 @@ class Query_Params_Generator {
 	 * @param array $default_params Default values from the default block.
 	 * @param array $custom_params  Custom values from AQL.
 	 */
-	public function __construct( $default_params, $custom_params ) {
+	public function __construct( $default_params, $custom_params, $context ) {
 		$this->default_params = is_array( $default_params ) ? $default_params : [];
 		$this->custom_params  = is_array( $custom_params ) ? $custom_params : [];
+		$this->context        = $context;
 	}
 
 	/**

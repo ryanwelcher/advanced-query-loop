@@ -23,8 +23,9 @@ trait Meta_Query {
 					$meta_queries[] = array_filter(
 						array(
 							'key'     => $query['meta_key'] ?? '',
-							'value'   => $query['meta_value'],
+							'value'   => $this->replace_dynamic_meta_values( $query ),
 							'compare' => $query['meta_compare'],
+							'type'    => 'NUMERIC',
 						)
 					);
 				}
@@ -32,5 +33,51 @@ trait Meta_Query {
 		}
 
 		return array_filter( $meta_queries );
+	}
+
+
+	/**
+	 * Helper to return the list of dynamic meta values
+	 *
+	 * @return array
+	 */
+	public function get_dynamic_meta_values() {
+		return array(
+			'Current Post ID',
+			'Current Author ID',
+			'User ID ',
+			'Current Date',
+		);
+	}
+
+	/**
+	 * Replace the meta value key with the dynamic value.
+	 *
+	 * @param array $query The full meta query.
+	 *
+	 * @return mixed. The replaced value.
+	 */
+	public function replace_dynamic_meta_values( $query ) {
+		$dynamic_meta_values = $this->get_dynamic_meta_values();
+		$context             = $this->context;
+
+		if ( in_array( $query['meta_value'], $dynamic_meta_values, true ) ) {
+			switch ( $query['meta_value'] ) {
+				case 'Current Post ID':
+					global $post;
+					return isset( $post ) ? $post->ID : $query['currentPost'];
+				case 'Current Author ID':
+					return '0';
+				case 'User ID':
+					if ( is_user_logged_in() ) {
+						$user = get_current_user();
+						return $user;
+					}
+					return 0;
+				case 'Current Date':
+					return 0;
+			}
+		}
+		return $meta_value;
 	}
 }

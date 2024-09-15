@@ -96,7 +96,8 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 addFilter(
 	'editor.BlockEdit',
 	'aql/add-add-controls/core/query',
-	withAdvancedQueryControls
+	withAdvancedQueryControls,
+	100
 );
 
 /**
