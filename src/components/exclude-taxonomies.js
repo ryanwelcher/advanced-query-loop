@@ -37,7 +37,7 @@ export const ExcludeTaxonomies = ( { attributes, setAttributes } ) => {
 		query: {
 			multiple_posts: multiplePosts = [],
 			postType,
-			excluded_taxonomies: excludedTaxonomies = [],
+			exclude_taxonomies: excludeTaxonomies = [],
 		} = {},
 	} = attributes;
 
@@ -64,7 +64,7 @@ export const ExcludeTaxonomies = ( { attributes, setAttributes } ) => {
 				label={ __( 'Exclude Taxonomies', 'advanced-query-loop' ) }
 				value={
 					prepDataFromTokenField(
-						excludedTaxonomies,
+						excludeTaxonomies,
 						taxonomies,
 						'slug',
 						'name'
@@ -75,7 +75,7 @@ export const ExcludeTaxonomies = ( { attributes, setAttributes } ) => {
 					setAttributes( {
 						query: {
 							...attributes.query,
-							excluded_taxonomies:
+							exclude_taxonomies:
 								prepDataFromTokenField(
 									selectedTaxonomies,
 									taxonomies,

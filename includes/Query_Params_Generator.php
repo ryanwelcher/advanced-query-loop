@@ -17,6 +17,7 @@ class Query_Params_Generator {
 	use Traits\Include_Posts;
 	use Traits\Meta_Query;
 	use Traits\Date_Query;
+	use Traits\Exclude_Taxonomies;
 
 
 	/**
@@ -28,6 +29,7 @@ class Query_Params_Generator {
 		'include_posts',
 		'meta_query',
 		'date_query',
+		'exclude_taxonomies'
 	);
 
 	/**
