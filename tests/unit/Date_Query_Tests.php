@@ -100,12 +100,6 @@ class Date_Query_Tests extends TestCase {
 	 * Data provider
 	 */
 	public function data_all_ranges_return_expected() {
-
-		$today  = strtotime( 'today' );
-		$last_month = strtotime( 'first day of -1 months' );
-
-		$after  = strtotime( "first day of {$months_offset} months" );
-		$before = strtotime( 'last day of last month' );
 		return [
 			// Month
 			[
