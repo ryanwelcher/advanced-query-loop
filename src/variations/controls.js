@@ -20,6 +20,7 @@ import { MultiplePostSelect } from '../components/multiple-post-select';
 import { PostOrderControls } from '../components/post-order-controls';
 import { PostExcludeControls } from '../components/post-exclude-controls';
 import { PostIncludeControls } from '../components/post-include-controls';
+import { ExcludeTaxonomies } from '../components/exclude-taxonomies';
 
 /**
  * Determines if the active variation is this one
@@ -61,6 +62,7 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 							<PostOffsetControls { ...props } />
 							<PostOrderControls { ...props } />
 							<PostExcludeControls { ...props } />
+							<ExcludeTaxonomies { ...props } />
 							<PostIncludeControls { ...props } />
 							<PostMetaQueryControls { ...props } />
 							<PostDateQueryControls { ...props } />
