@@ -17,6 +17,7 @@ class Query_Params_Generator {
 	use Traits\Include_Posts;
 	use Traits\Meta_Query;
 	use Traits\Date_Query;
+	use Traits\Disable_Pagination;
 
 
 	/**
@@ -28,6 +29,7 @@ class Query_Params_Generator {
 		'include_posts',
 		'meta_query',
 		'date_query',
+		'disable_pagination',
 	);
 
 	/**
@@ -58,8 +60,8 @@ class Query_Params_Generator {
 	 * @param array $custom_params  Custom values from AQL.
 	 */
 	public function __construct( $default_params, $custom_params ) {
-		$this->default_params = is_array( $default_params ) ? $default_params : [];
-		$this->custom_params  = is_array( $custom_params ) ? $custom_params : [];
+		$this->default_params = is_array( $default_params ) ? $default_params : array();
+		$this->custom_params  = is_array( $custom_params ) ? $custom_params : array();
 	}
 
 	/**
