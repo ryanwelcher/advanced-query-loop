@@ -12,8 +12,7 @@ import { createBlock } from '@wordpress/blocks';
 import { AQL } from '.';
 import AQLControls from '../slots/aql-controls';
 import AQLControlsInheritedQuery from '../slots/aql-controls-inherited-query';
-import { PostCountControls } from '../components/post-count-controls';
-import { PostOffsetControls } from '../components/post-offset-controls';
+import AQLLegacyControls from '../slots/aql-legacy-controls';
 import { PostMetaQueryControls } from '../components/post-meta-query-controls';
 import { PostDateQueryControls } from '../components/post-date-query-controls';
 import { MultiplePostSelect } from '../components/multiple-post-select';
@@ -58,10 +57,11 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 								'advanced-query-loop'
 							) }
 						>
+							<AQLLegacyControls.Slot
+								fillProps={ { ...props } }
+							/>
 							<PaginationToggle { ...props } />
 							<MultiplePostSelect { ...props } />
-							<PostCountControls { ...props } />
-							<PostOffsetControls { ...props } />
 							<PostOrderControls { ...props } />
 							<PostExcludeControls { ...props } />
 							<ExcludeTaxonomies { ...props } />
