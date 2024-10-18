@@ -3,7 +3,7 @@ Contributors: welcher
 Tags: Query Loop, Custom Queries
 Requires at least: 6.2
 Tested up to: 6.5.2
-Stable tag: 3.1.1
+Stable tag: 3.2.0
 Requires PHP: 7.4
 License: GPL v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -18,6 +18,9 @@ Please use the either the [support](https://wordpress.org/support/plugin/advance
 
 === Available Controls ===
 
+====  Disable Pagination ====
+Improve the performance of the query by disabling pagination
+
 ==== Multiple post types ====
 Select additional post types for your query!
 
@@ -31,6 +34,9 @@ Choose the posts you want to display manually.
 ==== Exclude current post ====
 
 Remove the current post from the query.
+
+==== Exclude posts by category ====
+Choose to exclude posts from a list of categories
 
 ==== Offset ====
 Choose whether you want to start at the first or 100th!
@@ -64,7 +70,13 @@ Sort in ascending or descending order by:
 3. Query posts before a date, after a date or between two dates.
 
 == Changelog ==
-= 3.1.1=
+= 3.2.0 =
+* Adds the ability to exclude posts by category (props @ghost-ng)
+* Adds the ability to disable pagination.
+* Deprecate controls that were moved into the Query Loop block in Gutenberg 19.
+* Fix fatal error when post include array was empty.
+
+= 3.1.1 =
 * Add better SVG that works in all usages
 * Change ranges to allow to not include the current date
 * Trim whitespace from title.rendered

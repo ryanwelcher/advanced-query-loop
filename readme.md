@@ -1,6 +1,6 @@
 # Advanced Query Loop
 
-![Unit Tests](https://github.com/ryanwelcher/advanced-query-loop/actions/workflows/phpunit.yml/badge.svg?branch=trunk)
+![](https://github.com/ryanwelcher/advanced-query-loop/actions/workflows/phpunit.yml/badge.svg?branch=trunk)
 
 ## Description
 
@@ -11,6 +11,10 @@ This plugin introduces a Query Loop block variation that will empower users to b
 Please use the either the [support](https://wordpress.org/support/plugin/advanced-query-loop/) forum or the [official repository](https://github.com/ryanwelcher/advanced-query-loop) for any questions or to log issues.
 
 ### Available Controls
+
+#### Disable Pagination
+
+Improve the performance of the query by disabling pagination
 
 #### Multiple post types
 
@@ -27,6 +31,10 @@ Choose the posts you want to display manually.
 #### Exclude current post
 
 Remove the current post from the query.
+
+#### Exclude posts by category
+
+Choose to exclude posts from a list of categories
 
 #### Offset
 
