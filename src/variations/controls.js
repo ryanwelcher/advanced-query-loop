@@ -22,6 +22,7 @@ import { TaxonomyQueryControl } from '../components/taxonomy-query-control';
 import { PostIncludeControls } from '../components/post-include-controls';
 import { PaginationToggle } from '../components/pagination-toggle';
 import { ChildItemsToggle } from '../components/child-items-toggle';
+import { GeneratePlayground } from '../components/generate-playground';
 
 /**
  * Determines if the active variation is this one
@@ -70,6 +71,7 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 							<ChildItemsToggle { ...props } />
 							<PostDateQueryControls { ...props } />
 							<PaginationToggle { ...props } />
+							<GeneratePlayground { ...props } />
 							<AQLControls.Slot fillProps={ { ...props } } />
 						</PanelBody>
 					</InspectorControls>
