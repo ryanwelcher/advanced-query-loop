@@ -62,6 +62,7 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 							<AQLLegacyControls.Slot
 								fillProps={ { ...props } }
 							/>
+
 							<MultiplePostSelect { ...props } />
 							<TaxonomyQueryControl { ...props } />
 							<PostMetaQueryControls { ...props } />
@@ -71,8 +72,12 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 							<ChildItemsToggle { ...props } />
 							<PostDateQueryControls { ...props } />
 							<PaginationToggle { ...props } />
-							<GeneratePlayground { ...props } />
 							<AQLControls.Slot fillProps={ { ...props } } />
+						</PanelBody>
+						<PanelBody
+							title={ __( 'Support', 'advanced-query-loop' ) }
+						>
+							<GeneratePlayground { ...props } />
 						</PanelBody>
 					</InspectorControls>
 				</>

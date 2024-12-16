@@ -3,7 +3,10 @@
  */
 import { Button } from '@wordpress/components';
 import { serialize } from '@wordpress/blocks';
-import { useSelect } from '@wordpress/data';
+import { useSelect, useDispatch } from '@wordpress/data';
+import { useCopyToClipboard } from '@wordpress/compose';
+import { store as noticesStore } from '@wordpress/notices';
+import { __ } from '@wordpress/i18n';
 
 function makePlaygroundBlueprint( content = '' ) {
 	const baseUrl = 'https://playground.wordpress.net/?mode=seamless#';
@@ -48,17 +51,21 @@ export const GeneratePlayground = ( { clientId } ) => {
 		[ clientId ]
 	);
 
-	console.log( types, taxonomies );
+	const { createNotice } = useDispatch( noticesStore );
+
+	const copyButtonRef = useCopyToClipboard(
+		makePlaygroundBlueprint( serialize( block ) ),
+		() => {
+			createNotice( 'info', __( 'Copied Playground URL to clipboard.' ), {
+				isDismissible: true,
+				type: 'snackbar',
+			} );
+		}
+	);
 
 	return (
-		<Button
-			variant="secondary"
-			onClick={ () => {
-				console.log( types, taxonomies );
-				console.log( makePlaygroundBlueprint( serialize( block ) ) );
-			} }
-		>
-			Click me!
+		<Button __next40pxDefaultSize ref={ copyButtonRef } variant="secondary">
+			{ __( 'Generate Playground' ) }
 		</Button>
 	);
 };
