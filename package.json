@@ -5,14 +5,15 @@
 	"main": "index.js",
 	"scripts": {
 		"setup": "composer run dev",
-		"start": "wp-scripts start",
+		"start": "concurrently \"tsc --watch\" \"wp-scripts start\" ",
 		"start:hot": "wp-scripts start --hot",
 		"build": "wp-scripts build",
 		"plugin-zip": "wp-scripts plugin-zip",
 		"format": "wp-scripts format",
 		"wp-env": "wp-env",
 		"release": "composer run build && npm run build && npm run plugin-zip",
-		"test:unit": "./vendor/bin/phpunit"
+		"test:unit": "./vendor/bin/phpunit",
+		"tsc": "tsc"
 	},
 	"files": [
 		"build",
@@ -27,11 +28,17 @@
 	"author": "",
 	"license": "GPLv2 or later",
 	"devDependencies": {
+		"@types/wordpress__block-editor": "^11.5.16",
+		"@types/wordpress__blocks": "^12.5.16",
 		"@wordpress/env": "^9.4.0",
-		"@wordpress/scripts": "^24.6.0"
+		"@wordpress/scripts": "^30.7.0",
+		"concurrently": "^9.1.0",
+		"typescript": "^5.7.2"
 	},
 	"dependencies": {
-		"19": "^0.0.0",
-		"uuid": "^9.0.0"
+		"@wordpress/block-editor": "^14.9.0",
+		"@wordpress/blocks": "^14.3.0",
+		"@wordpress/components": "^29.0.0",
+		"@wordpress/i18n": "^5.14.0"
 	}
 }

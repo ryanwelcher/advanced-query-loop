@@ -8,8 +8,6 @@ import { __ } from '@wordpress/i18n';
 
 /**
  * Generates a post include control component.
- *
- *@return {Element} PostIncludeControls
  */
 
 export const PostIncludeControls = ( { attributes, setAttributes } ) => {

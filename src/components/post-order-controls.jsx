@@ -59,7 +59,6 @@ export const sortOptions = [
  * PostOrderControls component
  *
  * @param {*} param0
- * @return {Element} PostCountControls
  */
 export const PostOrderControls = ( { attributes, setAttributes } ) => {
 	const { query: { order, orderBy } = {} } = attributes;

@@ -13,7 +13,6 @@ import { __ } from '@wordpress/i18n';
  * @param {Object}   props.attributes    Block attributes
  * @param {Function} props.setAttributes Block attributes setter
  *
- * @return {Element} PostExcludeControls
  */
 export const PostExcludeControls = ( { attributes, setAttributes } ) => {
 	const { query: { exclude_current: excludeCurrent } = {} } = attributes;
@@ -71,7 +70,6 @@ export const PostExcludeControls = ( { attributes, setAttributes } ) => {
 								'advanced-query-loop'
 						  )
 				}
-				__nextHasNoMarginBottom
 			/>
 		</>
 	);
