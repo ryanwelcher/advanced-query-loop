@@ -51,14 +51,15 @@ const isAdvancedQueryLoop = (
 	const {
 		attributes: { namespace },
 	} = props;
-	return namespace.length && namespace === AQL;
+	return (
+		typeof namespace === 'string' &&
+		namespace.length > 0 &&
+		namespace === AQL
+	);
 };
 
 /**
- * Custom controls
- *
- * @param {*} BlockEdit
- * @return {Element} BlockEdit instance
+ * Custom controls`
  */
 const withAdvancedQueryControls =
 	( BlockEdit: ComponentType< BlockEditProps< AQLAttributes > > ) =>
@@ -127,10 +128,6 @@ addFilter(
 
 /**
  * Filter to add AQL transform to core/query block
- *
- * @param {Object} settings
- * @param {string} name
- * @return {Object} settings
  */
 function addAQLTransforms(
 	settings: {
