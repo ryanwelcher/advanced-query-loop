@@ -17,27 +17,27 @@
 
 		"jsx": "preserve",
 
-		/* If transpiling with TypeScript: */
-		"module": "NodeNext",
-		"outDir": "build",
-		"sourceMap": true,
+		// /* If transpiling with TypeScript: */
+		// "module": "NodeNext",
+		// "outDir": "build",
+		// "sourceMap": true,
 
-		/* AND if you're building for a library: */
-		"declaration": true,
+		// /* AND if you're building for a library: */
+		// "declaration": true,
 
-		/* AND if you're building for a library in a monorepo: */
-		"composite": true,
-		"declarationMap": true,
+		// /* AND if you're building for a library in a monorepo: */
+		// "composite": true,
+		// "declarationMap": true,
 
 		/* If NOT transpiling with TypeScript: */
 		"module": "preserve",
 		"noEmit": true,
 
 		/* If your code runs in the DOM: */
-		"lib": [ "es2022", "dom", "dom.iterable" ],
+		"lib": [ "es2022", "dom", "dom.iterable" ]
 
-		/* If your code doesn't run in the DOM: */
-		"lib": [ "es2022" ]
+		// /* If your code doesn't run in the DOM: */
+		// "lib": [ "es2022" ]
 	},
 	"include": [ "src/**/*" ]
 }
