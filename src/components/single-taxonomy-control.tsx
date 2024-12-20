@@ -2,16 +2,16 @@
  * WordPress dependencies
  */
 import {
-	FormTokenField,
-	SelectControl,
 	Button,
-	ToggleControl,
+	FormTokenField,
 	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
 	__experimentalHStack as HStack,
+	SelectControl,
+	ToggleControl,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
 import { useEntityRecords } from '@wordpress/core-data';
-import { useMemo, useEffect, useState } from '@wordpress/element';
+import { useEffect, useMemo, useState } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -22,8 +22,8 @@ import { updateTaxonomyQuery } from '../utils';
 /**
  * Type definitions
  */
-import type { SingleTaxonomyControlProps } from '../types/taxonomy';
 import type { AQLAttributes, WPTerm } from '../types';
+import type { SingleTaxonomyControlProps } from '../types/taxonomy';
 
 const advancedOperators = [ 'EXISTS', 'NOT EXISTS', 'AND' ];
 const operatorOptions = [ 'IN', 'NOT IN', ...advancedOperators ];
