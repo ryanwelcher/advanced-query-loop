@@ -18,9 +18,15 @@ import { useMemo, useEffect, useState } from '@wordpress/element';
  */
 import useDebouncedInputValue from '../hooks/useDebouncedInputValue';
 import { updateTaxonomyQuery } from '../utils';
+
+/**
+ * Type definitions
+ */
+import type { SingleTaxonomyControlProps, TermRecord } from '../types/taxonomy';
+import type { AQLAttributes } from '../types';
+
 const advancedOperators = [ 'EXISTS', 'NOT EXISTS', 'AND' ];
 const operatorOptions = [ 'IN', 'NOT IN', ...advancedOperators ];
-
 const toggleMargin = {
 	marginTop: '1.5em',
 	marginBottom: '0.75em',
@@ -52,7 +58,7 @@ const SingleTaxonomyControl = ( {
 	availableTaxonomies,
 	attributes,
 	setAttributes,
-} ) => {
+}: SingleTaxonomyControlProps< AQLAttributes > ) => {
 	const [ searchTerm, setSearchTerm ] = useDebouncedInputValue( '', 500 );
 
 	const [ advancedMode, setAdvancedMode ] = useState( false );
@@ -132,8 +138,7 @@ const SingleTaxonomyControl = ( {
 											attributes.query.tax_query.queries,
 											id,
 											'terms',
-											newTerms,
-											'include'
+											newTerms
 										),
 									},
 								},
