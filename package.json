@@ -5,15 +5,17 @@
 	"main": "index.js",
 	"scripts": {
 		"setup": "composer run dev",
-		"start": "concurrently \"tsc --watch\" \"wp-scripts start\" ",
-		"start:hot": "wp-scripts start --hot",
-		"build": "wp-scripts build",
+		"start": "concurrently \"npm run tsc:watch\" \"npm run start:webpack\" ",
+		"start:webpack": "wp-scripts start src/variations/index.ts",
+		"start:hot": "wp-scripts start src/variations/index.ts --hot",
+		"build": "wp-scripts build src/variations/index.ts",
 		"plugin-zip": "wp-scripts plugin-zip",
 		"format": "wp-scripts format",
 		"wp-env": "wp-env",
 		"release": "composer run build && npm run build && npm run plugin-zip",
 		"test:unit": "./vendor/bin/phpunit",
-		"tsc": "tsc"
+		"tsc": "tsc",
+		"tsc:watch": "tsc --watch"
 	},
 	"files": [
 		"build",
