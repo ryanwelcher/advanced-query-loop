@@ -22,8 +22,8 @@ import { updateTaxonomyQuery } from '../utils';
 /**
  * Type definitions
  */
-import type { SingleTaxonomyControlProps, TermRecord } from '../types/taxonomy';
-import type { AQLAttributes } from '../types';
+import type { SingleTaxonomyControlProps } from '../types/taxonomy';
+import type { AQLAttributes, WPTerm } from '../types';
 
 const advancedOperators = [ 'EXISTS', 'NOT EXISTS', 'AND' ];
 const operatorOptions = [ 'IN', 'NOT IN', ...advancedOperators ];
@@ -32,23 +32,11 @@ const toggleMargin = {
 	marginBottom: '0.75em',
 };
 
-/*
-tax_query: {
-	relation: 'AND',
-	queries: [
-		{
-			taxonomy: 'category',
-			terms: [ 'current events' ],
-			operator: 'IN',
-		},
-		{
-			taxonomy: 'category',
-			terms: [ 'politics' ],
-			operator: 'NOT_IN',
-		},
-	],
-},
-*/
+/**
+ *
+ * @param param0
+ * @returns
+ */
 const SingleTaxonomyControl = ( {
 	id,
 	taxonomy,
@@ -64,7 +52,7 @@ const SingleTaxonomyControl = ( {
 	const [ advancedMode, setAdvancedMode ] = useState( false );
 	const [ disableAdvancedToggle, setDisableAdvancedToggle ] =
 		useState( false );
-	const { records } = useEntityRecords( 'taxonomy', taxonomy, {
+	const { records } = useEntityRecords< WPTerm >( 'taxonomy', taxonomy, {
 		per_page: 10,
 		search: searchTerm,
 		_fields: 'id,name',
@@ -206,7 +194,7 @@ const SingleTaxonomyControl = ( {
 											},
 										} );
 									} }
-									__next40pxDefaultSize
+									__nextHasNoMarginBottom
 								/>
 							</div>
 						</>
@@ -233,7 +221,7 @@ const SingleTaxonomyControl = ( {
 													.queries,
 												id,
 												'operator',
-												currentQuery.operator === 'IN'
+												currentQuery?.operator === 'IN'
 													? 'NOT IN'
 													: 'IN'
 											),
@@ -241,7 +229,7 @@ const SingleTaxonomyControl = ( {
 									},
 								} );
 							} }
-							__next40pxDefaultSize
+							__nextHasNoMarginBottom
 						/>
 					) }
 				</>

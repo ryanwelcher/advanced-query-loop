@@ -29,14 +29,7 @@ import type { ComponentType } from 'react';
 /**
  * Type definitions
  */
-
-interface AQLAttributes {
-	query: {
-		inherit: boolean;
-	};
-	namespace: string;
-}
-
+import type { AQLAttributes } from '../types';
 type BlockTransforms = { to: Transform[]; from: Transform[] };
 
 /**

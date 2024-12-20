@@ -17,7 +17,7 @@ export const updateTaxonomyQuery = (
 	queries: TaxonomyQuery[],
 	queryId: string,
 	item: string,
-	value: string | boolean
+	value: unknown
 ): TaxonomyQuery[] => {
 	return queries.map( ( query ) => {
 		if ( query.id === queryId ) {
