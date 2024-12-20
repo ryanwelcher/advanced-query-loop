@@ -32,8 +32,7 @@
 		"@types/wordpress__blocks": "^12.5.16",
 		"@wordpress/env": "^9.4.0",
 		"@wordpress/scripts": "^30.7.0",
-		"concurrently": "^9.1.0",
-		"typescript": "^5.7.2"
+		"concurrently": "^9.1.0"
 	},
 	"dependencies": {
 		"@wordpress/block-editor": "^14.9.0",
