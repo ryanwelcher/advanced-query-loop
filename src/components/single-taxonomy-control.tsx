@@ -32,11 +32,6 @@ const toggleMargin = {
 	marginBottom: '0.75em',
 };
 
-/**
- *
- * @param param0
- * @returns
- */
 const SingleTaxonomyControl = ( {
 	id,
 	taxonomy,
