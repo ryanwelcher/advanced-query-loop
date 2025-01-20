@@ -2,11 +2,11 @@
  * WordPress dependencies
  */
 import {
-	SelectControl,
-	TextControl,
+	BaseControl,
 	Button,
 	FormTokenField,
-	BaseControl,
+	SelectControl,
+	TextControl,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
