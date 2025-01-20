@@ -88,7 +88,8 @@ export const PostIncludeControls = ( { attributes, setAttributes } ) => {
 		return <div>{ __( 'Loading…', 'advanced-query-loop' ) }</div>;
 	}
 
-	if ( posts.length > 0 && ! posts[ 0 ].title.rendered ) {
+	// If the first post in the posts array does not have a title, don't render the component.
+	if ( posts.length > 0 && ! posts[ 0 ].title ) {
 		return null;
 	}
 
