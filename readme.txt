@@ -3,7 +3,7 @@ Contributors: welcher
 Tags: Query Loop, Custom Queries
 Requires at least: 6.2
 Tested up to: 6.7.1
-Stable tag: 4.0.0
+Stable tag: 4.0.1
 Requires PHP: 7.4
 License: GPL v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -26,10 +26,6 @@ Built complicated taxonomy queries!
 
 Select additional post types for your query!
 
-==== Post Count ====
-
-Set the number of items you want to display (up to 50).
-
 ==== Include Posts ====
 
 Choose the posts you want to display manually or only the children of the current content.
@@ -40,11 +36,7 @@ Remove the current post from the query.
 
 ==== Exclude posts by category ====
 
-Choose to exclude posts from a list of categories
-
-==== Offset ====
-
-Choose whether you want to start at the first or 100th!
+Choose to exclude posts from a list of categories.
 
 ==== Post Meta Query ====
 
@@ -73,7 +65,7 @@ Sort in ascending or descending order by:
 
 ==== Disable Pagination ====
 
-Improve the performance of the query by disabling pagination
+Improve the performance of the query by disabling pagination.
 
 == Screenshots ==
 
@@ -82,6 +74,10 @@ Improve the performance of the query by disabling pagination
 3. Query posts before a date, after a date or between two dates.
 
 == Changelog ==
+
+= 4.0.1 =
+* A few small bug fixes courtesy of @gvgvgvijayan
+
 = 4.0.0 =
 * Introducing the new Taxonomy Builder!
 * Show children of current item only.

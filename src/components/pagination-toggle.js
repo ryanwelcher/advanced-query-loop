@@ -10,7 +10,6 @@ export const PaginationToggle = ( { attributes, setAttributes } ) => {
 
 	return (
 		<ToggleControl
-			__nextHasNoMarginBottom
 			label={ __( 'Disable pagination', 'advanced-query-loop' ) }
 			help={ __(
 				'Disabling pagination will not show any pagination controls on the front end. It can also provide a performance improvement for complicated queries.',
