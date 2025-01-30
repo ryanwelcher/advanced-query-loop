@@ -55,13 +55,17 @@ export const sortOptions = [
 	},
 ];
 
+import type { AQLComponentProps, AQLAttributes } from '../types';
+
 /**
  * PostOrderControls component
  *
  * @param {*} param0
- * @return {Element} PostCountControls
  */
-export const PostOrderControls = ( { attributes, setAttributes } ) => {
+export const PostOrderControls = ( {
+	attributes,
+	setAttributes,
+}: AQLComponentProps< AQLAttributes > ) => {
 	const { query: { order, orderBy } = {} } = attributes;
 	return (
 		<>

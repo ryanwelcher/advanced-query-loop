@@ -2,47 +2,36 @@
  * WordPress dependencies
  */
 import {
-	FormTokenField,
-	SelectControl,
 	Button,
-	ToggleControl,
+	FormTokenField,
 	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
 	__experimentalHStack as HStack,
+	SelectControl,
+	ToggleControl,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
 import { useEntityRecords } from '@wordpress/core-data';
-import { useMemo, useEffect, useState } from '@wordpress/element';
+import { useEffect, useMemo, useState } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
 import useDebouncedInputValue from '../hooks/useDebouncedInputValue';
 import { updateTaxonomyQuery } from '../utils';
+
+/**
+ * Type definitions
+ */
+import type { AQLAttributes, WPTerm } from '../types';
+import type { SingleTaxonomyControlProps } from '../types/taxonomy';
+
 const advancedOperators = [ 'EXISTS', 'NOT EXISTS', 'AND' ];
 const operatorOptions = [ 'IN', 'NOT IN', ...advancedOperators ];
-
 const toggleMargin = {
 	marginTop: '1.5em',
 	marginBottom: '0.75em',
 };
 
-/*
-tax_query: {
-	relation: 'AND',
-	queries: [
-		{
-			taxonomy: 'category',
-			terms: [ 'current events' ],
-			operator: 'IN',
-		},
-		{
-			taxonomy: 'category',
-			terms: [ 'politics' ],
-			operator: 'NOT_IN',
-		},
-	],
-},
-*/
 const SingleTaxonomyControl = ( {
 	id,
 	taxonomy,
@@ -52,13 +41,13 @@ const SingleTaxonomyControl = ( {
 	availableTaxonomies,
 	attributes,
 	setAttributes,
-} ) => {
+}: SingleTaxonomyControlProps< AQLAttributes > ) => {
 	const [ searchTerm, setSearchTerm ] = useDebouncedInputValue( '', 500 );
 
 	const [ advancedMode, setAdvancedMode ] = useState( false );
 	const [ disableAdvancedToggle, setDisableAdvancedToggle ] =
 		useState( false );
-	const { records } = useEntityRecords( 'taxonomy', taxonomy, {
+	const { records } = useEntityRecords< WPTerm >( 'taxonomy', taxonomy, {
 		per_page: 10,
 		search: searchTerm,
 		_fields: 'id,name',
@@ -132,8 +121,7 @@ const SingleTaxonomyControl = ( {
 											attributes.query.tax_query.queries,
 											id,
 											'terms',
-											newTerms,
-											'include'
+											newTerms
 										),
 									},
 								},
@@ -201,7 +189,7 @@ const SingleTaxonomyControl = ( {
 											},
 										} );
 									} }
-									__next40pxDefaultSize
+									__nextHasNoMarginBottom
 								/>
 							</div>
 						</>
@@ -228,7 +216,7 @@ const SingleTaxonomyControl = ( {
 													.queries,
 												id,
 												'operator',
-												currentQuery.operator === 'IN'
+												currentQuery?.operator === 'IN'
 													? 'NOT IN'
 													: 'IN'
 											),
@@ -236,7 +224,7 @@ const SingleTaxonomyControl = ( {
 									},
 								} );
 							} }
-							__next40pxDefaultSize
+							__nextHasNoMarginBottom
 						/>
 					) }
 				</>

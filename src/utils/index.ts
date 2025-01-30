@@ -1,4 +1,9 @@
 /**
+ * Internal dependencies
+ */
+import type { TaxonomyQuery } from '../types/taxonomy';
+
+/**
  * Helper function to update taxonomy queries.
  *
  * @param {Array}  queries The current queries.
@@ -8,7 +13,12 @@
  *
  * @return {Array} The updated queries.
  */
-export const updateTaxonomyQuery = ( queries, queryId, item, value ) => {
+export const updateTaxonomyQuery = (
+	queries: TaxonomyQuery[],
+	queryId: string,
+	item: string,
+	value: unknown
+): TaxonomyQuery[] => {
 	return queries.map( ( query ) => {
 		if ( query.id === queryId ) {
 			return {
@@ -30,11 +40,11 @@ export const updateTaxonomyQuery = ( queries, queryId, item, value ) => {
  * @return {Array} The correct items to display or save in the token field
  */
 export const prepDataFromTokenField = (
-	subSet,
-	fullSet,
-	lookupProperty,
-	returnProperty
-) => {
+	subSet: any[],
+	fullSet: any[],
+	lookupProperty: string,
+	returnProperty: string
+): unknown[] => {
 	const subsetFullObjects = fullSet.filter( ( item ) =>
 		subSet.includes( item[ lookupProperty ] )
 	);

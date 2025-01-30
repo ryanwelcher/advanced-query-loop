@@ -6,6 +6,8 @@ import { InspectorControls } from '@wordpress/block-editor';
 import { PanelBody } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { createBlock } from '@wordpress/blocks';
+import type { BlockEditProps, Transform } from '@wordpress/blocks';
+
 /**
  *  Internal dependencies
  */
@@ -22,32 +24,73 @@ import { TaxonomyQueryControl } from '../components/taxonomy-query-control';
 import { PostIncludeControls } from '../components/post-include-controls';
 import { PaginationToggle } from '../components/pagination-toggle';
 import { ChildItemsToggle } from '../components/child-items-toggle';
+import type { ComponentType } from 'react';
+
+/**
+ * Type definitions
+ */
+import type { AQLAttributes } from '../types';
+type BlockTransforms = { to: Transform[]; from: Transform[] };
 
 /**
  * Determines if the active variation is this one
  *
- * @param {*} props
+ * @param {BlockEditProps< AQLAttributes >} props
  * @return {boolean} Is this the correct variation?
  */
-const isAdvancedQueryLoop = ( props ) => {
+const isAdvancedQueryLoop = (
+	props: BlockEditProps< AQLAttributes >
+): boolean => {
 	const {
 		attributes: { namespace },
 	} = props;
-	return namespace && namespace === AQL;
+	return (
+		typeof namespace === 'string' &&
+		namespace.length > 0 &&
+		namespace === AQL
+	);
 };
 
 /**
- * Custom controls
- *
- * @param {*} BlockEdit
- * @return {Element} BlockEdit instance
+ * Custom controls`
  */
-const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
-	// If the is the correct variation, add the custom controls.
-	if ( isAdvancedQueryLoop( props ) ) {
-		// If the inherit prop is false or undefined,  add all the controls.
-		const { attributes } = props;
-		if ( ! attributes.query.inherit ) {
+const withAdvancedQueryControls =
+	( BlockEdit: ComponentType< BlockEditProps< AQLAttributes > > ) =>
+	( props: BlockEditProps< AQLAttributes > ) => {
+		// If the is the correct variation, add the custom controls.
+		if ( isAdvancedQueryLoop( props ) ) {
+			// If the inherit prop is false, add all the controls.
+			const { attributes } = props;
+			if ( attributes.query.inherit === false ) {
+				return (
+					<>
+						<BlockEdit { ...props } />
+						<InspectorControls>
+							<PanelBody
+								title={ __(
+									'Advanced Query Settings',
+									'advanced-query-loop'
+								) }
+							>
+								<AQLLegacyControls.Slot
+									fillProps={ { ...props } }
+								/>
+								<MultiplePostSelect { ...props } />
+								<TaxonomyQueryControl { ...props } />
+								<PostMetaQueryControls { ...props } />
+								<PostOrderControls { ...props } />
+								<PostExcludeControls { ...props } />
+								<PostIncludeControls { ...props } />
+								<ChildItemsToggle { ...props } />
+								<PostDateQueryControls { ...props } />
+								<PaginationToggle { ...props } />
+								<AQLControls.Slot fillProps={ { ...props } } />
+							</PanelBody>
+						</InspectorControls>
+					</>
+				);
+			}
+			// Add some controls if the inherit prop is true.
 			return (
 				<>
 					<BlockEdit { ...props } />
@@ -58,46 +101,17 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 								'advanced-query-loop'
 							) }
 						>
-							<AQLLegacyControls.Slot
+							<PostOrderControls { ...props } />
+							<AQLControlsInheritedQuery.Slot
 								fillProps={ { ...props } }
 							/>
-							<MultiplePostSelect { ...props } />
-							<TaxonomyQueryControl { ...props } />
-							<PostMetaQueryControls { ...props } />
-							<PostOrderControls { ...props } />
-							<PostExcludeControls { ...props } />
-							<PostIncludeControls { ...props } />
-							<ChildItemsToggle { ...props } />
-							<PostDateQueryControls { ...props } />
-							<PaginationToggle { ...props } />
-							<AQLControls.Slot fillProps={ { ...props } } />
 						</PanelBody>
 					</InspectorControls>
 				</>
 			);
 		}
-		// Add some controls if the inherit prop is true.
-		return (
-			<>
-				<BlockEdit { ...props } />
-				<InspectorControls>
-					<PanelBody
-						title={ __(
-							'Advanced Query Settings',
-							'advanced-query-loop'
-						) }
-					>
-						<PostOrderControls { ...props } />
-						<AQLControlsInheritedQuery.Slot
-							fillProps={ { ...props } }
-						/>
-					</PanelBody>
-				</InspectorControls>
-			</>
-		);
-	}
-	return <BlockEdit { ...props } />;
-};
+		return <BlockEdit { ...props } />;
+	};
 
 addFilter(
 	'editor.BlockEdit',
@@ -107,12 +121,14 @@ addFilter(
 
 /**
  * Filter to add AQL transform to core/query block
- *
- * @param {Object} settings
- * @param {string} name
- * @return {Object} settings
  */
-function addAQLTransforms( settings, name ) {
+function addAQLTransforms(
+	settings: {
+		transforms: BlockTransforms;
+		keywords: string;
+	},
+	name: string
+) {
 	if ( name !== 'core/query' ) {
 		return settings;
 	}
