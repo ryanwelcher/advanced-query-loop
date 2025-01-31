@@ -61,7 +61,7 @@ const withAdvancedQueryControls =
 		if ( isAdvancedQueryLoop( props ) ) {
 			// If the inherit prop is false, add all the controls.
 			const { attributes } = props;
-			if ( attributes.query.inherit === false ) {
+			if ( ! attributes.query.inherit ) {
 				return (
 					<>
 						<BlockEdit { ...props } />
