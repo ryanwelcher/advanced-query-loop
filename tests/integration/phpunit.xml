@@ -1,0 +1,17 @@
+<phpunit
+  bootstrap="./bootstrap.php"
+  backupGlobals="false"
+  colors="true"
+  convertErrorsToExceptions="true"
+  convertNoticesToExceptions="true"
+  convertWarningsToExceptions="true"
+>
+  <testsuites>
+    <testsuite name="unittest">
+      <directory suffix="_Tests.php">./tests/</directory>
+    </testsuite>
+  </testsuites>
+  <php>
+    <env name="WP_PHPUNIT__TESTS_CONFIG" value="/wordpress-phpunit/wp-tests-config.php"/>
+</php>
+</phpunit>

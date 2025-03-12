@@ -39,6 +39,8 @@
 
 		<!-- Dont need to capitalize first letter -->
 		<exclude name="Generic.Commenting.DocComment.ShortNotCapital"/>
+
+
 	</rule>
 
 	<rule ref="WordPress-Extra">
@@ -64,6 +66,7 @@
 
 		<!-- Allow shorthand array syntax -->
 		<exclude name="Generic.Arrays.DisallowShortArraySyntax.Found"/>
+		<exclude name="Universal.Arrays.DisallowShortArraySyntax.Found"/>
 
 		<!-- Allow WP global modification -->
 		<exclude name="WordPress.WP.GlobalVariablesOverride.Prohibited"/>

@@ -36,7 +36,8 @@
 		"yoast/phpunit-polyfills": "^2.0"
 	},
 	"require": {
-		"php": ">=7.4"
+		"php": ">=7.4",
+		"wp-phpunit/wp-phpunit": "^6.7"
 	},
 	"config": {
 		"allow-plugins": {
