@@ -59,7 +59,7 @@ Sort in ascending or descending order by:
 
 #### Disable Pagination
 
-Improve the performance of the query by disabling pagination.
+Improve the performance of the query by disabling pagination. This is done automatically when there is now Pagination block in teh Post Template.
 
 ## Extending AQL
 
