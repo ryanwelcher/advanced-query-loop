@@ -20,10 +20,6 @@ Built complicated taxonomy queries!
 
 Select additional post types for your query!
 
-#### Post Count
-
-Set the number of items you want to display (up to 50).
-
 #### Include Posts
 
 Choose the posts you want to display manually or only the children of the current content.
@@ -34,11 +30,7 @@ Remove the current post from the query.
 
 #### Exclude posts by category
 
-Choose to exclude posts from a list of categories
-
-#### Offset
-
-Choose whether you want to start at the first or 100th!
+Choose to exclude posts from a list of categories.
 
 #### Post Meta Query
 
@@ -67,7 +59,7 @@ Sort in ascending or descending order by:
 
 #### Disable Pagination
 
-Improve the performance of the query by disabling pagination
+Improve the performance of the query by disabling pagination.
 
 ## Extending AQL
 
