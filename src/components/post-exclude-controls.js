@@ -3,7 +3,7 @@
  */
 import { ToggleControl } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
-import { useEntityRecord } from '@wordpress/core-data';
+import { useEntityRecord, store as coreDataStore } from '@wordpress/core-data';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -18,8 +18,14 @@ import { __ } from '@wordpress/i18n';
 export const PostExcludeControls = ( { attributes, setAttributes } ) => {
 	const { query: { exclude_current: excludeCurrent } = {} } = attributes;
 	const { record: siteOptions } = useEntityRecord( 'root', 'site' );
-	const currentPost = useSelect( ( select ) => {
-		return select( 'core/editor' ).getCurrentPost();
+	const { currentPost, isAdmin } = useSelect( ( select ) => {
+		return {
+			currentPost: select( 'core/editor' ).getCurrentPost(),
+			isAdmin: select( coreDataStore ).canUser( 'update', {
+				kind: 'root',
+				name: 'site',
+			} ),
+		};
 	}, [] );
 
 	if ( ! currentPost ) {
@@ -27,17 +33,18 @@ export const PostExcludeControls = ( { attributes, setAttributes } ) => {
 	}
 
 	const isDisabled = () => {
+		// If the user is not an admin, they cannot edit template anyway
+		if ( ! isAdmin ) {
+			return false;
+		}
 		const templatesToExclude = [ 'archive', 'search' ];
-
 		const {
 			show_on_front: showOnFront, // What is the front page set to show? Options: 'posts' or 'page'
 		} = siteOptions;
-
 		const disabledTemplates = [
 			...templatesToExclude,
 			...( showOnFront === 'posts' ? [ 'home', 'front-page' ] : [] ),
 		];
-
 		return (
 			currentPost.type === 'wp_template' &&
 			disabledTemplates.includes( currentPost.slug )
@@ -71,7 +78,6 @@ export const PostExcludeControls = ( { attributes, setAttributes } ) => {
 								'advanced-query-loop'
 						  )
 				}
-				__nextHasNoMarginBottom
 			/>
 		</>
 	);
