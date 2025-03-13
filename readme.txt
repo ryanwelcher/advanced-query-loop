@@ -3,7 +3,7 @@ Contributors: welcher
 Tags: Query Loop, Custom Queries
 Requires at least: 6.2
 Tested up to: 6.7.1
-Stable tag: 4.0.2
+Stable tag: 4.1.0
 Requires PHP: 7.4
 License: GPL v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -74,6 +74,11 @@ Improve the performance of the query by disabling pagination.
 3. Query posts before a date, after a date or between two dates.
 
 == Changelog ==
+
+
+= 4.1.0=
+* The control for Pagination controls has been removed and now is automatically enabled/disabled based whether the Pagination block is in the template.
+* Bug fixes.
 
 = 4.0.2=
 * Bug fixes

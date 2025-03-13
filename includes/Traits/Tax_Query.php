@@ -12,7 +12,7 @@ trait Tax_Query {
 	}
 
 	public function parse_tax_query( $queries ) {
-		$tax_query = [];
+		$tax_query = array();
 		// Don't process empty array of queries.
 		if ( isset( $queries['queries'] ) && count( $queries['queries'] ) > 0 ) {
 			// Handle the relation parameter.
@@ -24,7 +24,15 @@ trait Tax_Query {
 				if ( isset( $query['taxonomy'] ) && isset( $query['terms'] ) && count( $query['terms'] ) > 0 ) {
 					$processed_query                     = array_filter( $query, fn( $key ) => 'id' !== $key, ARRAY_FILTER_USE_KEY );
 					$processed_query['include_children'] = filter_var( $query['include_children'], FILTER_VALIDATE_BOOLEAN );
-					$processed_query['terms']            = [ ...array_map( fn( $term ) => get_term_by( 'name', $term, $query['taxonomy'] )->term_id, $query['terms'] ) ];
+					$processed_query['terms']            = array_filter(
+						array_map(
+							function ( $term ) use ( $query ) {
+								$term_obj = get_term_by( 'name', $term, $query['taxonomy'] );
+								return $term_obj ? $term_obj->term_id : null;
+							},
+							$query['terms']
+						)
+					);
 					$tax_query[]                         = $processed_query;
 				}
 			}
