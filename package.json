@@ -12,7 +12,7 @@
 		"format": "wp-scripts format",
 		"wp-env": "wp-env",
 		"release": "composer run build && npm run build && npm run plugin-zip",
-		"test:unit": "./vendor/bin/phpunit",
+		"test:unit": "./vendor/bin/phpunit --configuration ./tests/unit/phpunit.xml",
 		"test:integration": "wp-env run tests-cli --env-cwd=wp-content/plugins/advanced-query-loop ./vendor/bin/phpunit --configuration ./tests/integration/phpunit.xml"
 	},
 	"files": [

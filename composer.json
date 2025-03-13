@@ -33,11 +33,11 @@
 		"phpcompatibility/php-compatibility": "*",
 		"wp-coding-standards/wpcs": "*",
 		"phpunit/phpunit": "^8.5",
-		"yoast/phpunit-polyfills": "^2.0"
+		"yoast/phpunit-polyfills": "^2.0",
+		"wp-phpunit/wp-phpunit": "^6.7"
 	},
 	"require": {
-		"php": ">=7.4",
-		"wp-phpunit/wp-phpunit": "^6.7"
+		"php": ">=7.4"
 	},
 	"config": {
 		"allow-plugins": {
