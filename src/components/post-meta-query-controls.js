@@ -6,7 +6,15 @@ import { v4 as uuidv4 } from 'uuid';
 /**
  * WordPress dependencies
  */
-import { Button, SelectControl, PanelBody } from '@wordpress/components';
+import {
+	Button,
+	Dropdown,
+	__experimentalDropdownContentWrapper as DropdownContentWrapper,
+	PanelBody,
+	ToggleControl,
+	Panel,
+	__experimentalHStack as HStack,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useEntityRecords } from '@wordpress/core-data';
 import { useEffect, useState } from '@wordpress/element';
@@ -61,99 +69,160 @@ export const PostMetaQueryControls = ( { attributes, setAttributes } ) => {
 
 	return (
 		<>
-			<h2>{ __( 'Post Meta Query', 'advanced-query-loop' ) }</h2>
-			<>
-				{ queries.length > 1 && (
-					<SelectControl
-						label={ __(
-							'Query Relationship',
-							'advanced-query-loop'
-						) }
-						value={ relationFromQuery }
-						options={ [
-							{ label: 'Choose relationship', value: '' },
-							{ label: 'AND', value: 'AND' },
-							{ label: 'OR', value: 'OR' },
-						] }
-						onChange={ ( relation ) =>
-							setAttributes( {
-								query: {
-									...attributes.query,
-									meta_query: {
-										...attributes.query.meta_query,
-										relation,
-									},
-								},
-							} )
-						}
-						__nextHasNoMarginBottom
-					/>
+			<Dropdown
+				popoverProps={ {
+					placement: 'left-start',
+					offset: 36,
+				} }
+				renderToggle={ ( { isOpen, onToggle } ) => (
+					<Button
+						variant="primary"
+						onClick={ onToggle }
+						aria-haspopup="true"
+						aria-expanded={ isOpen }
+						disabled={ Object.keys( registeredMeta ).length === 0 }
+					>
+						{ isOpen
+							? __(
+									'Close Meta Query Builder',
+									'advanced-query-loop'
+							  )
+							: __(
+									'Open Meta Query Builder',
+									'advanced-query-loop'
+							  ) }
+					</Button>
 				) }
+				renderContent={ () => (
+					<DropdownContentWrapper
+						paddingSize="none"
+						style={ { width: '30rem' } }
+					>
+						<Panel
+							header={ __(
+								'Meta Query Builder',
+								'advanced-query-loop'
+							) }
+						>
+							<PanelBody>
+								{ queries.length > 1 && (
+									<>
+										<ToggleControl
+											label={ __(
+												'Combine filters',
+												'advanced-query-loop'
+											) }
+											help={ __(
+												'By default, filters are combined with the OR operator. Enable this option to combine filters with the AND operator.',
+												'advanced-query-loop'
+											) }
+											checked={
+												relationFromQuery === 'AND'
+											}
+											onChange={ () => {
+												setAttributes( {
+													query: {
+														...attributes.query,
+														meta_query: {
+															...attributes.query
+																.meta_query,
+															relation:
+																attributes.query
+																	.meta_query
+																	.relation ===
+																'OR'
+																	? 'AND'
+																	: 'OR',
+														},
+													},
+												} );
+											} }
+											__nextHasNoMarginBottom={ false }
+										/>
+										<hr />
+									</>
+								) }
 
-				{ queries.length < 1 && (
-					<p>
-						{ __(
-							'Add a meta query to select post meta to query',
-							'advanced-query-loop'
-						) }
-					</p>
-				) }
+								{ queries.map(
+									( {
+										id,
+										meta_key: metaKey,
+										meta_value: metaValue,
+										compare,
+									} ) => {
+										return (
+											<PostMetaControl
+												key={ id }
+												id={ id }
+												metaKey={ metaKey }
+												metaValue={ metaValue }
+												metaCompare={ compare }
+												registeredMetaKeys={ Object.keys(
+													registeredMeta
+												) }
+												queries={ queries }
+												attributes={ attributes }
+												setAttributes={ setAttributes }
+											/>
+										);
+									}
+								) }
 
-				{ queries.map(
-					( {
-						id,
-						meta_key: metaKey,
-						meta_value: metaValue,
-						compare,
-					} ) => {
-						return (
-							<PanelBody key={ id }>
-								<PostMetaControl
-									id={ id }
-									metaKey={ metaKey }
-									metaValue={ metaValue }
-									metaCompare={ compare }
-									registeredMetaKeys={ Object.keys(
-										registeredMeta
+								<HStack>
+									<Button
+										variant="primary"
+										onClick={ () => {
+											const newQueries = [
+												...queries,
+												{
+													id: uuidv4(),
+													meta_key: '',
+													meta_value: '',
+													meta_compare: '',
+												},
+											];
+											setAttributes( {
+												query: {
+													...attributes.query,
+													meta_query: {
+														...attributes.query
+															.meta_query,
+														queries: newQueries,
+													},
+												},
+											} );
+										} }
+									>
+										{ __(
+											'Add new query',
+											'advanced-query-loop'
+										) }
+									</Button>
+									{ queries.length > 0 && (
+										<Button
+											variant="primary"
+											isDestructive
+											onClick={ () => {
+												setAttributes( {
+													query: {
+														...attributes.query,
+														meta_query: {},
+													},
+												} );
+											} }
+										>
+											{ __(
+												'Reset queries',
+												'advanced-query-loop'
+											) }
+										</Button>
 									) }
-									queries={ queries }
-									attributes={ attributes }
-									setAttributes={ setAttributes }
-								/>
+								</HStack>
 							</PanelBody>
-						);
-					}
+						</Panel>
+					</DropdownContentWrapper>
 				) }
-				<Button
-					isSmall
-					variant="primary"
-					__next40pxDefaultSize
-					onClick={ () => {
-						const newQueries = [
-							...queries,
-							{
-								id: uuidv4(),
-								meta_key: '',
-								meta_value: '',
-								meta_compare: '',
-							},
-						];
-						setAttributes( {
-							query: {
-								...attributes.query,
-								meta_query: {
-									...attributes.query.meta_query,
-									queries: newQueries,
-								},
-							},
-						} );
-					} }
-				>
-					{ __( 'Add meta query', 'advanced-query-loop' ) }
-				</Button>
-				<br />
-				<br />
-			</>
+			/>
 		</>
 	);
 };

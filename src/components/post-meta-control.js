@@ -2,11 +2,12 @@
  * WordPress dependencies
  */
 import {
-	SelectControl,
-	TextControl,
 	Button,
 	FormTokenField,
-	BaseControl,
+	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
+	__experimentalHStack as HStack,
+	SelectControl,
+	TextControl,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
@@ -30,6 +31,11 @@ const compareMetaOptions = [
 	'RLIKE',
 ];
 
+const toggleMargin = {
+	marginTop: '1.5em',
+	marginBottom: '0.75em',
+};
+
 export const PostMetaControl = ( {
 	registeredMetaKeys,
 	id,
@@ -42,14 +48,14 @@ export const PostMetaControl = ( {
 	/**
 	 * Update a query param.
 	 *
-	 * @param {*} queries
-	 * @param {*} queryId
-	 * @param {*} item
-	 * @param {*} value
-	 * @returns
+	 * @param {Array} currentQueries The current queries array
+	 * @param {string} queryId       The query ID to update
+	 * @param {string} item The key to update
+	 * @param {string} value The value to update
+	 * @return {Array} The updated queries array
 	 */
-	const updateQueryParam = ( queries, queryId, item, value ) => {
-		return queries.map( ( query ) => {
+	const updateQueryParam = ( currentQueries, queryId, item, value ) => {
+		return currentQueries.map( ( query ) => {
 			if ( query.id === queryId ) {
 				return {
 					...query,
@@ -62,110 +68,115 @@ export const PostMetaControl = ( {
 
 	return (
 		<>
-			<BaseControl
-				help={ __(
-					'Start typing to search for a meta key or manually enter one.',
-					'advanced-query-loop'
-				) }
+			<FormTokenField
+				label={ __( 'Meta Key', 'advanced-query-loop' ) }
+				value={
+					activeQuery?.meta_key?.length
+						? [ activeQuery.meta_key ]
+						: []
+				}
+				__experimentalShowHowTo={ false }
+				suggestions={ registeredMetaKeys }
+				maxLength={ 1 }
+				onChange={ ( newMeta ) => {
+					setAttributes( {
+						query: {
+							...attributes.query,
+							meta_query: {
+								...attributes.query.meta_query,
+								queries: updateQueryParam(
+									queries,
+									id,
+									'meta_key',
+									newMeta[ 0 ]
+								),
+							},
+						},
+					} );
+				} }
 				__nextHasNoMarginBottom
+			/>
+			{ activeQuery?.meta_key?.length > 0 && (
+				<>
+					<TextControl
+						label={ __( 'Meta Value', 'advanced-query-loop' ) }
+						value={ activeQuery.meta_value }
+						onChange={ ( newValue ) => {
+							setAttributes( {
+								query: {
+									...attributes.query,
+									meta_query: {
+										...attributes.query.meta_query,
+										queries: updateQueryParam(
+											queries,
+											id,
+											'meta_value',
+											newValue
+										),
+									},
+								},
+							} );
+						} }
+					/>
+					<SelectControl
+						label={ __( 'Meta Compare', 'advanced-query-loop' ) }
+						value={ activeQuery.meta_compare }
+						options={ [
+							...compareMetaOptions.map( ( operator ) => {
+								return { label: operator, value: operator };
+							} ),
+						] }
+						onChange={ ( newCompare ) => {
+							setAttributes( {
+								query: {
+									...attributes.query,
+									meta_query: {
+										...attributes.query.meta_query,
+										queries: updateQueryParam(
+											queries,
+											id,
+											'meta_compare',
+											newCompare
+										),
+									},
+								},
+							} );
+						} }
+						__nextHasNoMarginBottom
+					/>
+				</>
+			) }
+			<hr />
+			<HStack
+				alignment={ activeQuery?.meta_key ? 'edge' : 'right' }
+				style={ toggleMargin }
 			>
-				<FormTokenField
-					label={ __( 'Meta Key', 'advanced-query-loop' ) }
-					value={
-						activeQuery?.meta_key?.length
-							? [ activeQuery.meta_key ]
-							: []
-					}
-					__experimentalShowHowTo={ false }
-					suggestions={ registeredMetaKeys }
-					maxLength={ 1 }
-					onChange={ ( newMeta ) => {
+				<Button
+					key={ id }
+					variant="secondary"
+					size="small"
+					isDestructive
+					onClick={ () => {
+						const updatedQueries = queries.filter(
+							( query ) => query.id !== id
+						);
+
 						setAttributes( {
 							query: {
 								...attributes.query,
 								meta_query: {
 									...attributes.query.meta_query,
-									queries: updateQueryParam(
-										queries,
-										id,
-										'meta_key',
-										newMeta[ 0 ]
-									),
+									queries: updatedQueries,
 								},
 							},
 						} );
 					} }
-					__nextHasNoMarginBottom
-				/>
-			</BaseControl>
-			<TextControl
-				label={ __( 'Meta Value', 'advanced-query-loop' ) }
-				value={ activeQuery.meta_value }
-				onChange={ ( newValue ) => {
-					setAttributes( {
-						query: {
-							...attributes.query,
-							meta_query: {
-								...attributes.query.meta_query,
-								queries: updateQueryParam(
-									queries,
-									id,
-									'meta_value',
-									newValue
-								),
-							},
-						},
-					} );
-				} }
-			/>
-			<SelectControl
-				label={ __( 'Meta Compare', 'advanced-query-loop' ) }
-				value={ activeQuery.meta_compare }
-				options={ [
-					...compareMetaOptions.map( ( operator ) => {
-						return { label: operator, value: operator };
-					} ),
-				] }
-				onChange={ ( newCompare ) => {
-					setAttributes( {
-						query: {
-							...attributes.query,
-							meta_query: {
-								...attributes.query.meta_query,
-								queries: updateQueryParam(
-									queries,
-									id,
-									'meta_compare',
-									newCompare
-								),
-							},
-						},
-					} );
-				} }
-				__nextHasNoMarginBottom
-			/>
-			<Button
-				size="small"
-				variant="secondary"
-				isDestructive
-				onClick={ () => {
-					const updatedQueries = queries.filter(
-						( query ) => query.id !== id
-					);
-
-					setAttributes( {
-						query: {
-							...attributes.query,
-							meta_query: {
-								...attributes.query.meta_query,
-								queries: updatedQueries,
-							},
-						},
-					} );
-				} }
-			>
-				{ __( 'Remove meta query', 'advanced-query-loop' ) }
-			</Button>
+				>
+					{ __( 'Remove query', 'advanced-query-loop' ) }
+				</Button>
+			</HStack>
+			<hr />
+			<br />
 		</>
 	);
 };
