@@ -1,6 +1,10 @@
 {
 	"core": "WordPress/WordPress",
-	"plugins": [ "." ],
+	"plugins": [
+		".",
+		"../advanced-query-loop-extension",
+		"../advanced-query-loop-testing"
+	],
 	"env": {
 		"tests": {
 			"phpVersion": "8.1"
