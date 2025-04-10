@@ -38,6 +38,8 @@ class Query_Params_Generator {
 
 	/**
 	 * Context
+	 *
+	 * @var string
 	 */
 	private string $context;
 
