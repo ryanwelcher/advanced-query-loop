@@ -1,6 +1,6 @@
 # Advanced Query Loop
 
-![Unit Tests](https://github.com/ryanwelcher/advanced-query-loop/actions/workflows/phpunit.yml/badge.svg?branch=trunk)
+![](https://github.com/ryanwelcher/advanced-query-loop/actions/workflows/phpunit.yml/badge.svg?branch=trunk)
 
 ## Description
 
@@ -12,25 +12,25 @@ Please use the either the [support](https://wordpress.org/support/plugin/advance
 
 ### Available Controls
 
+#### Taxonomy queries
+
+Built complicated taxonomy queries!
+
 #### Multiple post types
 
 Select additional post types for your query!
 
-#### Post Count
-
-Set the number of items you want to display (up to 50).
-
 #### Include Posts
 
-Choose the posts you want to display manually.
+Choose the posts you want to display manually or only the children of the current content.
 
 #### Exclude current post
 
 Remove the current post from the query.
 
-#### Offset
+#### Exclude posts by category
 
-Choose whether you want to start at the first or 100th!
+Choose to exclude posts from a list of categories.
 
 #### Post Meta Query
 
@@ -38,7 +38,7 @@ Generate complicated post meta queries using an interface that allows you to cre
 
 #### Date Query
 
-Query items before a date, after a date or between two dates or choose to show the post from the last 1, 3, 6 and 12 months.
+Query items before/after the current or selected or choose to show the post from the last 1, 3, 6 and 12 months.
 
 #### Post Order controls
 
@@ -56,6 +56,10 @@ Sort in ascending or descending order by:
 -   Post ID (props to @markhowellsmead)
 
 **Please note that this is a slight duplication of the existing sorting controls. They both work interchangeably but it just looks a bit odd in the UI**
+
+#### Disable Pagination
+
+Improve the performance of the query by disabling pagination. This is done automatically when there is now Pagination block in teh Post Template.
 
 ## Extending AQL
 

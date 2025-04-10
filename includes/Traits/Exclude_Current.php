@@ -28,7 +28,7 @@ trait Exclude_Current {
 		// If there are already posts to be excluded, we need to add to them.
 		$exclude_ids = $this->custom_args['post__not_in'] ?? array();
 
-		if ( is_int( $to_exclude ) || ! preg_match( '/[a-z\-]+\/\/[a-z\-]+/', $to_exclude ) ) {
+		if ( $this->is_post_id( $to_exclude ) ) {
 			array_push( $exclude_ids, intval( $to_exclude ) );
 		} else {
 			// This is usually when this was set on a template.

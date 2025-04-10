@@ -74,6 +74,7 @@ export const PostMetaControl = ( {
 					'Start typing to search for a meta key or manually enter one.',
 					'advanced-query-loop'
 				) }
+				__nextHasNoMarginBottom
 			>
 				<FormTokenField
 					label={ __( 'Meta Key', 'advanced-query-loop' ) }
@@ -101,6 +102,7 @@ export const PostMetaControl = ( {
 							},
 						} );
 					} }
+					__nextHasNoMarginBottom
 				/>
 			</BaseControl>
 			<BaseControl
@@ -161,6 +163,7 @@ export const PostMetaControl = ( {
 						},
 					} );
 				} }
+				__nextHasNoMarginBottom
 			/>
 			<Button
 				size="small"

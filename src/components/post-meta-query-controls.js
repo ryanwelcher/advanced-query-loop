@@ -94,6 +94,7 @@ export const PostMetaQueryControls = ( { attributes, setAttributes } ) => {
 								},
 							} )
 						}
+						__nextHasNoMarginBottom
 					/>
 				) }
 
@@ -135,6 +136,7 @@ export const PostMetaQueryControls = ( { attributes, setAttributes } ) => {
 				<Button
 					isSmall
 					variant="primary"
+					__next40pxDefaultSize
 					onClick={ () => {
 						const newQueries = [
 							...queries,
@@ -158,6 +160,8 @@ export const PostMetaQueryControls = ( { attributes, setAttributes } ) => {
 				>
 					{ __( 'Add meta query', 'advanced-query-loop' ) }
 				</Button>
+				<br />
+				<br />
 			</>
 		</>
 	);

@@ -9,3 +9,4 @@ DNU
 composer.lock
 .phpunit.*
 artifacts
+.vscode

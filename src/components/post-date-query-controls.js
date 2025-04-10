@@ -21,7 +21,6 @@ export const PostDateQueryControls = ( { attributes, setAttributes } ) => {
 			} = {},
 		} = {},
 	} = attributes;
-
 	return (
 		<>
 			<h2>{ __( 'Post Date Query', 'advanced-query-loop' ) }</h2>
@@ -66,6 +65,7 @@ export const PostDateQueryControls = ( { attributes, setAttributes } ) => {
 						},
 					} );
 				} }
+				__nextHasNoMarginBottom
 			/>
 			{ range !== '' && (
 				<CheckboxControl
@@ -97,7 +97,7 @@ export const PostDateQueryControls = ( { attributes, setAttributes } ) => {
 			<SelectControl
 				label={ __( 'Date Relationship', 'advanced-query-loop' ) }
 				help={ __(
-					'Show posts before, after, or between the selected date(s).',
+					'Show posts before or after the current date, or before, after, or between specific dates.',
 					'advanced-query-loop'
 				) }
 				value={ relationFromQuery }
@@ -108,15 +108,38 @@ export const PostDateQueryControls = ( { attributes, setAttributes } ) => {
 						value: '',
 					},
 					{
-						label: __( 'Before', 'advanced-query-loop' ),
+						label: __(
+							'Before current date',
+							'advanced-query-loop'
+						),
+						value: 'before-current',
+					},
+					{
+						label: __(
+							'After current date',
+							'advanced-query-loop'
+						),
+						value: 'after-current',
+					},
+					{
+						label: __(
+							'Before specific date',
+							'advanced-query-loop'
+						),
 						value: 'before',
 					},
 					{
-						label: __( 'After', 'advanced-query-loop' ),
+						label: __(
+							'After specific date',
+							'advanced-query-loop'
+						),
 						value: 'after',
 					},
 					{
-						label: __( 'Between', 'advanced-query-loop' ),
+						label: __(
+							'Between specific dates',
+							'advanced-query-loop'
+						),
 						value: 'between',
 					},
 				] }
@@ -134,72 +157,79 @@ export const PostDateQueryControls = ( { attributes, setAttributes } ) => {
 						},
 					} );
 				} }
+				__nextHasNoMarginBottom
 			/>
-			{ relationFromQuery !== '' && (
-				<>
-					{ relationFromQuery === 'between' && (
-						<h4>{ __( 'Start date', 'advanced-query-loop' ) }</h4>
-					) }
-					<DatePicker
-						currentDate={ datePrimary }
-						onChange={ ( newDate ) => {
-							setAttributes( {
-								query: {
-									...attributes.query,
-									date_query: {
-										...attributes.query.date_query,
-										date_primary: newDate,
-									},
-								},
-							} );
-						} }
-					/>
-
-					{ relationFromQuery === 'between' && (
-						<>
-							<h4>{ __( 'End date', 'advanced-query-loop' ) }</h4>
-							<DatePicker
-								currentDate={ dateSecondary }
-								onChange={ ( newDate ) => {
-									setAttributes( {
-										query: {
-											...attributes.query,
-											date_query: {
-												...attributes.query.date_query,
-												date_secondary: newDate,
-											},
+			{ relationFromQuery !== '' &&
+				! relationFromQuery.includes( 'current' ) && (
+					<>
+						{ relationFromQuery === 'between' && (
+							<h4>
+								{ __( 'Start date', 'advanced-query-loop' ) }
+							</h4>
+						) }
+						<DatePicker
+							currentDate={ datePrimary }
+							onChange={ ( newDate ) => {
+								setAttributes( {
+									query: {
+										...attributes.query,
+										date_query: {
+											...attributes.query.date_query,
+											date_primary: newDate,
 										},
-									} );
-								} }
-							/>
-						</>
-					) }
-
-					<br />
-					<CheckboxControl
-						label={ __(
-							'Include selected date(s)',
-							'advanced-query-loop'
-						) }
-						help={ __(
-							'Should the selected date(s) be included in your query?',
-							'advanced-query-loop'
-						) }
-						checked={ isInclusive }
-						onChange={ ( newIsInclusive ) => {
-							setAttributes( {
-								query: {
-									...attributes.query,
-									date_query: {
-										...attributes.query.date_query,
-										inclusive: newIsInclusive,
 									},
-								},
-							} );
-						} }
-					/>
-				</>
-			) }
+								} );
+							} }
+						/>
+
+						{ relationFromQuery === 'between' && (
+							<>
+								<h4>
+									{ __( 'End date', 'advanced-query-loop' ) }
+								</h4>
+								<DatePicker
+									currentDate={ dateSecondary }
+									onChange={ ( newDate ) => {
+										setAttributes( {
+											query: {
+												...attributes.query,
+												date_query: {
+													...attributes.query
+														.date_query,
+													date_secondary: newDate,
+												},
+											},
+										} );
+									} }
+								/>
+							</>
+						) }
+
+						<br />
+						<CheckboxControl
+							label={ __(
+								'Include selected date(s)',
+								'advanced-query-loop'
+							) }
+							help={ __(
+								'Should the selected date(s) be included in your query?',
+								'advanced-query-loop'
+							) }
+							checked={ isInclusive }
+							onChange={ ( newIsInclusive ) => {
+								setAttributes( {
+									query: {
+										...attributes.query,
+										date_query: {
+											...attributes.query.date_query,
+											inclusive: newIsInclusive,
+										},
+									},
+								} );
+							} }
+						/>
+					</>
+				) }
 		</>
 	);
 };

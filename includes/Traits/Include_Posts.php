@@ -19,6 +19,9 @@ trait Include_Posts {
 	 * @return array
 	 */
 	protected function get_include_ids( $include_posts ) {
-		return array_column( $include_posts, 'id' );
+		if ( is_array( $include_posts ) ) {
+			return array_column( $include_posts, 'id' );
+		}
+		return array();
 	}
 }

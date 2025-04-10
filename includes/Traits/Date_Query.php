@@ -20,7 +20,6 @@ trait Date_Query {
 		// Ranges and Relationships can't co-exist.
 		$range = $date_query['range'] ?? false;
 
-
 		if ( $date_query && $range && ! empty( $range ) ) {
 			$inclusive_range = isset( $date_query['current_date_in_range'] ) ? ( true === $date_query['current_date_in_range'] || 'true' === $date_query['current_date_in_range'] ) : false;
 			$date_queries    = $this->process_date_range( $range, $inclusive_range );
@@ -28,47 +27,90 @@ trait Date_Query {
 			$date_queries      = array();
 			$date_relationship = $date_query['relation'] ?? null;
 			$date_primary      = $date_query['date_primary'] ?? null;
-			if ( $date_query && $date_relationship && $date_primary ) {
-				$date_is_inclusive = $date_query['inclusive'] ?? false;
-				$date_secondary    = $date_query['date_secondary'] ?? null;
 
-				// Date format: 2022-12-27T11:14:21.
-				$primary_year  = substr( $date_primary, 0, 4 );
-				$primary_month = substr( $date_primary, 5, 2 );
-				$primary_day   = substr( $date_primary, 8, 2 );
+			if ( $date_query && $date_relationship ) {
 
-				if ( 'between' === $date_relationship && $date_secondary ) {
-					$secondary_year  = substr( $date_secondary, 0, 4 );
-					$secondary_month = substr( $date_secondary, 5, 2 );
-					$secondary_day   = substr( $date_secondary, 8, 2 );
+				if ( 'before-current' === $date_relationship || 'after-current' === $date_relationship ) {
+					switch ( $date_relationship ) {
+						case 'before-current':
+							$date_queries = $this->show_before_current_date();
+							break;
+						case 'after-current':
+							$date_queries = $this->show_after_current_date();
+							break;
+					}
+				} elseif ( $date_primary ) {
+					$date_is_inclusive = $date_query['inclusive'] ?? false;
+					$date_secondary    = $date_query['date_secondary'] ?? null;
 
-					$date_queries = array(
-						'after'  => array(
-							'year'  => $primary_year,
-							'month' => $primary_month,
-							'day'   => $primary_day,
-						),
-						'before' => array(
-							'year'  => $secondary_year,
-							'month' => $secondary_month,
-							'day'   => $secondary_day,
-						),
-					);
-				} else {
-					$date_queries = array(
-						$date_relationship => array(
-							'year'  => $primary_year,
-							'month' => $primary_month,
-							'day'   => $primary_day,
-						),
-					);
+					// Date format: 2022-12-27T11:14:21.
+					$primary_year  = substr( $date_primary, 0, 4 );
+					$primary_month = substr( $date_primary, 5, 2 );
+					$primary_day   = substr( $date_primary, 8, 2 );
+
+					if ( 'between' === $date_relationship && $date_secondary ) {
+						$secondary_year  = substr( $date_secondary, 0, 4 );
+						$secondary_month = substr( $date_secondary, 5, 2 );
+						$secondary_day   = substr( $date_secondary, 8, 2 );
+
+						$date_queries = array(
+							'after'  => array(
+								'year'  => $primary_year,
+								'month' => $primary_month,
+								'day'   => $primary_day,
+							),
+							'before' => array(
+								'year'  => $secondary_year,
+								'month' => $secondary_month,
+								'day'   => $secondary_day,
+							),
+						);
+					} else {
+						$date_queries = array(
+							$date_relationship => array(
+								'year'  => $primary_year,
+								'month' => $primary_month,
+								'day'   => $primary_day,
+							),
+						);
+					}
+					$date_queries['inclusive'] = $date_is_inclusive;
 				}
-				$date_queries['inclusive'] = $date_is_inclusive;
 			}
 		}
 
 		// Return the date queries.
 		$this->custom_args['date_query'] = array_filter( $date_queries );
+	}
+
+	/**
+	 * Generate the query to only show content before the current date
+	 */
+	public function show_before_current_date() {
+		$today = strtotime( 'today' );
+		// Return the date query.
+		return array(
+			'before' => array(
+				'year'  => gmdate( 'Y', $today ),
+				'month' => gmdate( 'm', $today ),
+				'day'   => gmdate( 'd', $today ),
+			),
+		);
+	}
+
+	/**
+	 * Generate the query to only show content after the current date
+	 */
+	public function show_after_current_date() {
+		$today = strtotime( 'today' );
+		// Return the date query.
+		return array(
+			'after' => array(
+				'year'  => gmdate( 'Y', $today ),
+				'month' => gmdate( 'm', $today ),
+				'day'   => gmdate( 'd', $today ),
+			),
+		);
 	}
 
 	/**

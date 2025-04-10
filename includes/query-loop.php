@@ -128,6 +128,7 @@ function add_more_sort_by( $query_params ) {
 	$query_params['orderby']['enum'][] = 'post__in';
 	$query_params['orderby']['enum'][] = 'comment_count';
 	$query_params['orderby']['enum'][] = 'name';
+	// die( '<pre>' .print_r( $query_params , 1 ) .'</pre>' );
 	return $query_params;
 }
 
@@ -151,10 +152,13 @@ function add_custom_query_params( $args, $request ) {
 		$request->get_params(),
 		false,
 	);
-
 	// Merge all queries.
-	return array_merge(
+	$merged = array_merge(
 		$args,
 		array_filter( $filtered_query_args )
 	);
+
+	// die( var_dump( $request->get_params() ) );
+
+	return $merged;
 }

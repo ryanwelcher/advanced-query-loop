@@ -10,9 +10,6 @@
          beStrictAboutTodoAnnotatedTests="true"
          convertDeprecationsToExceptions="true"
          verbose="true">
-	<php>
-		<const name="foo" value="bar"/>
-	</php>
     <testsuites>
          <testsuite name="default">
 			<directory suffix=".php">tests/unit</directory>

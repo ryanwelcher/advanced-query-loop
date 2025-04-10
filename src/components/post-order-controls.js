@@ -87,6 +87,7 @@ export const PostOrderControls = ( { attributes, setAttributes } ) => {
 						},
 					} );
 				} }
+				__nextHasNoMarginBottom
 			/>
 			<ToggleControl
 				label={ __( 'Ascending Order', 'advanced-query-loop' ) }
@@ -99,6 +100,7 @@ export const PostOrderControls = ( { attributes, setAttributes } ) => {
 						},
 					} );
 				} }
+				__nextHasNoMarginBottom
 			/>
 		</>
 	);

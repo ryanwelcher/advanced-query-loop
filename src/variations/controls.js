@@ -6,20 +6,23 @@ import { InspectorControls } from '@wordpress/block-editor';
 import { PanelBody } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { createBlock } from '@wordpress/blocks';
+
 /**
  *  Internal dependencies
  */
 import { AQL } from '.';
 import AQLControls from '../slots/aql-controls';
 import AQLControlsInheritedQuery from '../slots/aql-controls-inherited-query';
-import { PostCountControls } from '../components/post-count-controls';
-import { PostOffsetControls } from '../components/post-offset-controls';
+import AQLLegacyControls from '../slots/aql-legacy-controls';
 import { PostMetaQueryControls } from '../components/post-meta-query-controls';
 import { PostDateQueryControls } from '../components/post-date-query-controls';
 import { MultiplePostSelect } from '../components/multiple-post-select';
 import { PostOrderControls } from '../components/post-order-controls';
 import { PostExcludeControls } from '../components/post-exclude-controls';
+import { TaxonomyQueryControl } from '../components/taxonomy-query-control';
 import { PostIncludeControls } from '../components/post-include-controls';
+import { PaginationToggle } from '../components/pagination-toggle';
+import { ChildItemsToggle } from '../components/child-items-toggle';
 
 /**
  * Determines if the active variation is this one
@@ -43,9 +46,9 @@ const isAdvancedQueryLoop = ( props ) => {
 const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 	// If the is the correct variation, add the custom controls.
 	if ( isAdvancedQueryLoop( props ) ) {
-		// If the inherit prop is false, add all the controls.
+		// If the inherit prop is false or undefined,  add all the controls.
 		const { attributes } = props;
-		if ( attributes.query.inherit === false ) {
+		if ( ! attributes.query.inherit ) {
 			return (
 				<>
 					<BlockEdit { ...props } />
@@ -56,14 +59,18 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 								'advanced-query-loop'
 							) }
 						>
+							<AQLLegacyControls.Slot
+								fillProps={ { ...props } }
+							/>
 							<MultiplePostSelect { ...props } />
-							<PostCountControls { ...props } />
-							<PostOffsetControls { ...props } />
+							<TaxonomyQueryControl { ...props } />
+							<PostMetaQueryControls { ...props } />
 							<PostOrderControls { ...props } />
 							<PostExcludeControls { ...props } />
 							<PostIncludeControls { ...props } />
-							<PostMetaQueryControls { ...props } />
+							<ChildItemsToggle { ...props } />
 							<PostDateQueryControls { ...props } />
+							<PaginationToggle { ...props } />
 							<AQLControls.Slot fillProps={ { ...props } } />
 						</PanelBody>
 					</InspectorControls>

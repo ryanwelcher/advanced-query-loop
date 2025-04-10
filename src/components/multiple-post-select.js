@@ -26,6 +26,7 @@ export const MultiplePostSelect = ( { attributes, setAttributes } ) => {
 				'These post types will be queried in addition to the main post type.',
 				'advanced-query-loop'
 			) }
+			__nextHasNoMarginBottom
 		>
 			<FormTokenField
 				label={ __( 'Additional Post Types', 'advanced-query-loop' ) }
@@ -46,6 +47,7 @@ export const MultiplePostSelect = ( { attributes, setAttributes } ) => {
 				} }
 				__experimentalExpandOnFocus
 				__experimentalShowHowTo={ false }
+				__nextHasNoMarginBottom
 			/>
 		</BaseControl>
 	);
