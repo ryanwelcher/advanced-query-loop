@@ -115,8 +115,8 @@ export const PostIncludeControls = ( { attributes, setAttributes } ) => {
 						decodeEntities( item.title )
 					) }
 					suggestions={ posts.map( ( post ) =>
-						decodeEntities( post?.title?.rendered )
-					) } // Need to fix this here. Posts might not have title.rendered
+						decodeEntities( post?.title?.rendered || '' )
+					) }
 					onInputChange={ ( searchPost ) =>
 						setSearchArg( searchPost )
 					}
