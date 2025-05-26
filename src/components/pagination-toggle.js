@@ -1,9 +1,11 @@
 /**
  * WordPress dependencies
  */
-import { useSelect } from '@wordpress/data';
 import { store as blockEditorStore } from '@wordpress/block-editor';
+import { ToggleControl } from '@wordpress/components';
+import { useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Check for the core/query-pagination block.
@@ -16,24 +18,27 @@ const getPaginationBlockClientId = ( blocks ) => {
 		?.clientId;
 };
 
-export const PaginationToggle = ( { attributes, setAttributes, clientId } ) => {
-	const innerBlocks = useSelect(
-		( select ) =>
-			select( blockEditorStore ).getBlocksByClientId( clientId )[ 0 ]
-				?.innerBlocks
+export const PaginationToggle = ( { attributes, setAttributes } ) => {
+	const { query: { disable_pagination: disablePagination } = {} } =
+		attributes;
+
+	return (
+		<ToggleControl
+			label={ __( 'Disable pagination', 'advanced-query-loop' ) }
+			help={ __(
+				'Disabling pagination will not show any pagination controls on the front end. It can also provide a performance improvement for complicated queries.',
+				'advanced-query-loop'
+			) }
+			checked={ !! disablePagination }
+			onChange={ () => {
+				setAttributes( {
+					query: {
+						...attributes.query,
+						disable_pagination: ! disablePagination,
+					},
+				} );
+			} }
+			__nextHasNoMarginBottom
+		/>
 	);
-
-	useEffect( () => {
-		setAttributes( {
-			query: {
-				...attributes.query,
-				disable_pagination: ! getPaginationBlockClientId( innerBlocks )
-					? true
-					: false,
-			},
-		} );
-	}, [ innerBlocks, setAttributes ] );
-
-	// There is no UI for component.
-	return null;
 };
