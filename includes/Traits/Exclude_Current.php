@@ -33,7 +33,9 @@ trait Exclude_Current {
 		} else {
 			// This is usually when this was set on a template.
 			global $post;
-			array_push( $exclude_ids, $post->ID );
+			if ( $post ) {
+				array_push( $exclude_ids, $post->ID );
+			}
 		}
 		return $exclude_ids;
 	}
