@@ -23,8 +23,8 @@ trait Meta_Query {
 					$meta_queries[] = array_filter(
 						array(
 							'key'     => $query['meta_key'] ?? '',
-							'value'   => $query['meta_value'],
-							'compare' => $query['meta_compare'],
+							'value'   => $query['meta_value'] ?? '',
+							'compare' => $query['meta_compare'] ?? '',
 						)
 					);
 				}
