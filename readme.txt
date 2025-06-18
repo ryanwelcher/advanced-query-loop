@@ -3,7 +3,7 @@ Contributors: welcher
 Tags: Query Loop, Custom Queries
 Requires at least: 6.2
 Tested up to: 6.8.1
-Stable tag: 4.1.1
+Stable tag: 4.1.2
 Requires PHP: 7.4
 License: GPL v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -74,6 +74,9 @@ Improve the performance of the query by disabling pagination.
 3. Query posts before a date, after a date or between two dates.
 
 == Changelog ==
+= 4.1.2=
+* Harden up the code to remove a warning.
+* Resurrect the disable pagination toggle.
 
 = 4.1.1=
 * Allow extended orderby values for all publicly queryable post types (props @ocean90)
