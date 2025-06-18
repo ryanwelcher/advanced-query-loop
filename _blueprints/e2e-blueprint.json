@@ -1,0 +1,8 @@
+{
+	"steps": [
+		{
+			"step": "activatePlugin",
+			"pluginPath": "/wordpress/wp-content/plugins/advanced-query-loop/index.php"
+		}
+	]
+}
