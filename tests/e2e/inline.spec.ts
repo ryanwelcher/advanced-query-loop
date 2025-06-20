@@ -49,14 +49,6 @@ test.describe( 'Basic Tests - Inline', () => {
 		await login( php, {
 			username: 'admin',
 		} );
-		// Create a new post.
-		const url = new URL( '/wp-admin/post-new.php', handler.absoluteUrl );
-
-		await page.goto( url.toString() );
-		await editor.setPreferences( 'core/edit-post', {
-			welcomeGuide: false,
-			fullscreenMode: false,
-		} );
 	} );
 
 	test.afterEach( async () => {
@@ -69,6 +61,15 @@ test.describe( 'Basic Tests - Inline', () => {
 		page,
 		editor,
 	} ) => {
+		// Create a new post.
+		const url = new URL( '/wp-admin/post-new.php', handler.absoluteUrl );
+
+		await page.goto( url.toString() );
+		await editor.setPreferences( 'core/edit-post', {
+			welcomeGuide: false,
+			fullscreenMode: false,
+		} );
+
 		await insertAQL( { page, editor } );
 
 		const blocks = await editor.getBlocks();
