@@ -1,4 +1,8 @@
 {
+	"$schema": "https://playground.wordpress.net/blueprint-schema.json",
+	"constants": {
+		"SCRIPT_DEBUG": true
+	},
 	"steps": [
 		{
 			"step": "activatePlugin",
