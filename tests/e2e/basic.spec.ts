@@ -9,7 +9,7 @@ import { test, expect } from './aql-fixtures';
 import { insertAQL } from './utils';
 
 test.describe( 'Basic Tests', () => {
-	test.beforeEach( async ( { page, editor, playground } ) => {
+	test.beforeEach( async ( { page, editor, playground, admin } ) => {
 		await playground.init( { page, editor } );
 	} );
 
@@ -18,14 +18,19 @@ test.describe( 'Basic Tests', () => {
 	} );
 
 	test( 'AQL was inserted and variation was selected', async ( {
-		page,
 		editor,
+		admin,
 	} ) => {
-		await insertAQL( { page, editor } );
+		await admin.visitAdminPage( 'post-new.php' );
 
+		await editor.setPreferences( 'core/edit-post', {
+			welcomeGuide: false,
+			fullscreenMode: false,
+		} );
+		await insertAQL( { editor } );
 		const blocks = await editor.getBlocks();
 
-		await expect( blocks[ 0 ].attributes.namespace ).toEqual(
+		expect( blocks[ 0 ].attributes.namespace ).toEqual(
 			'advanced-query-loop'
 		);
 	} );

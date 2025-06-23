@@ -10,7 +10,7 @@ export const setupPlayground = async ( { page, editor } ) => {};
  * @param param0.page
  * @param param0.editor
  */
-export const insertAQL = async ( { page, editor } ) => {
+export const insertAQL = async ( { editor } ) => {
 	await editor.insertBlock( {
 		name: 'core/query',
 		attributes: {

@@ -12,13 +12,13 @@ export default defineConfig( {
 	/* Retry on CI only */
 	retries: process.env.CI ? 2 : 0,
 	/* Opt out of parallel tests on CI. */
-	workers: process.env.CI ? 1 : undefined,
+	workers: 1,
 	/* Reporter to use. See https://playwright.dev/docs/test-reporters */
 	reporter: 'line',
 	use: {
 		/* Collect trace when retrying the failed test. */
 		trace: 'on-first-retry',
-		baseURL: 'http://localhost:8889/',
+		baseURL: 'http://127.0.0.1:8889/',
 	},
 
 	/* Configure projects for major browsers */

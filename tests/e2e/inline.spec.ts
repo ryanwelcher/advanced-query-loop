@@ -41,7 +41,6 @@ test.describe( 'Basic Tests - Inline', () => {
 				},
 			],
 			blueprint,
-			quiet: true,
 		} );
 		handler = cliServer.requestHandler;
 		php = await handler.getPrimaryPhp();
@@ -74,7 +73,7 @@ test.describe( 'Basic Tests - Inline', () => {
 
 		const blocks = await editor.getBlocks();
 
-		await expect( blocks[ 0 ].attributes.namespace ).toEqual(
+		expect( blocks[ 0 ].attributes.namespace ).toEqual(
 			'advanced-query-loop'
 		);
 	} );

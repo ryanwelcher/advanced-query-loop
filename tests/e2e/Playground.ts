@@ -7,7 +7,7 @@ import { login } from '@wp-playground/blueprints';
 import { readFileSync } from 'fs';
 
 export class Playground {
-	private cliServer: any;
+	private cliServer;
 	private php: PHP;
 	private handler: PHPRequestHandler;
 	private blueprint: string;
@@ -28,25 +28,17 @@ export class Playground {
 				},
 			],
 			blueprint,
-			quiet: true,
+			port: 8889,
 		} );
 		this.handler = this.cliServer.requestHandler;
 		this.php = await this.handler.getPrimaryPhp();
+
 		// Login to the admin page.
 		await login( this.php, {
 			username: 'admin',
 		} );
-		// Create a new post.
-		const url = new URL(
-			'/wp-admin/post-new.php',
-			this.handler.absoluteUrl
-		);
 
-		await page.goto( url.toString() );
-		await editor.setPreferences( 'core/edit-post', {
-			welcomeGuide: false,
-			fullscreenMode: false,
-		} );
+		return this.handler;
 	}
 
 	async cleanUp() {

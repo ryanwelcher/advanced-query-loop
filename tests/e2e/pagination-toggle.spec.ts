@@ -9,17 +9,22 @@ import { test, expect } from './aql-fixtures';
 import { insertAQL } from './utils';
 
 test.describe( 'Disable pagination toggle', () => {
-	test.beforeEach( async ( { page, editor, playground } ) => {
+	test.beforeEach( async ( { page, editor, playground, admin } ) => {
 		await playground.init( { page, editor } );
+		await admin.visitAdminPage( 'post-new.php' );
+
+		await editor.setPreferences( 'core/edit-post', {
+			welcomeGuide: false,
+			fullscreenMode: false,
+		} );
+		await insertAQL( { page, editor } );
 	} );
 
 	test.afterEach( async ( { playground } ) => {
 		await playground.cleanUp();
 	} );
 
-	test( 'Initial state', async ( { page, editor } ) => {
-		await insertAQL( { page, editor } );
-
+	test( 'Initial state', async ( { page, editor, admin } ) => {
 		await expect(
 			page.getByRole( 'checkbox', { name: 'Disable pagination' } )
 		).toBeVisible();
@@ -30,26 +35,25 @@ test.describe( 'Disable pagination toggle', () => {
 
 		const blocks = await editor.getBlocks();
 
-		await expect(
+		expect(
 			blocks[ 0 ].attributes.query.disable_pagination
 		).toBeUndefined();
 	} );
 
-	test( 'Toggled on and then off', async ( { page, editor } ) => {
-		await insertAQL( { page, editor } );
+	test( 'Toggled on and then off', async ( { page, editor, admin } ) => {
 		let blocks;
 
 		await page
 			.getByRole( 'checkbox', { name: 'Disable pagination' } )
 			.click();
 
-		await expect(
+		expect(
 			page.getByRole( 'checkbox', { name: 'Disable pagination' } )
 		).toBeChecked();
 
 		blocks = await editor.getBlocks();
 
-		await expect( blocks[ 0 ].attributes.query.disable_pagination ).toEqual(
+		expect( blocks[ 0 ].attributes.query.disable_pagination ).toEqual(
 			true
 		);
 
@@ -57,13 +61,13 @@ test.describe( 'Disable pagination toggle', () => {
 			.getByRole( 'checkbox', { name: 'Disable pagination' } )
 			.click();
 
-		await expect(
+		expect(
 			page.getByRole( 'checkbox', { name: 'Disable pagination' } )
 		).not.toBeChecked();
 
 		blocks = await editor.getBlocks();
 
-		await expect( blocks[ 0 ].attributes.query.disable_pagination ).toEqual(
+		expect( blocks[ 0 ].attributes.query.disable_pagination ).toEqual(
 			false
 		);
 	} );
