@@ -1,9 +1,4 @@
 /**
- * Setup playground
- */
-export const setupPlayground = async ( { page, editor } ) => {};
-
-/**
  * Inserts AQL and selects the Title & Date variation.
  *
  * @param param0

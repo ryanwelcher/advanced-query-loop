@@ -1,12 +1,12 @@
 /**
  * Import our custom test fixtures.
  */
-import { test, expect } from './aql-fixtures';
+import { test, expect } from '../aql-fixtures';
 
 /**
  * Internal dependencies.
  */
-import { insertAQL } from './utils';
+import { insertAQL } from '../utils';
 
 test.describe( 'Basic Tests', () => {
 	test.beforeEach( async ( { page, editor, playground, admin } ) => {
