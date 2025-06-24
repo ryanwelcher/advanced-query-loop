@@ -88,6 +88,11 @@ export const PostIncludeControls = ( { attributes, setAttributes } ) => {
 		return <div>{ __( 'Loading…', 'advanced-query-loop' ) }</div>;
 	}
 
+	// If the first post in the posts array does not have a title, don't render the component.
+	if ( posts.length > 0 && ! posts[ 0 ].title ) {
+		return null;
+	}
+
 	return (
 		<>
 			<h2> { __( 'Include Posts', 'advanced-query-loop' ) }</h2>
@@ -101,7 +106,9 @@ export const PostIncludeControls = ( { attributes, setAttributes } ) => {
 				<FormTokenField
 					label={ __( 'Posts', 'advanced-query-loop' ) }
 					value={ includePosts.map( ( item ) => item.title ) }
-					suggestions={ posts.map( ( post ) => post.title.rendered ) }
+					suggestions={ posts.map(
+						( post ) => post?.title?.rendered
+					) } // Need to fix this here. Posts might not have title.rendered
 					onInputChange={ ( searchPost ) =>
 						setSearchArg( searchPost )
 					}

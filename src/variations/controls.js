@@ -6,6 +6,7 @@ import { InspectorControls } from '@wordpress/block-editor';
 import { PanelBody } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { createBlock } from '@wordpress/blocks';
+
 /**
  *  Internal dependencies
  */
@@ -46,9 +47,9 @@ const isAdvancedQueryLoop = ( props ) => {
 const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 	// If the is the correct variation, add the custom controls.
 	if ( isAdvancedQueryLoop( props ) ) {
-		// If the inherit prop is false, add all the controls.
+		// If the inherit prop is false or undefined,  add all the controls.
 		const { attributes } = props;
-		if ( attributes.query.inherit === false ) {
+		if ( ! attributes.query.inherit ) {
 			return (
 				<>
 					<BlockEdit { ...props } />
