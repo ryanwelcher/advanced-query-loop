@@ -46,8 +46,9 @@ const isAdvancedQueryLoop = ( props ) => {
 const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 	// If the is the correct variation, add the custom controls.
 	if ( isAdvancedQueryLoop( props ) ) {
-		// If the inherit prop is false or undefined,  add all the controls.
+		const { controls } = window?.aql;
 		const { attributes } = props;
+		// If the inherit prop is false or undefined, add all the controls.
 		if ( ! attributes.query.inherit ) {
 			return (
 				<>
@@ -62,15 +63,31 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 							<AQLLegacyControls.Slot
 								fillProps={ { ...props } }
 							/>
-							<MultiplePostSelect { ...props } />
-							<TaxonomyQueryControl { ...props } />
-							<PostMetaQueryControls { ...props } />
+							{ controls?.multiple_posts && (
+								<MultiplePostSelect { ...props } />
+							) }
+							{ controls?.tax_query && (
+								<TaxonomyQueryControl { ...props } />
+							) }
+							{ controls?.meta_query && (
+								<PostMetaQueryControls { ...props } />
+							) }
 							<PostOrderControls { ...props } />
-							<PostExcludeControls { ...props } />
-							<PostIncludeControls { ...props } />
-							<ChildItemsToggle { ...props } />
-							<PostDateQueryControls { ...props } />
-							<PaginationToggle { ...props } />
+							{ controls?.exclude_current && (
+								<PostExcludeControls { ...props } />
+							) }
+							{ controls?.include_posts && (
+								<PostIncludeControls { ...props } />
+							) }
+							{ controls?.post_parent && (
+								<ChildItemsToggle { ...props } />
+							) }
+							{ controls?.date_query && (
+								<PostDateQueryControls { ...props } />
+							) }
+							{ controls?.disable_pagination && (
+								<PaginationToggle { ...props } />
+							) }
 							<AQLControls.Slot fillProps={ { ...props } } />
 						</PanelBody>
 					</InspectorControls>
