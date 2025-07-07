@@ -110,7 +110,7 @@ class Query_Params_Generator {
 	 * Static function to return the list of filtered params.
 	 */
 	public static function get_known_params() {
-		return apply_filters( 'aql_allowed_controls', self::KNOWN_PARAMS );
+		return \apply_filters( 'aql_allowed_controls', self::KNOWN_PARAMS );
 	}
 
 	/**
