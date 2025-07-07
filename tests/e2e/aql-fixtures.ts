@@ -12,6 +12,7 @@ import { Editor, Admin, PageUtils } from '@wordpress/e2e-test-utils-playwright';
  * Internal dependencies.
  */
 import { Playground } from './Playground';
+import { Selectors } from './Selectors';
 
 interface Fixtures
 	extends PlaywrightTestArgs,
@@ -23,6 +24,7 @@ interface Fixtures
 	admin: Admin;
 	pageUtils: PageUtils;
 	absoluteUrl: any;
+	selectors: any;
 }
 
 export const test = baseTest.extend< Fixtures >( {
@@ -44,6 +46,9 @@ export const test = baseTest.extend< Fixtures >( {
 	},
 	admin: async ( { page, editor, pageUtils }, use ) => {
 		await use( new Admin( { page, editor, pageUtils } ) );
+	},
+	selectors: async ( { page }, use ) => {
+		await use( new Selectors( page ) );
 	},
 } );
 

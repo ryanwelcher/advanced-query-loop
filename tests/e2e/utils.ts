@@ -1,3 +1,5 @@
+import { Locator, Page } from '@playwright/test';
+
 /**
  * Inserts AQL and selects the Title & Date variation.
  *
@@ -22,4 +24,16 @@ export const insertAQL = async ( { editor } ) => {
 		.getByRole( 'document', { name: 'Block: Advanced Query Loop' } )
 		.getByRole( 'button', { name: 'Title & Date' } )
 		.click();
+};
+
+/**
+ *
+ * @param page
+ * @param name
+ * @returns
+ */
+export const selectFormTokenField = ( page: Page, name: string ): Locator => {
+	return page.getByRole( 'combobox', {
+		name,
+	} );
 };

@@ -24,9 +24,21 @@ test.describe( 'Additional Post Types', () => {
 		await playground.cleanUp();
 	} );
 
-	test( 'Control is visible', async ( { page, editor } ) => {
-		expect(
-			page.getByRole( 'combobox', { name: 'Additional Post Types' } )
-		).toBeVisible();
+	test( 'Control is visible and empty', async ( {
+		page,
+		editor,
+		selectors,
+	} ) => {
+		const multiplePostTypes = selectors.selectFormTokenField(
+			'Additional Post Types'
+		);
+		expect( multiplePostTypes ).toBeVisible();
+		expect( multiplePostTypes ).toBeEmpty();
+		// const list = await multiplePostTypes.getAttribute( 'aria-describedby' );
+
+		expect( await page.getByText( 'page' ) ).not.toBeVisible();
+		expect( await page.getByText( 'attachment' ) ).not.toBeVisible();
+		// await page.getByRole( 'option', { name: 'attachment' } ).click();
+		// await expect( multiplePostTypes ).toBeEmpty();
 	} );
 } );
