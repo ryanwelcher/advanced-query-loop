@@ -68,7 +68,6 @@ class Query_Params_Generator {
 		$this->custom_params  = is_array( $custom_params ) ? $custom_params : array();
 	}
 
-
 	/**
 	 * Checks to see if the item that is passed is a post ID.
 	 *
@@ -108,10 +107,17 @@ class Query_Params_Generator {
 	}
 
 	/**
+	 * Static function to return the list of filtered params.
+	 */
+	public static function get_known_params() {
+		return apply_filters( 'aql_allowed_controls', self::KNOWN_PARAMS );
+	}
+
+	/**
 	 * Process all params at once.
 	 */
 	public function process_all(): void {
-		foreach ( self::KNOWN_PARAMS as $param_name ) {
+		foreach ( self::get_known_params() as $param_name ) {
 			if ( $this->has_custom_param( $param_name ) ) {
 				call_user_func( array( $this, 'process_' . $param_name ) );
 			}
