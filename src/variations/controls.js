@@ -46,8 +46,13 @@ const isAdvancedQueryLoop = ( props ) => {
 const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 	// If the is the correct variation, add the custom controls.
 	if ( isAdvancedQueryLoop( props ) ) {
-		const { controls } = window?.aql;
+		const { allowedControls } = window?.aql;
 		const { attributes } = props;
+		const allowedControlsArray = allowedControls.split( ',' );
+		const propsWithControls = {
+			...props,
+			allowedControls: allowedControlsArray,
+		};
 		// If the inherit prop is false or undefined, add all the controls.
 		if ( ! attributes.query.inherit ) {
 			return (
@@ -61,34 +66,21 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 							) }
 						>
 							<AQLLegacyControls.Slot
-								fillProps={ { ...props } }
+								fillProps={ { ...propsWithControls } }
 							/>
-							{ controls?.multiple_posts && (
-								<MultiplePostSelect { ...props } />
-							) }
-							{ controls?.tax_query && (
-								<TaxonomyQueryControl { ...props } />
-							) }
-							{ controls?.meta_query && (
-								<PostMetaQueryControls { ...props } />
-							) }
-							<PostOrderControls { ...props } />
-							{ controls?.exclude_current && (
-								<PostExcludeControls { ...props } />
-							) }
-							{ controls?.include_posts && (
-								<PostIncludeControls { ...props } />
-							) }
-							{ controls?.post_parent && (
-								<ChildItemsToggle { ...props } />
-							) }
-							{ controls?.date_query && (
-								<PostDateQueryControls { ...props } />
-							) }
-							{ controls?.disable_pagination && (
-								<PaginationToggle { ...props } />
-							) }
-							<AQLControls.Slot fillProps={ { ...props } } />
+
+							<MultiplePostSelect { ...propsWithControls } />
+							<TaxonomyQueryControl { ...propsWithControls } />
+							<PostMetaQueryControls { ...propsWithControls } />
+							<PostOrderControls { ...propsWithControls } />
+							<PostExcludeControls { ...propsWithControls } />
+							<PostIncludeControls { ...propsWithControls } />
+							<ChildItemsToggle { ...propsWithControls } />
+							<PostDateQueryControls { ...propsWithControls } />
+							<PaginationToggle { ...propsWithControls } />
+							<AQLControls.Slot
+								fillProps={ { ...propsWithControls } }
+							/>
 						</PanelBody>
 					</InspectorControls>
 				</>
@@ -105,9 +97,9 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 							'advanced-query-loop'
 						) }
 					>
-						<PostOrderControls { ...props } />
+						<PostOrderControls { ...propsWithControls } />
 						<AQLControlsInheritedQuery.Slot
-							fillProps={ { ...props } }
+							fillProps={ { ...propsWithControls } }
 						/>
 					</PanelBody>
 				</InspectorControls>

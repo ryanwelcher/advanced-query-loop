@@ -7,7 +7,11 @@ import { useSelect } from '@wordpress/data';
 import { store as coreStore } from '@wordpress/core-data';
 import { store as editorStore } from '@wordpress/editor';
 
-export const ChildItemsToggle = ( { attributes, setAttributes } ) => {
+export const ChildItemsToggle = ( {
+	attributes,
+	setAttributes,
+	allowedControls,
+} ) => {
 	const { query: { post_parent: postParent } = {} } = attributes;
 
 	const { isHierarchial, postTypeName, postID } = useSelect( ( select ) => {
@@ -21,6 +25,11 @@ export const ChildItemsToggle = ( { attributes, setAttributes } ) => {
 			postID: post?.id,
 		};
 	}, [] );
+
+	// If the control is not allowed, return null.
+	if ( ! allowedControls.includes( 'child_items_only' ) ) {
+		return null;
+	}
 
 	return (
 		<ToggleControl
