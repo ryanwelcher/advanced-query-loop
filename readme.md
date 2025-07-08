@@ -63,7 +63,7 @@ Improve the performance of the query by disabling pagination. This is done autom
 
 ## Filtering the available controls
 
-It is possible to remove controls from AQL using the `aql_allowed_controls` filter:
+It is possible to remove controls from AQL using the `aql_allowed_controls` filter. The filter receives a single parameter containing an array of allowed controls. This can be modified to remove the control from the UI and stop processing the associated query param.
 
 ```php
 add_filter(
