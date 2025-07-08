@@ -35,11 +35,10 @@ if ( ! function_exists( 'add_action' ) ) {
 			);
 			// Allow for translation.
 			wp_set_script_translations( 'advanced-query-loop', 'advanced-query-loop' );
-
 			// Add inline script.
 			wp_add_inline_script(
 				'advanced-query-loop',
-				'aql.controls = ' . json_encode( Query_Params_Generator::get_known_params() ) . ';'
+				'aql.allowedControls = "' . implode( ',', Query_Params_Generator::get_allowed_controls() ) . '";'
 			);
 		}
 
