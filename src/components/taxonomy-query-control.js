@@ -37,7 +37,7 @@ export const TaxonomyQueryControl = ( { attributes, setAttributes } ) => {
 
 	const availableTaxonomies = useSelect( ( select ) =>
 		select( coreStore )
-			.getTaxonomies()
+			.getTaxonomies( { per_page: 50 } )
 			?.filter( ( { types } ) =>
 				types.some( ( type ) =>
 					[ postType, ...multiplePosts ].includes( type )
