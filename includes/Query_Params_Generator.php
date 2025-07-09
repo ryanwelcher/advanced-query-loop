@@ -21,20 +21,22 @@ class Query_Params_Generator {
 	use Traits\Tax_Query;
 	use Traits\Post_Parent;
 
-
 	/**
-	 * The list of all custom params
+	 * The list of allowed controls and their associated params in the query.
 	 */
-	const KNOWN_PARAMS = array(
-		'multiple_posts',
-		'exclude_current',
-		'include_posts',
-		'meta_query',
-		'date_query',
-		'disable_pagination',
-		'tax_query',
-		'post_parent',
+	const ALLOWED_CONTROLS = array(
+		'additional_post_types'    => 'multiple_posts',
+		'taxonomy_query_builder'   => 'tax_query',
+		'post_meta_query'          => 'meta_query',
+		'post_order'               => 'post_order',
+		'exclude_current_post'     => 'exclude_current',
+		'include_posts'            => 'include_posts',
+		'child_items_only'         => 'child_items_only',
+		'date_query_dynamic_range' => 'date_query',
+		'date_query_relationship'  => 'date_query',
+		'pagination'               => 'disable_pagination',
 	);
+
 
 	/**
 	 * Default values from the default block.
@@ -67,7 +69,6 @@ class Query_Params_Generator {
 		$this->default_params = is_array( $default_params ) ? $default_params : array();
 		$this->custom_params  = is_array( $custom_params ) ? $custom_params : array();
 	}
-
 
 	/**
 	 * Checks to see if the item that is passed is a post ID.
@@ -106,12 +107,30 @@ class Query_Params_Generator {
 		}
 		return false;
 	}
+	/**
+	 * Static function to return the list of allowed controls and their associated params in the query.
+	 *
+	 * @return array
+	 */
+	public static function get_allowed_controls() {
+		return \apply_filters( 'aql_allowed_controls', array_keys( self::ALLOWED_CONTROLS ) );
+	}
+
+	protected function get_params_to_process() {
+		$params = array();
+		foreach ( self::get_allowed_controls() as $control ) {
+			$params[] = self::ALLOWED_CONTROLS[ $control ];
+		}
+		return $params;
+	}
 
 	/**
 	 * Process all params at once.
 	 */
 	public function process_all(): void {
-		foreach ( self::KNOWN_PARAMS as $param_name ) {
+		// Get the params from the allowed controls and remove any duplicates.
+		$params = array_unique( $this->get_params_to_process() );
+		foreach ( $params as $param_name ) {
 			if ( $this->has_custom_param( $param_name ) ) {
 				call_user_func( array( $this, 'process_' . $param_name ) );
 			}
@@ -124,5 +143,4 @@ class Query_Params_Generator {
 	public function get_query_args(): array {
 		return $this->custom_args;
 	}
-
 }

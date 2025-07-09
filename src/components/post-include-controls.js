@@ -13,7 +13,11 @@ import { __ } from '@wordpress/i18n';
  *@return {Element} PostIncludeControls
  */
 
-export const PostIncludeControls = ( { attributes, setAttributes } ) => {
+export const PostIncludeControls = ( {
+	attributes,
+	setAttributes,
+	allowedControls,
+} ) => {
 	const {
 		query: {
 			include_posts: includePosts = [],
@@ -68,6 +72,11 @@ export const PostIncludeControls = ( { attributes, setAttributes } ) => {
 			setMultiplePostsState( multiplePosts );
 		}
 	}, [ multiplePosts ] );
+
+	// If the control is not allowed, return null.``
+	if ( ! allowedControls.includes( 'include_posts' ) ) {
+		return null;
+	}
 
 	/**
 	 * Retrieves the ID of a post based on its title.

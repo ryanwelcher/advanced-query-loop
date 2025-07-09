@@ -61,6 +61,42 @@ Sort in ascending or descending order by:
 
 Improve the performance of the query by disabling pagination. This is done automatically when there is now Pagination block in teh Post Template.
 
+## Filtering the available controls
+
+It is possible to remove controls from AQL using the `aql_allowed_controls` filter. The filter receives a single parameter containing an array of allowed controls. This can be modified to remove the control from the UI and stop processing the associated query param.
+
+```php
+add_filter(
+	'aql_allowed_controls',
+	function( $controls ) {
+		// Exclude the additional_post_types and taxonomy_query_builder controls.
+		$to_exclude        = array( 'additional_post_types', 'taxonomy_query_builder' );
+		$filtered_controls = array_filter(
+			$controls,
+			function( $control ) use ( $to_exclude ) {
+				if ( ! in_array( $control, $to_exclude, true ) ) {
+					return $control;
+				}
+			},
+		);
+		return $filtered_controls;
+	}
+);
+```
+
+### List of control identifiers
+
+-   `'additional_post_types'`
+-   `'taxonomy_query_builder'`
+-   `'post_meta_query'`
+-   `'post_order'`
+-   `'exclude_current_post'`
+-   `'include_posts'`
+-   `'child_items_only'`
+-   `'date_query_dynamic_range'`
+-   `'date_query_relationship'`
+-   `'pagination'`
+
 ## Extending AQL
 
 Detailed instructions on how to extend AQL as well as an example are available [here](./extending-aql.md)
