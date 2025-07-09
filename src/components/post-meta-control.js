@@ -8,8 +8,10 @@ import {
 	__experimentalHStack as HStack,
 	SelectControl,
 	TextControl,
+	ToggleControl,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { useState, useEffect } from '@wordpress/element';
 
 const compareMetaOptions = [
 	'=',
@@ -31,8 +33,20 @@ const compareMetaOptions = [
 	'RLIKE',
 ];
 
+const metaTypeOptions = [
+	'CHAR',
+	'NUMERIC',
+	'BINARY',
+	'DATE',
+	'DATETIME',
+	'DECIMAL',
+	'SIGNED',
+	'TIME',
+	'UNSIGNED',
+];
+
 const toggleMargin = {
-	marginTop: '1.5em',
+	marginTop: '0.75em',
 	marginBottom: '0.75em',
 };
 
@@ -44,15 +58,27 @@ export const PostMetaControl = ( {
 	setAttributes,
 } ) => {
 	const activeQuery = queries.find( ( query ) => query.id === id );
+	const [ advancedMode, setAdvancedMode ] = useState( false );
+	const [ disableAdvancedToggle, setDisableAdvancedToggle ] =
+		useState( false );
+
+	useEffect( () => {
+		if ( activeQuery?.meta_type || activeQuery?.meta_compare ) {
+			setAdvancedMode( true );
+			setDisableAdvancedToggle( true );
+		} else {
+			setDisableAdvancedToggle( false );
+		}
+	}, [ activeQuery?.meta_type, activeQuery?.meta_compare ] );
 
 	/**
 	 * Update a query param.
 	 *
-	 * @param {Array} currentQueries The current queries array
-	 * @param {string} queryId       The query ID to update
-	 * @param {string} item The key to update
-	 * @param {string} value The value to update
-	 * @return {Array} The updated queries array
+	 * @param {Array}  currentQueries The current queries array
+	 * @param {string} queryId        The query ID to update
+	 * @param {string} item           The key to update
+	 * @param {string} value          The value to update
+	 * @return {Array}                The updated queries array
 	 */
 	const updateQueryParam = ( currentQueries, queryId, item, value ) => {
 		return currentQueries.map( ( query ) => {
@@ -94,7 +120,6 @@ export const PostMetaControl = ( {
 						},
 					} );
 				} }
-				__nextHasNoMarginBottom
 			/>
 			{ activeQuery?.meta_key?.length > 0 && (
 				<>
@@ -118,32 +143,73 @@ export const PostMetaControl = ( {
 							} );
 						} }
 					/>
-					<SelectControl
-						label={ __( 'Meta Compare', 'advanced-query-loop' ) }
-						value={ activeQuery.meta_compare }
-						options={ [
-							...compareMetaOptions.map( ( operator ) => {
-								return { label: operator, value: operator };
-							} ),
-						] }
-						onChange={ ( newCompare ) => {
-							setAttributes( {
-								query: {
-									...attributes.query,
-									meta_query: {
-										...attributes.query.meta_query,
-										queries: updateQueryParam(
-											queries,
-											id,
-											'meta_compare',
-											newCompare
-										),
-									},
-								},
-							} );
-						} }
-						__nextHasNoMarginBottom
-					/>
+					{ advancedMode && (
+						<>
+							<SelectControl
+								label={ __(
+									'Meta Compare',
+									'advanced-query-loop'
+								) }
+								value={ activeQuery.meta_compare }
+								options={ [
+									...compareMetaOptions.map( ( operator ) => {
+										return {
+											label: operator,
+											value: operator,
+										};
+									} ),
+								] }
+								onChange={ ( newCompare ) => {
+									setAttributes( {
+										query: {
+											...attributes.query,
+											meta_query: {
+												...attributes.query.meta_query,
+												queries: updateQueryParam(
+													queries,
+													id,
+													'meta_compare',
+													newCompare
+												),
+											},
+										},
+									} );
+								} }
+							/>
+							<SelectControl
+								label={ __(
+									'Meta Type',
+									'advanced-query-loop'
+								) }
+								value={ activeQuery.meta_type }
+								options={ [
+									...metaTypeOptions.map( ( type ) => {
+										return {
+											label: type,
+											value: type,
+										};
+									} ),
+								] }
+								onChange={ ( newType ) => {
+									setAttributes( {
+										query: {
+											...attributes.query,
+											meta_query: {
+												...attributes.query.meta_query,
+												queries: updateQueryParam(
+													queries,
+													id,
+													'meta_type',
+													newType
+												),
+											},
+										},
+									} );
+								} }
+								__nextHasNoMarginBottom
+							/>
+						</>
+					) }
 				</>
 			) }
 			<hr />
@@ -151,6 +217,14 @@ export const PostMetaControl = ( {
 				alignment={ activeQuery?.meta_key ? 'edge' : 'right' }
 				style={ toggleMargin }
 			>
+				{ activeQuery?.meta_key && (
+					<ToggleControl
+						checked={ advancedMode }
+						label={ __( 'Advanced mode', 'advanced-query-loop' ) }
+						onChange={ () => setAdvancedMode( ! advancedMode ) }
+						disabled={ disableAdvancedToggle }
+					/>
+				) }
 				<Button
 					key={ id }
 					variant="secondary"

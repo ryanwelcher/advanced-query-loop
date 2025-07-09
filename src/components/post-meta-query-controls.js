@@ -1,3 +1,4 @@
+/* eslint-disable @wordpress/no-unsafe-wp-apis */
 /**
  * External dependencies
  */
@@ -23,6 +24,7 @@ import { useEffect, useState } from '@wordpress/element';
  * Internal dependencies
  */
 import { PostMetaControl } from './post-meta-control';
+import useRegisteredMeta from '../hooks/useRegisteredMeta';
 
 /**
  * Converts the meta keys from the all sources into a single array.
@@ -53,7 +55,6 @@ export const PostMetaQueryControls = ( {
 	const { records } = useEntityRecords( 'postType', postType, {
 		per_page: 1,
 	} );
-
 	const [ selectedPostType ] = useState( postType );
 
 	useEffect( () => {
@@ -62,7 +63,7 @@ export const PostMetaQueryControls = ( {
 			setAttributes( {
 				query: {
 					...attributes.query,
-					include_posts: [],
+					// include_posts: [],
 					meta_query: {},
 				},
 			} );
@@ -85,21 +86,16 @@ export const PostMetaQueryControls = ( {
 				} }
 				renderToggle={ ( { isOpen, onToggle } ) => (
 					<Button
-						variant="primary"
+						variant={ isOpen ? 'primary' : 'secondary' }
 						onClick={ onToggle }
 						aria-haspopup="true"
 						aria-expanded={ isOpen }
 						disabled={ Object.keys( registeredMeta ).length === 0 }
 					>
-						{ isOpen
-							? __(
-									'Close Meta Query Builder',
-									'advanced-query-loop'
-							  )
-							: __(
-									'Open Meta Query Builder',
-									'advanced-query-loop'
-							  ) }
+						{ __(
+							'Post Meta query builder',
+							'advanced-query-loop'
+						) }
 					</Button>
 				) }
 				renderContent={ () => (
@@ -118,15 +114,15 @@ export const PostMetaQueryControls = ( {
 									<>
 										<ToggleControl
 											label={ __(
-												'Combine filters',
+												'Match Any Filter',
 												'advanced-query-loop'
 											) }
 											help={ __(
-												'By default, filters are combined with the OR operator. Enable this option to combine filters with the AND operator.',
+												'By default, filters are combined using the AND operator, meaning all filter conditions must be met. Enable this option to use the OR operator instead, allowing results that match any of the filter conditions.',
 												'advanced-query-loop'
 											) }
 											checked={
-												relationFromQuery === 'AND'
+												relationFromQuery === 'OR'
 											}
 											onChange={ () => {
 												setAttributes( {

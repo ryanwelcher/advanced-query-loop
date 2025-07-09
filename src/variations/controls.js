@@ -1,9 +1,14 @@
+/* eslint-disable @wordpress/no-unsafe-wp-apis */
 /**
  * WordPress dependencies
  */
 import { addFilter } from '@wordpress/hooks';
 import { InspectorControls } from '@wordpress/block-editor';
-import { PanelBody } from '@wordpress/components';
+import {
+	PanelBody,
+	__experimentalVStack as VStack,
+	BaseControl,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { createBlock } from '@wordpress/blocks';
 
@@ -70,8 +75,22 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 							/>
 
 							<MultiplePostSelect { ...propsWithControls } />
-							<TaxonomyQueryControl { ...propsWithControls } />
-							<PostMetaQueryControls { ...propsWithControls } />
+							<BaseControl
+								label={ __(
+									'Query Builders',
+									'advanced-query-loop'
+								) }
+								id="query-builders"
+							>
+								<VStack alignment="center">
+									<TaxonomyQueryControl
+										{ ...propsWithControls }
+									/>
+									<PostMetaQueryControls
+										{ ...propsWithControls }
+									/>
+								</VStack>
+							</BaseControl>
 							<PostOrderControls { ...propsWithControls } />
 							<PostExcludeControls { ...propsWithControls } />
 							<PostIncludeControls { ...propsWithControls } />
