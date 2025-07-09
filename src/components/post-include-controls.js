@@ -1,9 +1,10 @@
 /**
  * WordPress dependencies
  */
-import { FormTokenField, BaseControl } from '@wordpress/components';
+import { BaseControl, FormTokenField } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useEffect, useState } from '@wordpress/element';
+import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -12,7 +13,11 @@ import { __ } from '@wordpress/i18n';
  *@return {Element} PostIncludeControls
  */
 
-export const PostIncludeControls = ( { attributes, setAttributes } ) => {
+export const PostIncludeControls = ( {
+	attributes,
+	setAttributes,
+	allowedControls,
+} ) => {
 	const {
 		query: {
 			include_posts: includePosts = [],
@@ -68,6 +73,11 @@ export const PostIncludeControls = ( { attributes, setAttributes } ) => {
 		}
 	}, [ multiplePosts ] );
 
+	// If the control is not allowed, return null.``
+	if ( ! allowedControls.includes( 'include_posts' ) ) {
+		return null;
+	}
+
 	/**
 	 * Retrieves the ID of a post based on its title.
 	 *
@@ -76,8 +86,13 @@ export const PostIncludeControls = ( { attributes, setAttributes } ) => {
 	 */
 	const getPostId = ( postTitle ) => {
 		const foundPost =
-			includePosts.find( ( post ) => post.title === postTitle ) ||
-			posts.find( ( post ) => post.title.rendered.trim() === postTitle );
+			includePosts.find(
+				( post ) => decodeEntities( post.title ) === postTitle
+			) ||
+			posts.find(
+				( post ) =>
+					decodeEntities( post.title.rendered.trim() ) === postTitle
+			);
 
 		return foundPost.title.rendered
 			? { id: foundPost.id, title: foundPost.title.rendered }
@@ -105,10 +120,12 @@ export const PostIncludeControls = ( { attributes, setAttributes } ) => {
 			>
 				<FormTokenField
 					label={ __( 'Posts', 'advanced-query-loop' ) }
-					value={ includePosts.map( ( item ) => item.title ) }
-					suggestions={ posts.map(
-						( post ) => post?.title?.rendered
-					) } // Need to fix this here. Posts might not have title.rendered
+					value={ includePosts.map( ( item ) =>
+						decodeEntities( item.title )
+					) }
+					suggestions={ posts.map( ( post ) =>
+						decodeEntities( post?.title?.rendered || '' )
+					) }
 					onInputChange={ ( searchPost ) =>
 						setSearchArg( searchPost )
 					}

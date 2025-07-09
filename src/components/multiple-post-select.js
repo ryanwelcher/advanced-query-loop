@@ -6,16 +6,27 @@ import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 import { store as coreStore } from '@wordpress/core-data';
 
-export const MultiplePostSelect = ( { attributes, setAttributes } ) => {
+export const MultiplePostSelect = ( {
+	attributes,
+	setAttributes,
+	allowedControls,
+} ) => {
 	const { query: { multiple_posts: multiplePosts = [], postType } = {} } =
 		attributes;
 
-	const postTypes = useSelect( ( select ) =>
-		select( coreStore )
-			.getPostTypes( { per_page: 50 } )
-			?.filter( ( { viewable } ) => viewable )
-			?.map( ( { slug } ) => slug )
+	const postTypes = useSelect(
+		( select ) =>
+			select( coreStore )
+				.getPostTypes( { per_page: 50 } )
+				?.filter( ( { viewable } ) => viewable )
+				?.map( ( { slug } ) => slug ),
+		[]
 	);
+
+	// If the control is not allowed, return null.
+	if ( ! allowedControls.includes( 'additional_post_types' ) ) {
+		return null;
+	}
 
 	if ( ! postTypes ) {
 		return <div>{ __( 'Loading…', 'advanced-query-loop' ) }</div>;

@@ -9,13 +9,18 @@ import { __ } from '@wordpress/i18n';
 /**
  * A component that lets you pick posts to be excluded from the query
  *
- * @param {Object}   props               Component props
- * @param {Object}   props.attributes    Block attributes
- * @param {Function} props.setAttributes Block attributes setter
+ * @param {Object}   props                 Component props
+ * @param {Object}   props.attributes      Block attributes
+ * @param {Function} props.setAttributes   Block attributes setter
+ * @param {Array}    props.allowedControls Allowed controls
  *
  * @return {Element} PostExcludeControls
  */
-export const PostExcludeControls = ( { attributes, setAttributes } ) => {
+export const PostExcludeControls = ( {
+	attributes,
+	setAttributes,
+	allowedControls,
+} ) => {
 	const { query: { exclude_current: excludeCurrent } = {} } = attributes;
 	const { record: siteOptions } = useEntityRecord( 'root', 'site' );
 	const { currentPost, isAdmin } = useSelect( ( select ) => {
@@ -27,6 +32,11 @@ export const PostExcludeControls = ( { attributes, setAttributes } ) => {
 			} ),
 		};
 	}, [] );
+
+	// If the control is not allowed, return null.
+	if ( ! allowedControls.includes( 'exclude_current_post' ) ) {
+		return null;
+	}
 
 	if ( ! currentPost ) {
 		return <div>{ __( 'Loading…', 'advanced-query-loop' ) }</div>;

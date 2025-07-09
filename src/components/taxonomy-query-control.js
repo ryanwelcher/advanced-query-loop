@@ -26,7 +26,11 @@ import { store as coreStore } from '@wordpress/core-data';
  */
 import SingleTaxonomyControl from './single-taxonomy-control';
 
-export const TaxonomyQueryControl = ( { attributes, setAttributes } ) => {
+export const TaxonomyQueryControl = ( {
+	attributes,
+	setAttributes,
+	allowedControls,
+} ) => {
 	const {
 		query: {
 			postType,
@@ -37,13 +41,18 @@ export const TaxonomyQueryControl = ( { attributes, setAttributes } ) => {
 
 	const availableTaxonomies = useSelect( ( select ) =>
 		select( coreStore )
-			.getTaxonomies()
+			.getTaxonomies( { per_page: 50 } )
 			?.filter( ( { types } ) =>
 				types.some( ( type ) =>
 					[ postType, ...multiplePosts ].includes( type )
 				)
 			)
 	);
+
+	// If the control is not allowed, return null.
+	if ( ! allowedControls.includes( 'taxonomy_query_builder' ) ) {
+		return null;
+	}
 
 	return (
 		<>

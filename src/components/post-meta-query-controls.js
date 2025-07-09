@@ -38,7 +38,11 @@ const combineMetaKeys = ( records ) => {
 };
 
 // A component to render a select control for the post meta query.
-export const PostMetaQueryControls = ( { attributes, setAttributes } ) => {
+export const PostMetaQueryControls = ( {
+	attributes,
+	setAttributes,
+	allowedControls,
+} ) => {
 	const {
 		query: {
 			postType,
@@ -52,8 +56,6 @@ export const PostMetaQueryControls = ( { attributes, setAttributes } ) => {
 
 	const [ selectedPostType ] = useState( postType );
 
-	const registeredMeta = combineMetaKeys( records );
-
 	useEffect( () => {
 		// If the post type changes, reset the meta query.
 		if ( postType !== selectedPostType ) {
@@ -66,6 +68,13 @@ export const PostMetaQueryControls = ( { attributes, setAttributes } ) => {
 			} );
 		}
 	}, [ postType ] );
+
+	// If the control is not allowed, return null.
+	if ( ! allowedControls.includes( 'post_meta_query' ) ) {
+		return null;
+	}
+
+	const registeredMeta = combineMetaKeys( records );
 
 	return (
 		<>
