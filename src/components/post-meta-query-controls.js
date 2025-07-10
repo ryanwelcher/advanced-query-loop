@@ -119,11 +119,11 @@ export const PostMetaQueryControls = ( {
 									<>
 										<ToggleControl
 											label={ __(
-												'Match Any Filter',
+												'Match Any Condition',
 												'advanced-query-loop'
 											) }
 											help={ __(
-												'By default, filters are combined using the AND operator, meaning all filter conditions must be met. Enable this option to use the OR operator instead, allowing results that match any of the filter conditions.',
+												'By default, conditions are combined using the AND operator, meaning all conditions must be met. Enable this option to use the OR operator instead, allowing results that match any of the conditions.',
 												'advanced-query-loop'
 											) }
 											checked={
