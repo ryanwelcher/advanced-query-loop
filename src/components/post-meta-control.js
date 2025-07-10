@@ -64,7 +64,10 @@ export const PostMetaControl = ( {
 
 	useEffect( () => {
 		// This causes advanced mode to be enabled if the meta_type or meta_compare is set and breaks updating.
-		if ( activeQuery?.meta_type || activeQuery?.meta_compare ) {
+		if (
+			( activeQuery?.meta_type && activeQuery?.meta_type !== 'CHAR' ) ||
+			( activeQuery?.meta_compare && activeQuery?.meta_compare !== '=' )
+		) {
 			setAdvancedMode( true );
 			setDisableAdvancedToggle( true );
 		} else {
