@@ -69,10 +69,15 @@ export const TaxonomyQueryControl = ( {
 						aria-expanded={ isOpen }
 						disabled={ availableTaxonomies.length === 0 }
 					>
-						{ __(
-							'Taxonomy query builder',
-							'advanced-query-loop'
-						) }
+						{ isOpen
+							? __(
+									'Close Taxonomy query builder',
+									'advanced-query-loop'
+							  )
+							: __(
+									'Open Taxonomy query builder',
+									'advanced-query-loop'
+							  ) }
 					</Button>
 				) }
 				renderContent={ () => (

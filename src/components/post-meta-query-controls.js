@@ -92,10 +92,15 @@ export const PostMetaQueryControls = ( {
 						aria-expanded={ isOpen }
 						disabled={ Object.keys( registeredMeta ).length === 0 }
 					>
-						{ __(
-							'Post Meta query builder',
-							'advanced-query-loop'
-						) }
+						{ isOpen
+							? __(
+									'Close Post meta query builder',
+									'advanced-query-loop'
+							  )
+							: __(
+									'Open Post Meta query builder',
+									'advanced-query-loop'
+							  ) }
 					</Button>
 				) }
 				renderContent={ () => (
