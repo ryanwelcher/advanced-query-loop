@@ -1,6 +1,6 @@
 === Advanced Query Loop ===
 Contributors: welcher
-Tags: Query Loop, Custom Queries, Advanced Queries, Post Meta, Taxonomy, Date Queries
+Tags: Query Loop, Custom Queries, Advanced Queries, Post Meta, Taxonomy
 Requires at least: 6.2
 Tested up to: 6.8.1
 Stable tag: 4.2.0
@@ -154,24 +154,24 @@ Advanced Query Loop is built with developers in mind:
 3. Query posts before a date, after a date or between two dates.
 
 == Changelog ==
-= 4.2.0=
+= 4.2.0 =
 * Fix taxonomy pagination limit (props @NickOrtiz).
 * Allow controls to be filtered at the code level.
 
-= 4.1.2=
+= 4.1.2 =
 * Harden up the code to remove a warning.
 * Resurrect the disable pagination toggl
 
-= 4.1.1=
+= 4.1.1 =
 * Allow extended orderby values for all publicly queryable post types (props @ocean90)
 * Decode entities in the FormTokenField for post inclusion.
 * Fix post type merge issue to retain default post type on frontend (props @mehidi258)
 
-= 4.1.0=
+= 4.1.0 =
 * The control for Pagination controls has been removed and now is automatically enabled/disabled based whether the Pagination block is in the template.
 * Bug fixes.
 
-= 4.0.2=
+= 4.0.2 =
 * Bug fixes
 
 = 4.0.1 =
