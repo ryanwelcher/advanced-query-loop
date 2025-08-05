@@ -25,6 +25,7 @@ trait Meta_Query {
 							'key'     => $query['meta_key'] ?? '',
 							'value'   => $query['meta_value'] ?? '',
 							'compare' => $query['meta_compare'] ?? '',
+							'type'    => $query['meta_type'] ?? '',
 						)
 					);
 				}

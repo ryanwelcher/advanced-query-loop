@@ -63,7 +63,7 @@ export const TaxonomyQueryControl = ( {
 				} }
 				renderToggle={ ( { isOpen, onToggle } ) => (
 					<Button
-						variant="primary"
+						variant={ isOpen ? 'primary' : 'secondary' }
 						onClick={ onToggle }
 						aria-haspopup="true"
 						aria-expanded={ isOpen }
@@ -71,11 +71,11 @@ export const TaxonomyQueryControl = ( {
 					>
 						{ isOpen
 							? __(
-									'Close Taxonomy Query Builder',
+									'Close Taxonomy query builder',
 									'advanced-query-loop'
 							  )
 							: __(
-									'Open Taxonomy Query Builder',
+									'Open Taxonomy query builder',
 									'advanced-query-loop'
 							  ) }
 					</Button>
