@@ -32,6 +32,10 @@ Remove the current post from the query.
 
 Choose to exclude posts from a list of categories.
 
+#### Exclude posts list
+
+Curate a list of posts to exclude from the query.
+
 #### Post Meta Query
 
 Generate complicated post meta queries using an interface that allows you to create a query based on `meta_key`, `meta_value` and the `compare` options. Combine multiple queries and determine if they combine results (OR) or narrow them down (AND).

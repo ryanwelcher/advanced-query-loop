@@ -3,7 +3,7 @@ Contributors: welcher
 Tags: Query Loop, Custom Queries, Advanced Queries, Post Meta, Taxonomy
 Requires at least: 6.2
 Tested up to: 6.8.1
-Stable tag: 4.2.0
+Stable tag: 4.3.0
 Requires PHP: 7.4
 License: GPL v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -51,8 +51,8 @@ Take full control over which posts appear in your query:
 
 Keep your queries clean and relevant:
 * **Exclude current post**: Automatically hide the post being viewed
+* **Exclude a list of posts**: Curate a list of posts to exclude from the query
 * **Category filtering**: Exclude posts from specific categories
-* **Smart defaults**: Built-in logic to avoid duplicate content
 
 ==== 🔍 Advanced Post Meta Queries ====
 
@@ -154,6 +154,12 @@ Advanced Query Loop is built with developers in mind:
 3. Query posts before a date, after a date or between two dates.
 
 == Changelog ==
+
+= 4.3.0 =
+* Exclude posts (props @darylldoyle, @Pulsar-X).
+* Updated Post Meta Query UI
+* Fixed showing child pages only.
+
 = 4.2.0 =
 * Fix taxonomy pagination limit (props @NickOrtiz).
 * Allow controls to be filtered at the code level.
