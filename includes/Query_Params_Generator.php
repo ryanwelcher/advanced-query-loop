@@ -14,6 +14,7 @@ class Query_Params_Generator {
 
 	use Traits\Multiple_Posts;
 	use Traits\Exclude_Current;
+	use Traits\Exclude_Posts;
 	use Traits\Include_Posts;
 	use Traits\Meta_Query;
 	use Traits\Date_Query;
@@ -35,6 +36,7 @@ class Query_Params_Generator {
 		'date_query_dynamic_range' => 'date_query',
 		'date_query_relationship'  => 'date_query',
 		'pagination'               => 'disable_pagination',
+		'exclude_posts'            => 'exclude_posts',
 	);
 
 
