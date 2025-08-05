@@ -31,7 +31,7 @@ class Query_Params_Generator {
 		'post_order'               => 'post_order',
 		'exclude_current_post'     => 'exclude_current',
 		'include_posts'            => 'include_posts',
-		'child_items_only'         => 'child_items_only',
+		'child_items_only'         => 'post_parent',
 		'date_query_dynamic_range' => 'date_query',
 		'date_query_relationship'  => 'date_query',
 		'pagination'               => 'disable_pagination',
