@@ -127,6 +127,19 @@ const ExcludeCurrentPostControl = ( { attributes, setAttributes, allowedControls
 	);
 }
 
+/**
+ * The ExcludePostsControl component allows users to exclude specific posts
+ * from queries based on post titles, providing search and selection
+ * functionality in the form of a token field.
+ *
+ * @param {Object}   props                     The component props.
+ * @param {Object}   props.attributes          The block attributes.
+ * @param {Function} props.setAttributes       Function to update the block attributes.
+ * @param {Array}    props.allowedControls     List of controls allowed for the current context.
+ *
+ * @returns {Element|null} Returns the control for selecting excluded posts,
+ *                             or null if the 'exclude_posts' control is not allowed.
+ */
 const ExcludePostsControl = ( { attributes, setAttributes, allowedControls } ) => {
 	const {
 		query: {
