@@ -21,7 +21,9 @@ trait Post_Parent {
 		} else {
 			// This is usually when this was set on a template.
 			global $post;
-			$this->custom_args['post_parent'] = $post->ID;
+			if ( isset( $post ) ) {
+				$this->custom_args['post_parent'] = $post->ID;
+			}
 		}
 	}
 }
