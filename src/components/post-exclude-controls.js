@@ -1,10 +1,15 @@
 /**
  * WordPress dependencies
  */
-import { ToggleControl, FormTokenField, BaseControl } from '@wordpress/components';
+import {
+	ToggleControl,
+	FormTokenField,
+	BaseControl,
+} from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useEntityRecord, store as coreDataStore } from '@wordpress/core-data';
 import { __ } from '@wordpress/i18n';
+import { decodeEntities } from '@wordpress/html-entities';
 
 /**
  * A component that lets you pick posts to be excluded from the query
@@ -21,10 +26,18 @@ export const PostExcludeControls = ( {
 	setAttributes,
 	allowedControls,
 } ) => {
-	const { query: { exclude_current: excludeCurrent, exclude_posts: excludePosts = [], } = {} } = attributes;
+	const {
+		query: {
+			exclude_current: excludeCurrent,
+			exclude_posts: excludePosts = [],
+		} = {},
+	} = attributes;
 
 	// If the control is not allowed, return null.
-	if ( ! allowedControls.includes( 'exclude_current_post' ) && ! allowedControls.includes( 'exclude_posts' ) ) {
+	if (
+		! allowedControls.includes( 'exclude_current_post' ) &&
+		! allowedControls.includes( 'exclude_posts' )
+	) {
 		return null;
 	}
 
@@ -50,19 +63,19 @@ export const PostExcludeControls = ( {
  * of advanced query loop settings. It toggles the exclusion of the current post
  * or content associated with the current template from query results.
  *
- * @param {Object} props                   The properties passed to the component.
- * @param {Object} props.attributes        The block attributes.
+ * @param {Object}   props                 The properties passed to the component.
+ * @param {Object}   props.attributes      The block attributes.
  * @param {Function} props.setAttributes   Function to update block attributes.
- * @param {Array} props.allowedControls    List of control identifiers that are allowed for this block.
+ * @param {Array}    props.allowedControls List of control identifiers that are allowed for this block.
  *
  * @return {Element|null} A `ToggleControl` component if the control is allowed, or `null` if not.
  */
-const ExcludeCurrentPostControl = ( { attributes, setAttributes, allowedControls } ) => {
-	const { query: { exclude_current: excludeCurrent, } = {} } = attributes;
-
-	if ( ! allowedControls.includes( 'exclude_current_post' ) ) {
-		return null;
-	}
+const ExcludeCurrentPostControl = ( {
+	attributes,
+	setAttributes,
+	allowedControls,
+} ) => {
+	const { query: { exclude_current: excludeCurrent } = {} } = attributes;
 
 	const { record: siteOptions } = useEntityRecord( 'root', 'site' );
 	const { currentPost, isAdmin } = useSelect( ( select ) => {
@@ -74,6 +87,10 @@ const ExcludeCurrentPostControl = ( { attributes, setAttributes, allowedControls
 			} ),
 		};
 	}, [] );
+
+	if ( ! allowedControls.includes( 'exclude_current_post' ) ) {
+		return null;
+	}
 
 	if ( ! currentPost ) {
 		return <div>{ __( 'Loading…', 'advanced-query-loop' ) }</div>;
@@ -115,43 +132,43 @@ const ExcludeCurrentPostControl = ( { attributes, setAttributes, allowedControls
 			help={
 				isDisabled()
 					? __(
-						'This option is disabled for this template as there is no dedicated post to exclude.',
-						'advanced-query-loop'
-					)
+							'This option is disabled for this template as there is no dedicated post to exclude.',
+							'advanced-query-loop'
+					  )
 					: __(
-						'Remove the associated post for this template/content from the query results.',
-						'advanced-query-loop'
-					)
+							'Remove the associated post for this template/content from the query results.',
+							'advanced-query-loop'
+					  )
 			}
 		/>
 	);
-}
+};
 
 /**
  * The ExcludePostsControl component allows users to exclude specific posts
  * from queries based on post titles, providing search and selection
  * functionality in the form of a token field.
  *
- * @param {Object}   props                     The component props.
- * @param {Object}   props.attributes          The block attributes.
- * @param {Function} props.setAttributes       Function to update the block attributes.
- * @param {Array}    props.allowedControls     List of controls allowed for the current context.
+ * @param {Object}   props                 The component props.
+ * @param {Object}   props.attributes      The block attributes.
+ * @param {Function} props.setAttributes   Function to update the block attributes.
+ * @param {Array}    props.allowedControls List of controls allowed for the current context.
  *
  * @returns {Element|null} Returns the control for selecting excluded posts,
  *                             or null if the 'exclude_posts' control is not allowed.
  */
-const ExcludePostsControl = ( { attributes, setAttributes, allowedControls } ) => {
+const ExcludePostsControl = ( {
+	attributes,
+	setAttributes,
+	allowedControls,
+} ) => {
 	const {
 		query: {
 			exclude_posts: excludePosts = [],
 			multiple_posts: multiplePosts = [],
-			postType
-		} = {}
+			postType,
+		} = {},
 	} = attributes;
-
-	if ( ! allowedControls.includes( 'exclude_posts' ) ) {
-		return null;
-	}
 
 	// Get the posts for all post types used in the query.
 	const posts = useSelect(
@@ -173,14 +190,20 @@ const ExcludePostsControl = ( { attributes, setAttributes, allowedControls } ) =
 		[ postType, multiplePosts ]
 	);
 
+	if ( ! allowedControls.includes( 'exclude_posts' ) ) {
+		return null;
+	}
+
 	// For use with flatMap(), as this lets us remove elements during a map()
 	const idToTitle = ( id ) => {
 		const post = posts.find( ( p ) => p.id === id );
-		return post ? [ post.title.rendered ] : [];
+		return post ? [ decodeEntities( post.title.rendered.trim() ) ] : [];
 	};
 
 	const titleToId = ( title ) => {
-		const post = posts.find( ( p ) => p.title.rendered === title );
+		const post = posts.find(
+			( p ) => decodeEntities( p.title.rendered.trim() ) === title
+		);
 		return post ? [ post.id ] : [];
 	};
 
@@ -198,7 +221,9 @@ const ExcludePostsControl = ( { attributes, setAttributes, allowedControls } ) =
 			<FormTokenField
 				label={ __( 'Posts to Exclude', 'advanced-query-loop' ) }
 				value={ excludePosts.flatMap( ( id ) => idToTitle( id ) ) }
-				suggestions={ posts.map( ( post ) => post.title.rendered ) }
+				suggestions={ posts.map( ( post ) =>
+					decodeEntities( post.title.rendered.trim() )
+				) }
 				onChange={ ( titles ) => {
 					// Converts the Titles to Post IDs before saving them
 					setAttributes( {
@@ -215,5 +240,5 @@ const ExcludePostsControl = ( { attributes, setAttributes, allowedControls } ) =
 				__experimentalShowHowTo={ false }
 			/>
 		</BaseControl>
-	)
-}
+	);
+};
