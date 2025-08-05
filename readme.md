@@ -95,6 +95,7 @@ add_filter(
 -   `'post_meta_query'`
 -   `'post_order'`
 -   `'exclude_current_post'`
+-   `'exclude_posts'`
 -   `'include_posts'`
 -   `'child_items_only'`
 -   `'date_query_dynamic_range'`
