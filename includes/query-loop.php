@@ -98,7 +98,7 @@ if ( ! function_exists( 'add_filter' ) ) {
 \add_action(
 	'init',
 	function () {
-		$registered_post_types = \get_post_types( array( 'show_in_rest' => true, 'publicly_queryable' => true ) );
+		$registered_post_types = \get_post_types( array( 'show_in_rest' => true, 'public' => true ) );
 		foreach ( $registered_post_types as $registered_post_type ) {
 			\add_filter( 'rest_' . $registered_post_type . '_query', __NAMESPACE__ . '\add_custom_query_params', 10, 2 );
 
