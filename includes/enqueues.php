@@ -40,8 +40,6 @@ if ( ! function_exists( 'add_action' ) ) {
 				'advanced-query-loop',
 				'aql.allowedControls = "' . implode( ',', Query_Params_Generator::get_allowed_controls() ) . '";'
 			);
-		} else {
-			die( 'no file found');
 		}
 
 		// Per Page, Offset, and Max count controls were merged into GB 19.

@@ -23,7 +23,7 @@ jobs:
               run: npm ci
 
             - name: Build Plugin
-              run: npm run build
+              run: composer run build && npm run build
 
             - name: Setup Playwright
               run: npx playwright install --with-deps
