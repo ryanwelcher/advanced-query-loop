@@ -32,6 +32,10 @@ Remove the current post from the query.
 
 Choose to exclude posts from a list of categories.
 
+#### Exclude posts list
+
+Curate a list of posts to exclude from the query.
+
 #### Post Meta Query
 
 Generate complicated post meta queries using an interface that allows you to create a query based on `meta_key`, `meta_value` and the `compare` options. Combine multiple queries and determine if they combine results (OR) or narrow them down (AND).
@@ -60,6 +64,43 @@ Sort in ascending or descending order by:
 #### Disable Pagination
 
 Improve the performance of the query by disabling pagination. This is done automatically when there is now Pagination block in teh Post Template.
+
+## Filtering the available controls
+
+It is possible to remove controls from AQL using the `aql_allowed_controls` filter. The filter receives a single parameter containing an array of allowed controls. This can be modified to remove the control from the UI and stop processing the associated query param.
+
+```php
+add_filter(
+	'aql_allowed_controls',
+	function( $controls ) {
+		// Exclude the additional_post_types and taxonomy_query_builder controls.
+		$to_exclude        = array( 'additional_post_types', 'taxonomy_query_builder' );
+		$filtered_controls = array_filter(
+			$controls,
+			function( $control ) use ( $to_exclude ) {
+				if ( ! in_array( $control, $to_exclude, true ) ) {
+					return $control;
+				}
+			},
+		);
+		return $filtered_controls;
+	}
+);
+```
+
+### List of control identifiers
+
+-   `'additional_post_types'`
+-   `'taxonomy_query_builder'`
+-   `'post_meta_query'`
+-   `'post_order'`
+-   `'exclude_current_post'`
+-   `'exclude_posts'`
+-   `'include_posts'`
+-   `'child_items_only'`
+-   `'date_query_dynamic_range'`
+-   `'date_query_relationship'`
+-   `'pagination'`
 
 ## Extending AQL
 

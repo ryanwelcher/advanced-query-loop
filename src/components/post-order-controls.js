@@ -61,8 +61,18 @@ export const sortOptions = [
  * @param {*} param0
  * @return {Element} PostCountControls
  */
-export const PostOrderControls = ( { attributes, setAttributes } ) => {
+export const PostOrderControls = ( {
+	attributes,
+	setAttributes,
+	allowedControls,
+} ) => {
 	const { query: { order, orderBy } = {} } = attributes;
+
+	// If the control is not allowed, return null.
+	if ( ! allowedControls.includes( 'post_order' ) ) {
+		return null;
+	}
+
 	return (
 		<>
 			<SelectControl

@@ -1,9 +1,14 @@
+/* eslint-disable @wordpress/no-unsafe-wp-apis */
 /**
  * WordPress dependencies
  */
 import { addFilter } from '@wordpress/hooks';
 import { InspectorControls } from '@wordpress/block-editor';
-import { PanelBody } from '@wordpress/components';
+import {
+	PanelBody,
+	__experimentalVStack as VStack,
+	BaseControl,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { createBlock } from '@wordpress/blocks';
 
@@ -46,8 +51,14 @@ const isAdvancedQueryLoop = ( props ) => {
 const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 	// If the is the correct variation, add the custom controls.
 	if ( isAdvancedQueryLoop( props ) ) {
-		// If the inherit prop is false or undefined,  add all the controls.
+		const { allowedControls } = window?.aql;
 		const { attributes } = props;
+		const allowedControlsArray = allowedControls.split( ',' );
+		const propsWithControls = {
+			...props,
+			allowedControls: allowedControlsArray,
+		};
+		// If the inherit prop is false or undefined, add all the controls.
 		if ( ! attributes.query.inherit ) {
 			return (
 				<>
@@ -60,18 +71,35 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 							) }
 						>
 							<AQLLegacyControls.Slot
-								fillProps={ { ...props } }
+								fillProps={ { ...propsWithControls } }
 							/>
-							<MultiplePostSelect { ...props } />
-							<TaxonomyQueryControl { ...props } />
-							<PostMetaQueryControls { ...props } />
-							<PostOrderControls { ...props } />
-							<PostExcludeControls { ...props } />
-							<PostIncludeControls { ...props } />
-							<ChildItemsToggle { ...props } />
-							<PostDateQueryControls { ...props } />
-							<PaginationToggle { ...props } />
-							<AQLControls.Slot fillProps={ { ...props } } />
+
+							<MultiplePostSelect { ...propsWithControls } />
+							<BaseControl
+								label={ __(
+									'Query Builders',
+									'advanced-query-loop'
+								) }
+								id="query-builders"
+							>
+								<VStack alignment="center">
+									<TaxonomyQueryControl
+										{ ...propsWithControls }
+									/>
+									<PostMetaQueryControls
+										{ ...propsWithControls }
+									/>
+								</VStack>
+							</BaseControl>
+							<PostOrderControls { ...propsWithControls } />
+							<PostExcludeControls { ...propsWithControls } />
+							<PostIncludeControls { ...propsWithControls } />
+							<ChildItemsToggle { ...propsWithControls } />
+							<PostDateQueryControls { ...propsWithControls } />
+							<PaginationToggle { ...propsWithControls } />
+							<AQLControls.Slot
+								fillProps={ { ...propsWithControls } }
+							/>
 						</PanelBody>
 					</InspectorControls>
 				</>
@@ -88,9 +116,9 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 							'advanced-query-loop'
 						) }
 					>
-						<PostOrderControls { ...props } />
+						<PostOrderControls { ...propsWithControls } />
 						<AQLControlsInheritedQuery.Slot
-							fillProps={ { ...props } }
+							fillProps={ { ...propsWithControls } }
 						/>
 					</PanelBody>
 				</InspectorControls>

@@ -1,6 +1,6 @@
 {
 	"name": "advanced-query-loop",
-	"version": "4.1.2",
+	"version": "4.3.0",
 	"description": "Query loop block variations to create custom queries.",
 	"main": "index.js",
 	"scripts": {
@@ -36,7 +36,6 @@
 		"@wp-playground/cli": "^1.1.3"
 	},
 	"dependencies": {
-		"19": "^0.0.0",
 		"uuid": "^9.0.0"
 	}
 }

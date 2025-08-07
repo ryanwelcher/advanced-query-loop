@@ -4,9 +4,17 @@
 import { ToggleControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
-export const PaginationToggle = ( { attributes, setAttributes } ) => {
+export const PaginationToggle = ( {
+	attributes,
+	setAttributes,
+	allowedControls,
+} ) => {
 	const { query: { disable_pagination: disablePagination } = {} } =
 		attributes;
+	// If the control is not allowed, return null.
+	if ( ! allowedControls.includes( 'pagination' ) ) {
+		return null;
+	}
 
 	return (
 		<ToggleControl

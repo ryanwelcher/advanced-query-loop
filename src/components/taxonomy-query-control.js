@@ -26,7 +26,11 @@ import { store as coreStore } from '@wordpress/core-data';
  */
 import SingleTaxonomyControl from './single-taxonomy-control';
 
-export const TaxonomyQueryControl = ( { attributes, setAttributes } ) => {
+export const TaxonomyQueryControl = ( {
+	attributes,
+	setAttributes,
+	allowedControls,
+} ) => {
 	const {
 		query: {
 			postType,
@@ -37,13 +41,18 @@ export const TaxonomyQueryControl = ( { attributes, setAttributes } ) => {
 
 	const availableTaxonomies = useSelect( ( select ) =>
 		select( coreStore )
-			.getTaxonomies()
+			.getTaxonomies( { per_page: 50 } )
 			?.filter( ( { types } ) =>
 				types.some( ( type ) =>
 					[ postType, ...multiplePosts ].includes( type )
 				)
 			)
 	);
+
+	// If the control is not allowed, return null.
+	if ( ! allowedControls.includes( 'taxonomy_query_builder' ) ) {
+		return null;
+	}
 
 	return (
 		<>
@@ -54,7 +63,7 @@ export const TaxonomyQueryControl = ( { attributes, setAttributes } ) => {
 				} }
 				renderToggle={ ( { isOpen, onToggle } ) => (
 					<Button
-						variant="primary"
+						variant={ isOpen ? 'primary' : 'secondary' }
 						onClick={ onToggle }
 						aria-haspopup="true"
 						aria-expanded={ isOpen }
@@ -62,11 +71,11 @@ export const TaxonomyQueryControl = ( { attributes, setAttributes } ) => {
 					>
 						{ isOpen
 							? __(
-									'Close Taxonomy Query Builder',
+									'Close Taxonomy query builder',
 									'advanced-query-loop'
 							  )
 							: __(
-									'Open Taxonomy Query Builder',
+									'Open Taxonomy query builder',
 									'advanced-query-loop'
 							  ) }
 					</Button>
