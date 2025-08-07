@@ -29,6 +29,7 @@ export class Playground {
 			],
 			blueprint,
 			port: 8889,
+			quiet: true,
 		} );
 		this.handler = this.cliServer.requestHandler;
 		this.php = await this.handler.getPrimaryPhp();

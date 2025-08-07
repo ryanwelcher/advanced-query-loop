@@ -27,15 +27,3 @@ export const insertAQL = async ( { editor, page } ) => {
 
 	await page.getByRole( 'radio', { name: 'Custom' } ).click();
 };
-
-/**
- *
- * @param page
- * @param name
- * @returns
- */
-export const selectFormTokenField = ( page: Page, name: string ): Locator => {
-	return page.getByRole( 'combobox', {
-		name,
-	} );
-};
