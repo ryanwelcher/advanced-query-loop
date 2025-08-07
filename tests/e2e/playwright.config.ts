@@ -15,11 +15,11 @@ export default defineConfig( {
 	workers: 1,
 	/* Reporter to use. See https://playwright.dev/docs/test-reporters */
 	reporter: 'line',
-	timeout: 60_000,
 	use: {
 		/* Collect trace when retrying the failed test. */
 		trace: 'on-first-retry',
 		baseURL: 'http://127.0.0.1:8889/',
+		screenshot: 'only-on-failure',
 	},
 
 	/* Configure projects for major browsers */
