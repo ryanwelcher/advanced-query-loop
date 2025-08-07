@@ -114,6 +114,6 @@ function register_stream_post_type() {
 		);
 
 		register_taxonomy( 'genre', array( 'twitch-stream' ), $args );
-
 }
+
 add_action( 'init', 'register_stream_post_type' );

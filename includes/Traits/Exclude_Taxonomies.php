@@ -15,16 +15,15 @@ trait Exclude_Taxonomies {
 	 */
 	public function process_exclude_taxonomies(): void {
 		$taxonomies_to_exclude = $this->custom_params['exclude_taxonomies'];
-		if( count( $taxonomies_to_exclude ) ) {
+		if ( count( $taxonomies_to_exclude ) ) {
 			$tax_query = [];
 			foreach ( $taxonomies_to_exclude as $slug ) {
-				$tax_query[]  = [
+				$tax_query[] = [
 					'taxonomy' => $slug,
-					'operator' => 'NOT EXISTS'
+					'operator' => 'NOT EXISTS',
 				];
 			}
 			$this->custom_args['tax_query'] = $tax_query;
 		}
 	}
 }
-
