@@ -19,7 +19,6 @@ export default defineConfig( {
 		/* Collect trace when retrying the failed test. */
 		trace: 'on-first-retry',
 		baseURL: 'http://127.0.0.1:8889/',
-		screenshot: 'only-on-failure',
 	},
 
 	/* Configure projects for major browsers */
