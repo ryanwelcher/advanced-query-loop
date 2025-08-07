@@ -1,4 +1,5 @@
-import { Locator, Page } from '@playwright/test';
+import { Page } from '@playwright/test';
+import { Editor } from '@wordpress/e2e-test-utils-playwright';
 
 /**
  * Inserts AQL and selects the Title & Date variation.
@@ -7,7 +8,13 @@ import { Locator, Page } from '@playwright/test';
  * @param param0.page
  * @param param0.editor
  */
-export const insertAQL = async ( { editor, page } ) => {
+export const insertAQL = async ( {
+	editor,
+	page,
+}: {
+	editor: Editor;
+	page: Page;
+} ) => {
 	await editor.insertBlock( {
 		name: 'core/query',
 		attributes: {

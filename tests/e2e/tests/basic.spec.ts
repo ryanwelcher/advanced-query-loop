@@ -29,7 +29,6 @@ test.describe( 'Basic Tests', () => {
 			fullscreenMode: false,
 		} );
 
-		await page.waitForTimeout( 2000 );
 		await insertAQL( { editor, page } );
 		const blocks = await editor.getBlocks();
 

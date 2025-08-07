@@ -29,18 +29,10 @@ test.describe( 'Additional Post Types', () => {
 		editor,
 		selectors,
 	} ) => {
-		// await page.getByRole( 'radio', { name: 'Custom' } ).click();
-
 		const multiplePostTypes = selectors.selectFormTokenField(
 			'Additional Post Types'
 		);
 		expect( multiplePostTypes ).toBeVisible();
 		expect( multiplePostTypes ).toBeEmpty();
-		// const list = await multiplePostTypes.getAttribute( 'aria-describedby' );
-
-		// expect( await page.getByText( 'page' ) ).not.toBeVisible();
-		// expect( await page.getByText( 'attachment' ) ).not.toBeVisible();
-		// await page.getByRole( 'option', { name: 'attachment' } ).click();
-		// await expect( multiplePostTypes ).toBeEmpty();
 	} );
 } );

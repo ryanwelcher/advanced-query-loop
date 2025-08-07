@@ -5,6 +5,8 @@ import { runCLI } from '@wp-playground/cli';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { login } from '@wp-playground/blueprints';
 import { readFileSync } from 'fs';
+import { Page } from '@playwright/test';
+import { Editor } from '@wordpress/e2e-test-utils-playwright';
 
 export class Playground {
 	private cliServer;
@@ -12,11 +14,11 @@ export class Playground {
 	private handler: PHPRequestHandler;
 	private blueprint: string;
 
-	constructor( blueprint ) {
+	constructor( blueprint: string ) {
 		this.blueprint = blueprint;
 	}
 
-	async init( { page, editor } ) {
+	async init( { page, editor }: { editor: Editor; page: Page } ) {
 		const blueprint = JSON.parse( readFileSync( this.blueprint, 'utf8' ) );
 		this.cliServer = await runCLI( {
 			command: 'server',
