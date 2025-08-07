@@ -22,18 +22,14 @@ test.describe( 'Basic Tests', () => {
 		admin,
 		page,
 	} ) => {
-		await admin.visitAdminPage( 'plugins.php' );
-		await page.screenshot( {
-			path: 'fullpage_screenshot.png',
-			fullPage: true,
-		} );
-
 		await admin.visitAdminPage( 'post-new.php' );
 
 		await editor.setPreferences( 'core/edit-post', {
 			welcomeGuide: false,
 			fullscreenMode: false,
 		} );
+
+		await page.waitForTimeout( 2000 );
 		await insertAQL( { editor, page } );
 		const blocks = await editor.getBlocks();
 
