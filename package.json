@@ -29,7 +29,7 @@
 	"author": "",
 	"license": "GPLv2 or later",
 	"devDependencies": {
-		"@playwright/test": "^1.53.0",
+		"@playwright/test": "^1.54.2",
 		"@wordpress/e2e-test-utils-playwright": "^1.25.0",
 		"@wordpress/env": "^9.4.0",
 		"@wordpress/scripts": "^24.6.0",
