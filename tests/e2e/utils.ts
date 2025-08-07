@@ -7,7 +7,7 @@ import { Locator, Page } from '@playwright/test';
  * @param param0.page
  * @param param0.editor
  */
-export const insertAQL = async ( { editor } ) => {
+export const insertAQL = async ( { editor, page } ) => {
 	await editor.insertBlock( {
 		name: 'core/query',
 		attributes: {
@@ -24,6 +24,8 @@ export const insertAQL = async ( { editor } ) => {
 		.getByRole( 'document', { name: 'Block: Advanced Query Loop' } )
 		.getByRole( 'button', { name: 'Title & Date' } )
 		.click();
+
+	await page.getByRole( 'radio', { name: 'Custom' } ).click();
 };
 
 /**

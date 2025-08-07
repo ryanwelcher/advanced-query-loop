@@ -20,6 +20,7 @@ test.describe( 'Basic Tests', () => {
 	test( 'AQL was inserted and variation was selected', async ( {
 		editor,
 		admin,
+		page,
 	} ) => {
 		await admin.visitAdminPage( 'post-new.php' );
 
@@ -27,7 +28,7 @@ test.describe( 'Basic Tests', () => {
 			welcomeGuide: false,
 			fullscreenMode: false,
 		} );
-		await insertAQL( { editor } );
+		await insertAQL( { editor, page } );
 		const blocks = await editor.getBlocks();
 
 		expect( blocks[ 0 ].attributes.namespace ).toEqual(

@@ -17,7 +17,7 @@ test.describe( 'Disable pagination toggle', () => {
 			welcomeGuide: false,
 			fullscreenMode: false,
 		} );
-		await insertAQL( { editor } );
+		await insertAQL( { editor, page } );
 	} );
 
 	test.afterEach( async ( { playground } ) => {
