@@ -34,5 +34,7 @@ jobs:
 
             - name: Lint JavaScript files
               run: npm run lint:js
+              env:
+                  CI: true
 
         name: Javascript
