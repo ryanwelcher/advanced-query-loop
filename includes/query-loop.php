@@ -98,7 +98,12 @@ if ( ! function_exists( 'add_filter' ) ) {
 \add_action(
 	'init',
 	function () {
-		$registered_post_types = \get_post_types( array( 'show_in_rest' => true, 'public' => true ) );
+		$registered_post_types = \get_post_types(
+			array(
+				'show_in_rest' => true,
+				'public'       => true,
+			)
+		);
 		foreach ( $registered_post_types as $registered_post_type ) {
 			\add_filter( 'rest_' . $registered_post_type . '_query', __NAMESPACE__ . '\add_custom_query_params', 10, 2 );
 
@@ -116,7 +121,6 @@ if ( ! function_exists( 'add_filter' ) ) {
  * @see https://developer.wordpress.org/reference/classes/wp_rest_posts_controller/get_collection_params/
  *
  * @param array $query_params The query params.
- * @param array $post_type    The post type.
  *
  * @return array
  */

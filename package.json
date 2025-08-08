@@ -9,6 +9,8 @@
 		"start:hot": "wp-scripts start --hot",
 		"build": "wp-scripts build",
 		"plugin-zip": "wp-scripts plugin-zip",
+		"lint:js": "wp-scripts lint-js",
+		"lint:php": "composer run lint",
 		"format": "wp-scripts format",
 		"wp-env": "wp-env",
 		"release": "composer run build && npm run build && npm run plugin-zip",

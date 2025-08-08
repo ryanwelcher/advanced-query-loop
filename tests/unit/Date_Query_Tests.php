@@ -203,6 +203,5 @@ class Date_Query_Tests extends TestCase {
 
 		// Empty arrays return empty.
 		$this->assertSame( $expected_results, $qpg->get_query_args() );
-
 	}
 }

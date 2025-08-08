@@ -26,13 +26,6 @@ export const PostExcludeControls = ( {
 	setAttributes,
 	allowedControls,
 } ) => {
-	const {
-		query: {
-			exclude_current: excludeCurrent,
-			exclude_posts: excludePosts = [],
-		} = {},
-	} = attributes;
-
 	// If the control is not allowed, return null.
 	if (
 		! allowedControls.includes( 'exclude_current_post' ) &&
@@ -154,7 +147,7 @@ const ExcludeCurrentPostControl = ( {
  * @param {Function} props.setAttributes   Function to update the block attributes.
  * @param {Array}    props.allowedControls List of controls allowed for the current context.
  *
- * @returns {Element|null} Returns the control for selecting excluded posts,
+ * @return {Element|null} Returns the control for selecting excluded posts,
  *                             or null if the 'exclude_posts' control is not allowed.
  */
 const ExcludePostsControl = ( {
@@ -177,9 +170,9 @@ const ExcludePostsControl = ( {
 
 			// Fetch posts for each post type and combine them into one array
 			return [ ...multiplePosts, postType ].reduce(
-				( accumulator, postType ) => {
+				( accumulator, type ) => {
 					// Depending on the number of posts this could take a while, since we can't paginate here
-					const records = getEntityRecords( 'postType', postType, {
+					const records = getEntityRecords( 'postType', type, {
 						per_page: -1,
 					} );
 					return [ ...accumulator, ...( records || [] ) ];
