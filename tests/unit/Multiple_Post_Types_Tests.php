@@ -53,7 +53,7 @@ class Multiple_Post_Types_Tests extends TestCase {
 		$qpg->process_all();
 
 		// Empty arrays return empty.
-		$this->assertEmpty( $qpg->get_query_args() );
+		$this->assertEquals( [ 'is_aql' => true ], $qpg->get_query_args() );
 	}
 
 
@@ -79,7 +79,10 @@ class Multiple_Post_Types_Tests extends TestCase {
 					),
 				),
 				// Expected results
-				array( 'post_type' => array( 'posts', 'pages' ) ),
+				array(
+					'post_type' => array( 'posts', 'pages' ),
+					'is_aql'    => true,
+				),
 			),
 			// Test for duplicates. The UI shouldn't allow this but worth doing anyways.
 			array(
@@ -95,7 +98,10 @@ class Multiple_Post_Types_Tests extends TestCase {
 					),
 				),
 				// Expected results
-				array( 'post_type' => array( 'posts' ) ),
+				array(
+					'post_type' => array( 'posts' ),
+					'is_aql'    => true,
+				),
 			),
 		);
 	}

@@ -53,6 +53,6 @@ class Query_Params_Generator_Tests extends TestCase {
 		$qpg->process_all();
 
 		// Empty arrays return empty.
-		$this->assertEmpty( $qpg->get_query_args() );
+		$this->assertEquals( [ 'is_aql' => true ], $qpg->get_query_args() );
 	}
 }
