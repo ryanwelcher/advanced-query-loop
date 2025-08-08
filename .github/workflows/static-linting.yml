@@ -39,4 +39,4 @@ jobs:
               env:
                   CI: true
 
-        name: Javascript, CSS, and package.json
+        name: Javascript
