@@ -91,7 +91,13 @@ class Exclude_Current_Tests extends TestCase {
 		$qpg = new Query_Params_Generator( $default_data, $custom_data );
 		$qpg->process_all();
 
-		$this->assertEquals( array( 'post__not_in' => array( 1 ), 'is_aql' => true ), $qpg->get_query_args() );
+		$this->assertEquals(
+			array(
+				'post__not_in' => array( 1 ),
+				'is_aql'       => true,
+			),
+			$qpg->get_query_args()
+		);
 	}
 
 
@@ -109,6 +115,12 @@ class Exclude_Current_Tests extends TestCase {
 		$qpg = new Query_Params_Generator( $default_data, $custom_data );
 		$qpg->process_all();
 
-		$this->assertEquals( array( 'post__not_in' => array( 1337 ), 'is_aql' => true  ), $qpg->get_query_args() );
+		$this->assertEquals(
+			array(
+				'post__not_in' => array( 1337 ),
+				'is_aql'       => true,
+			),
+			$qpg->get_query_args()
+		);
 	}
 }
