@@ -59,7 +59,7 @@ class Query_Params_Generator {
 	 *
 	 * @var array
 	 */
-	private array $custom_args = array();
+	private array $custom_args = array( 'is_aql' => true );
 
 	/**
 	 * Construct method
