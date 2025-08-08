@@ -33,4 +33,3 @@ function is_core_version_or_higher( string $version ) {
 	$core = get_bloginfo( 'version' );
 	return version_compare( $core, $version, '>=' );
 }
-

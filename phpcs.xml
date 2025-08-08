@@ -5,6 +5,7 @@
 	<exclude-pattern>*/phpunit.xml*</exclude-pattern>
 	<exclude-pattern>*/dist/*</exclude-pattern>
 	<exclude-pattern>*/languages/*</exclude-pattern>
+	<exclude-pattern>*/build/*</exclude-pattern>
 
 	<!-- Third-party code -->
 	<exclude-pattern>*/bower-components/*</exclude-pattern>
@@ -40,7 +41,6 @@
 		<!-- Dont need to capitalize first letter -->
 		<exclude name="Generic.Commenting.DocComment.ShortNotCapital"/>
 	</rule>
-
 	<rule ref="WordPress-Extra">
 		<!-- Forget about file names -->
 		<exclude name="WordPress.Files.FileName"/>
@@ -64,6 +64,7 @@
 
 		<!-- Allow shorthand array syntax -->
 		<exclude name="Generic.Arrays.DisallowShortArraySyntax.Found"/>
+		<exclude name="Universal.Arrays.DisallowShortArraySyntax.Found" />
 
 		<!-- Allow WP global modification -->
 		<exclude name="WordPress.WP.GlobalVariablesOverride.Prohibited"/>

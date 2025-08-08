@@ -24,7 +24,6 @@ import { useEffect, useState } from '@wordpress/element';
  * Internal dependencies
  */
 import { PostMetaControl } from './post-meta-control';
-import useRegisteredMeta from '../hooks/useRegisteredMeta';
 
 /**
  * Converts the meta keys from the all sources into a single array.
