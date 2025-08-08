@@ -179,7 +179,6 @@ add_filter(
 				$query->max_num_pages = $cached_query->max_num_pages;
 				return $cached_query->posts;
 			}
-			return $null_return;
 		}
 		return $null_return;
 	},
