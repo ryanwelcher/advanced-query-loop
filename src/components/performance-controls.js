@@ -2,7 +2,9 @@
  * WordPress dependencies
  */
 import {
+	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
 	__experimentalToolsPanel as ToolsPanel,
+	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
 	__experimentalToolsPanelItem as ToolsPanelItem,
 	ToggleControl,
 } from '@wordpress/components';
