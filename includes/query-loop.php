@@ -169,10 +169,15 @@ function add_custom_query_params( $args, $request ) {
 /**
  * Retrieve any cached AQL instances and bypass making a query.
  */
+
 add_filter(
 	'posts_pre_query',
 	function ( $null_return, $query ) {
-		if ( isset( $query->query['is_aql'] ) ) {
+
+		if ( ! $query->is_admin &&
+			isset( $query->query['is_aql'] ) &&
+			! isset( $_GET['context'] ) // phpcs:ignore
+		) {
 			$cached_query = get_transient( $query->query_vars_hash );
 			if ( $cached_query ) {
 				$query->found_posts   = $cached_query->found_posts;
@@ -180,6 +185,7 @@ add_filter(
 				return $cached_query->posts;
 			}
 		}
+
 		return $null_return;
 	},
 	10,
@@ -192,7 +198,10 @@ add_filter(
 add_filter(
 	'the_posts',
 	function ( $posts, $query ) {
-		if ( isset( $query->query['is_aql'] ) ) {
+		if ( ! $query->is_admin &&
+			isset( $query->query['is_aql'] ) &&
+			! isset( $_GET['context'] ) // phpcs:ignore
+		) {
 			if ( ! get_transient( $query->query_vars_hash ) ) {
 				set_transient( $query->query_vars_hash, $query, HOUR_IN_SECONDS );
 			}
@@ -202,3 +211,5 @@ add_filter(
 	10,
 	2
 );
+
+
