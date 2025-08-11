@@ -176,7 +176,8 @@ add_filter(
 
 		if ( ! $query->is_admin &&
 			isset( $query->query['is_aql'] ) &&
-			! isset( $_GET['context'] ) // phpcs:ignore
+			! isset( $_GET['context'] ) && // phpcs:ignore
+			! isset( $_GET['canvas'] ) // phpcs:ignore
 		) {
 			$cached_query = get_transient( $query->query_vars_hash );
 			if ( $cached_query ) {
@@ -200,7 +201,8 @@ add_filter(
 	function ( $posts, $query ) {
 		if ( ! $query->is_admin &&
 			isset( $query->query['is_aql'] ) &&
-			! isset( $_GET['context'] ) // phpcs:ignore
+			! isset( $_GET['context'] ) && // phpcs:ignore
+			! isset( $_GET['canvas'] ) // phpcs:ignore
 		) {
 			if ( ! get_transient( $query->query_vars_hash ) ) {
 				set_transient( $query->query_vars_hash, $query, HOUR_IN_SECONDS );
