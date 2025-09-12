@@ -29,10 +29,11 @@ test.describe( 'Additional Post Types', () => {
 		editor,
 		selectors,
 	} ) => {
-		const multiplePostTypes = selectors.selectFormTokenField(
+		const additionalPostTypes = selectors.selectFormTokenField(
 			'Additional Post Types'
 		);
-		expect( multiplePostTypes ).toBeVisible();
-		expect( multiplePostTypes ).toBeEmpty();
+
+		await expect( additionalPostTypes ).toBeVisible();
+		await expect( additionalPostTypes ).toBeEmpty();
 	} );
 } );
