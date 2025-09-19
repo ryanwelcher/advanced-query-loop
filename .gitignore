@@ -1,6 +1,5 @@
 build
 node_modules
-package-lock.json
 .DS_Store
 *.zip
 DNU
@@ -10,3 +9,4 @@ composer.lock
 .phpunit.*
 artifacts
 .vscode
+test-results

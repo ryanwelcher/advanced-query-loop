@@ -1,6 +1,8 @@
 # Advanced Query Loop
 
 ![](https://github.com/ryanwelcher/advanced-query-loop/actions/workflows/phpunit.yml/badge.svg?branch=trunk)
+![](https://github.com/ryanwelcher/advanced-query-loop/actions/workflows/static-linting.yml/badge.svg?branch=trunk)
+![](https://github.com/ryanwelcher/advanced-query-loop/actions/workflows/e2e.yml/badge.svg?branch=trunk)
 
 ## Description
 

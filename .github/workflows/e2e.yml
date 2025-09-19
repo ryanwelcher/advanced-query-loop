@@ -1,0 +1,39 @@
+name: E2E Tests
+
+on:
+    push:
+        branches: ['trunk']
+    pull_request:
+        branches: ['trunk']
+
+jobs:
+    e2e:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: '20'
+                  cache: 'npm'
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Build Plugin
+              run: composer run build && npm run build
+
+            - name: Setup Playwright
+              run: npx playwright install --with-deps
+
+            - name: Run End-to-End tests
+              run: npm run test:e2e
+
+            - name: Upload test results
+              if: always() # Uploads artifacts even if tests fail
+              uses: actions/upload-artifact@v4
+              with:
+                  name: playwright-results
+                  path: test-results/
