@@ -5,7 +5,10 @@ const usePostTypeMetaFields = ( postTypes ) => {
 	return useSelect(
 		( select ) => {
 			let meta = {};
-			postTypes.forEach( ( type ) => {
+			if ( ! Array.isArray( postTypes ) || postTypes.length === 0 ) {
+				return meta;
+			}
+			postTypes.filter( Boolean ).forEach( ( type ) => {
 				const postInstance = select( coreDataStore ).getEntityRecords(
 					'postType',
 					type,
