@@ -10,7 +10,6 @@ const usePostTypeMetaFields = ( postTypes ) => {
 			{ per_page: 1 }
 		);
 		if ( postInstance && postInstance?.[ 0 ]?.meta !== undefined ) {
-			console.log( 'postInstance', postInstance );
 			meta = {
 				...meta,
 				...postInstance?.[ 0 ]?.meta,
