@@ -17,26 +17,13 @@ import {
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useEntityRecords } from '@wordpress/core-data';
 import { useEffect, useState } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
 import { PostMetaControl } from './post-meta-control';
-
-/**
- * Converts the meta keys from the all sources into a single array.
- *
- * @param {Array} records
- * @return {Array} meta keys
- */
-const combineMetaKeys = ( records ) => {
-	return {
-		...records?.[ 0 ]?.meta,
-		...records?.[ 0 ]?.acf,
-	};
-};
+import usePostTypeMetaFields from '../hooks/usePostTypeMetaFields';
 
 // A component to render a select control for the post meta query.
 export const PostMetaQueryControls = ( {
@@ -47,13 +34,16 @@ export const PostMetaQueryControls = ( {
 	const {
 		query: {
 			postType,
+			multiple_posts: multiplePosts = [],
 			meta_query: { relation: relationFromQuery = '', queries = [] } = {},
 		} = {},
 	} = attributes;
 
-	const { records } = useEntityRecords( 'postType', postType, {
-		per_page: 1,
-	} );
+	const registeredMeta = usePostTypeMetaFields( [
+		postType,
+		...multiplePosts,
+	] );
+
 	const [ selectedPostType ] = useState( postType );
 
 	useEffect( () => {
@@ -73,8 +63,6 @@ export const PostMetaQueryControls = ( {
 	if ( ! allowedControls.includes( 'post_meta_query' ) ) {
 		return null;
 	}
-
-	const registeredMeta = combineMetaKeys( records );
 
 	return (
 		<>
