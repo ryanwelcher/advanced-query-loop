@@ -11,3 +11,4 @@ composer.lock
 .phpunit.*
 artifacts
 .vscode
+.mcp.json
