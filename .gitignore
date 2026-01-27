@@ -10,3 +10,4 @@ composer.lock
 artifacts
 .vscode
 test-results
+.mcp.json
