@@ -1,0 +1,16 @@
+{
+	"$schema": "https://playground.wordpress.net/blueprint-schema.json",
+	"constants": {
+		"SCRIPT_DEBUG": true
+	},
+	"steps": [
+		{
+			"step": "activatePlugin",
+			"pluginPath": "/wordpress/wp-content/plugins/advanced-query-loop/index.php"
+		},
+		{
+			"step": "runPHP",
+			"code": "<?php\n/**\n * Generate 150 test posts with predictable titles for testing search functionality.\n * This helps test the search functionality in post include/exclude controls.\n */\nfor ( $i = 1; $i <= 150; $i++ ) {\n\t// Create a mix of different title patterns\n\tif ( $i <= 50 ) {\n\t\t$title = 'Apple Post ' . str_pad( $i, 3, '0', STR_PAD_LEFT );\n\t} elseif ( $i <= 100 ) {\n\t\t$title = 'Banana Article ' . str_pad( $i, 3, '0', STR_PAD_LEFT );\n\t} else {\n\t\t$title = 'Cherry Story ' . str_pad( $i, 3, '0', STR_PAD_LEFT );\n\t}\n\n\twp_insert_post( array(\n\t\t'post_title'   => $title,\n\t\t'post_content' => 'This is test post content for ' . $title . '. It contains some sample text to make the post more realistic.',\n\t\t'post_status'  => 'publish',\n\t\t'post_type'    => 'post',\n\t) );\n}\n\necho '150 test posts created successfully.';\n?>"
+		}
+	]
+}
