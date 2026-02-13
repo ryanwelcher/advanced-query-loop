@@ -20,13 +20,13 @@ class Tax_Query_Tests extends TestCase {
 	 */
 	public function data_no_tax_query_added() {
 		return array(
-			'no tax_query param' => array(
+			'no tax_query param'                 => array(
 				// Custom data.
 				array(),
 				// Expected.
 				array( 'is_aql' => true ),
 			),
-			'empty tax_query array' => array(
+			'empty tax_query array'              => array(
 				// Custom data.
 				array(
 					'tax_query' => array(),
@@ -34,7 +34,7 @@ class Tax_Query_Tests extends TestCase {
 				// Expected.
 				array( 'is_aql' => true ),
 			),
-			'tax_query without queries' => array(
+			'tax_query without queries'          => array(
 				// Custom data.
 				array(
 					'tax_query' => array(
@@ -85,7 +85,7 @@ class Tax_Query_Tests extends TestCase {
 	 */
 	public function data_single_tax_query() {
 		return array(
-			'single taxonomy with one term' => array(
+			'single taxonomy with one term'        => array(
 				// Custom data.
 				array(
 					'tax_query' => array(
@@ -114,7 +114,7 @@ class Tax_Query_Tests extends TestCase {
 					),
 				),
 			),
-			'single taxonomy with multiple terms' => array(
+			'single taxonomy with multiple terms'  => array(
 				// Custom data.
 				array(
 					'tax_query' => array(
@@ -197,7 +197,7 @@ class Tax_Query_Tests extends TestCase {
 	 */
 	public function data_multiple_tax_queries() {
 		return array(
-			'two taxonomies with AND relation' => array(
+			'two taxonomies with AND relation'       => array(
 				// Custom data.
 				array(
 					'tax_query' => array(
@@ -242,7 +242,7 @@ class Tax_Query_Tests extends TestCase {
 					),
 				),
 			),
-			'three taxonomies with OR relation' => array(
+			'three taxonomies with OR relation'      => array(
 				// Custom data.
 				array(
 					'tax_query' => array(
@@ -356,7 +356,7 @@ class Tax_Query_Tests extends TestCase {
 	 */
 	public function data_edge_cases() {
 		return array(
-			'query with id field gets filtered out' => array(
+			'query with id field gets filtered out'       => array(
 				// Custom data.
 				array(
 					'tax_query' => array(
@@ -407,7 +407,10 @@ class Tax_Query_Tests extends TestCase {
 					'tax_query' => array(
 						array(
 							'taxonomy'         => 'category',
-							'terms'            => array( 0 => 1, 2 => 2 ), // Keys preserved from original array
+							'terms'            => array(
+								0 => 1,
+								2 => 2,
+							), // Keys preserved from original array
 							'field'            => 'term_id',
 							'operator'         => 'IN',
 							'include_children' => false,
@@ -444,7 +447,7 @@ class Tax_Query_Tests extends TestCase {
 					),
 				),
 			),
-			'include_children handles string values' => array(
+			'include_children handles string values'      => array(
 				// Custom data.
 				array(
 					'tax_query' => array(
@@ -473,7 +476,7 @@ class Tax_Query_Tests extends TestCase {
 					),
 				),
 			),
-			'query without taxonomy is skipped' => array(
+			'query without taxonomy is skipped'           => array(
 				// Custom data.
 				array(
 					'tax_query' => array(
@@ -493,7 +496,7 @@ class Tax_Query_Tests extends TestCase {
 					'tax_query' => array(),
 				),
 			),
-			'query without terms is skipped' => array(
+			'query without terms is skipped'              => array(
 				// Custom data.
 				array(
 					'tax_query' => array(

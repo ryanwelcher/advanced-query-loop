@@ -26,7 +26,7 @@ class Post_Parent_Tests extends TestCase {
 				// Expected.
 				array( 'is_aql' => true ),
 			),
-			'empty post_parent' => array(
+			'empty post_parent'    => array(
 				// Custom data.
 				array(
 					'post_parent' => '',
@@ -34,7 +34,7 @@ class Post_Parent_Tests extends TestCase {
 				// Expected - empty string is not processed.
 				array( 'is_aql' => true ),
 			),
-			'null post_parent' => array(
+			'null post_parent'     => array(
 				// Custom data.
 				array(
 					'post_parent' => null,
@@ -67,7 +67,7 @@ class Post_Parent_Tests extends TestCase {
 	 */
 	public function data_valid_post_parent_ids() {
 		return array(
-			'integer post_parent' => array(
+			'integer post_parent'        => array(
 				// Custom data.
 				array(
 					'post_parent' => 123,
@@ -89,7 +89,7 @@ class Post_Parent_Tests extends TestCase {
 					'post_parent' => '456',
 				),
 			),
-			'zero post_parent' => array(
+			'zero post_parent'           => array(
 				// Custom data.
 				array(
 					'post_parent' => 0,
@@ -99,7 +99,7 @@ class Post_Parent_Tests extends TestCase {
 					'is_aql' => true,
 				),
 			),
-			'negative post_parent' => array(
+			'negative post_parent'       => array(
 				// Custom data.
 				array(
 					'post_parent' => -1,
@@ -181,7 +181,7 @@ class Post_Parent_Tests extends TestCase {
 	 */
 	public function data_template_slug_patterns() {
 		return array(
-			'theme//template pattern' => array(
+			'theme//template pattern'        => array(
 				'twentytwentyfour//single',
 			),
 			'theme//nested/template pattern' => array(
@@ -225,7 +225,7 @@ class Post_Parent_Tests extends TestCase {
 	 */
 	public function test_post_parent_with_other_params() {
 		$custom_data = array(
-			'post_parent'   => 100,
+			'post_parent'     => 100,
 			'exclude_current' => 50,
 		);
 

@@ -20,7 +20,7 @@ class Meta_Query_Tests extends TestCase {
 	 */
 	public function data_no_meta_query_added() {
 		return array(
-			'no meta_query param' => array(
+			'no meta_query param'    => array(
 				// Default values.
 				array(),
 				// Custom data.
@@ -66,7 +66,7 @@ class Meta_Query_Tests extends TestCase {
 	 */
 	public function data_single_meta_query() {
 		return array(
-			'single query with all fields' => array(
+			'single query with all fields'              => array(
 				// Custom data.
 				array(
 					'meta_query' => array(
@@ -93,7 +93,7 @@ class Meta_Query_Tests extends TestCase {
 					),
 				),
 			),
-			'single query without compare and type' => array(
+			'single query without compare and type'     => array(
 				// Custom data.
 				array(
 					'meta_query' => array(
@@ -164,7 +164,7 @@ class Meta_Query_Tests extends TestCase {
 	 */
 	public function data_multiple_meta_queries() {
 		return array(
-			'two queries with AND relation' => array(
+			'two queries with AND relation'               => array(
 				// Custom data.
 				array(
 					'meta_query' => array(
@@ -205,7 +205,7 @@ class Meta_Query_Tests extends TestCase {
 					),
 				),
 			),
-			'two queries with OR relation' => array(
+			'two queries with OR relation'                => array(
 				// Custom data.
 				array(
 					'meta_query' => array(
@@ -328,7 +328,7 @@ class Meta_Query_Tests extends TestCase {
 					'meta_query' => array(),
 				),
 			),
-			'relation without queries' => array(
+			'relation without queries'                     => array(
 				// Custom data.
 				array(
 					'meta_query' => array(
@@ -343,7 +343,7 @@ class Meta_Query_Tests extends TestCase {
 					),
 				),
 			),
-			'numeric meta values' => array(
+			'numeric meta values'                          => array(
 				// Custom data.
 				array(
 					'meta_query' => array(
@@ -370,7 +370,7 @@ class Meta_Query_Tests extends TestCase {
 					),
 				),
 			),
-			'LIKE comparison' => array(
+			'LIKE comparison'                              => array(
 				// Custom data.
 				array(
 					'meta_query' => array(

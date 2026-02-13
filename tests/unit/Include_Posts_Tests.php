@@ -20,7 +20,7 @@ class Include_Posts_Tests extends TestCase {
 	 */
 	public function data_no_posts_included() {
 		return array(
-			'no include_posts param' => array(
+			'no include_posts param'    => array(
 				// Custom data.
 				array(),
 				// Expected.
@@ -36,7 +36,7 @@ class Include_Posts_Tests extends TestCase {
 					'is_aql' => true,
 				),
 			),
-			'null include_posts' => array(
+			'null include_posts'        => array(
 				// Custom data.
 				array(
 					'include_posts' => null,
@@ -44,7 +44,7 @@ class Include_Posts_Tests extends TestCase {
 				// Expected - null is not an array, returns empty.
 				array( 'is_aql' => true ),
 			),
-			'string include_posts' => array(
+			'string include_posts'      => array(
 				// Custom data.
 				array(
 					'include_posts' => 'not-an-array',
@@ -80,7 +80,7 @@ class Include_Posts_Tests extends TestCase {
 	 */
 	public function data_single_post() {
 		return array(
-			'single post with id key' => array(
+			'single post with id key'            => array(
 				// Custom data.
 				array(
 					'include_posts' => array(
@@ -148,7 +148,7 @@ class Include_Posts_Tests extends TestCase {
 	 */
 	public function data_multiple_posts() {
 		return array(
-			'two posts' => array(
+			'two posts'                  => array(
 				// Custom data.
 				array(
 					'include_posts' => array(
@@ -166,11 +166,26 @@ class Include_Posts_Tests extends TestCase {
 				// Custom data.
 				array(
 					'include_posts' => array(
-						array( 'id' => 100, 'title' => 'Post 1' ),
-						array( 'id' => 200, 'title' => 'Post 2' ),
-						array( 'id' => 300, 'title' => 'Post 3' ),
-						array( 'id' => 400, 'title' => 'Post 4' ),
-						array( 'id' => 500, 'title' => 'Post 5' ),
+						array(
+							'id'    => 100,
+							'title' => 'Post 1',
+						),
+						array(
+							'id'    => 200,
+							'title' => 'Post 2',
+						),
+						array(
+							'id'    => 300,
+							'title' => 'Post 3',
+						),
+						array(
+							'id'    => 400,
+							'title' => 'Post 4',
+						),
+						array(
+							'id'    => 500,
+							'title' => 'Post 5',
+						),
 					),
 				),
 				// Expected results.
@@ -179,7 +194,7 @@ class Include_Posts_Tests extends TestCase {
 					'post__in' => array( 100, 200, 300, 400, 500 ),
 				),
 			),
-			'posts with duplicate ids' => array(
+			'posts with duplicate ids'   => array(
 				// Custom data.
 				array(
 					'include_posts' => array(
@@ -233,7 +248,7 @@ class Include_Posts_Tests extends TestCase {
 					'post__in' => array(),
 				),
 			),
-			'mixed posts with and without id' => array(
+			'mixed posts with and without id'    => array(
 				// Custom data.
 				array(
 					'include_posts' => array(
@@ -248,7 +263,7 @@ class Include_Posts_Tests extends TestCase {
 					'post__in' => array( 111, 222 ),
 				),
 			),
-			'post with id value of zero' => array(
+			'post with id value of zero'         => array(
 				// Custom data.
 				array(
 					'include_posts' => array(
@@ -261,7 +276,7 @@ class Include_Posts_Tests extends TestCase {
 					'post__in' => array( 0 ),
 				),
 			),
-			'post with negative id' => array(
+			'post with negative id'              => array(
 				// Custom data.
 				array(
 					'include_posts' => array(
@@ -274,7 +289,7 @@ class Include_Posts_Tests extends TestCase {
 					'post__in' => array( -1 ),
 				),
 			),
-			'post with empty string id' => array(
+			'post with empty string id'          => array(
 				// Custom data.
 				array(
 					'include_posts' => array(
@@ -287,11 +302,11 @@ class Include_Posts_Tests extends TestCase {
 					'post__in' => array( '' ),
 				),
 			),
-			'large number of posts' => array(
+			'large number of posts'              => array(
 				// Custom data.
 				array(
 					'include_posts' => array_map(
-						function( $i ) {
+						function ( $i ) {
 							return array( 'id' => $i );
 						},
 						range( 1, 100 )
@@ -326,7 +341,7 @@ class Include_Posts_Tests extends TestCase {
 	 */
 	public function test_include_posts_with_other_params() {
 		$custom_data = array(
-			'include_posts' => array(
+			'include_posts'   => array(
 				array( 'id' => 10 ),
 				array( 'id' => 20 ),
 			),

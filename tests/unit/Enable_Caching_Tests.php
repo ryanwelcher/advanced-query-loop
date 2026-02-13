@@ -20,7 +20,7 @@ class Enable_Caching_Tests extends TestCase {
 	 */
 	public function data_no_caching_setting() {
 		return array(
-			'no enable_caching param' => array(
+			'no enable_caching param'     => array(
 				// Custom data.
 				array(),
 				// Expected.
@@ -34,7 +34,7 @@ class Enable_Caching_Tests extends TestCase {
 				// Expected - empty string is falsy, not processed.
 				array( 'is_aql' => true ),
 			),
-			'null enable_caching' => array(
+			'null enable_caching'         => array(
 				// Custom data.
 				array(
 					'enable_caching' => null,
@@ -42,7 +42,7 @@ class Enable_Caching_Tests extends TestCase {
 				// Expected - null is falsy, not processed.
 				array( 'is_aql' => true ),
 			),
-			'false enable_caching' => array(
+			'false enable_caching'        => array(
 				// Custom data.
 				array(
 					'enable_caching' => false,
@@ -50,7 +50,7 @@ class Enable_Caching_Tests extends TestCase {
 				// Expected - false is falsy, not processed.
 				array( 'is_aql' => true ),
 			),
-			'zero enable_caching' => array(
+			'zero enable_caching'         => array(
 				// Custom data.
 				array(
 					'enable_caching' => 0,
@@ -83,7 +83,7 @@ class Enable_Caching_Tests extends TestCase {
 	 */
 	public function data_enable_caching_enabled() {
 		return array(
-			'boolean true' => array(
+			'boolean true'           => array(
 				// Custom data.
 				array(
 					'enable_caching' => true,
@@ -94,7 +94,7 @@ class Enable_Caching_Tests extends TestCase {
 					'enable_caching' => true,
 				),
 			),
-			'integer 1' => array(
+			'integer 1'              => array(
 				// Custom data.
 				array(
 					'enable_caching' => 1,
@@ -105,7 +105,7 @@ class Enable_Caching_Tests extends TestCase {
 					'enable_caching' => 1,
 				),
 			),
-			'string "true"' => array(
+			'string "true"'          => array(
 				// Custom data.
 				array(
 					'enable_caching' => 'true',
@@ -116,7 +116,7 @@ class Enable_Caching_Tests extends TestCase {
 					'enable_caching' => 'true',
 				),
 			),
-			'string "1"' => array(
+			'string "1"'             => array(
 				// Custom data.
 				array(
 					'enable_caching' => '1',

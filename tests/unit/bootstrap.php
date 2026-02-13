@@ -22,12 +22,12 @@ if ( ! function_exists( 'get_term_by' ) ) {
 	function get_term_by( $field, $value, $taxonomy ) {
 		// Mock term data for testing
 		$mock_terms = array(
-			'category' => array(
+			'category'   => array(
 				'News'       => 1,
 				'Technology' => 2,
 				'Sports'     => 3,
 			),
-			'post_tag' => array(
+			'post_tag'   => array(
 				'Featured' => 10,
 				'Popular'  => 11,
 				'Trending' => 12,
@@ -60,8 +60,4 @@ if ( ! function_exists( 'sanitize_title' ) ) {
 	function sanitize_title( $title ) {
 		return strtolower( str_replace( ' ', '-', $title ) );
 	}
-}
-
-if ( ! function_exists( 'filter_var' ) ) {
-	// filter_var is a PHP function, but ensure it's available
 }

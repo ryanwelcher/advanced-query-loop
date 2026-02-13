@@ -62,7 +62,7 @@ class Exclude_Posts_Tests extends TestCase {
 	 */
 	public function data_basic_exclude_posts() {
 		return array(
-			'exclude two posts' => array(
+			'exclude two posts'   => array(
 				// Default values.
 				array(),
 				// Custom data.

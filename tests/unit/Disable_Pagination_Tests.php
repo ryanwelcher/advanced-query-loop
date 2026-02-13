@@ -20,7 +20,7 @@ class Disable_Pagination_Tests extends TestCase {
 	 */
 	public function data_no_pagination_setting() {
 		return array(
-			'no disable_pagination param' => array(
+			'no disable_pagination param'     => array(
 				// Custom data.
 				array(),
 				// Expected.
@@ -34,7 +34,7 @@ class Disable_Pagination_Tests extends TestCase {
 				// Expected - empty string is falsy, not processed.
 				array( 'is_aql' => true ),
 			),
-			'null disable_pagination' => array(
+			'null disable_pagination'         => array(
 				// Custom data.
 				array(
 					'disable_pagination' => null,
@@ -42,7 +42,7 @@ class Disable_Pagination_Tests extends TestCase {
 				// Expected - null is falsy, not processed.
 				array( 'is_aql' => true ),
 			),
-			'false disable_pagination' => array(
+			'false disable_pagination'        => array(
 				// Custom data.
 				array(
 					'disable_pagination' => false,
@@ -75,7 +75,7 @@ class Disable_Pagination_Tests extends TestCase {
 	 */
 	public function data_disable_pagination_enabled() {
 		return array(
-			'boolean true' => array(
+			'boolean true'  => array(
 				// Custom data.
 				array(
 					'disable_pagination' => true,
@@ -86,7 +86,7 @@ class Disable_Pagination_Tests extends TestCase {
 					'no_found_rows' => true,
 				),
 			),
-			'integer 1' => array(
+			'integer 1'     => array(
 				// Custom data.
 				array(
 					'disable_pagination' => 1,
@@ -108,7 +108,7 @@ class Disable_Pagination_Tests extends TestCase {
 					'no_found_rows' => 'true',
 				),
 			),
-			'string "1"' => array(
+			'string "1"'    => array(
 				// Custom data.
 				array(
 					'disable_pagination' => '1',

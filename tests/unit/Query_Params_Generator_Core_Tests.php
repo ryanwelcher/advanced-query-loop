@@ -56,7 +56,7 @@ class Query_Params_Generator_Core_Tests extends TestCase {
 	 */
 	public function data_has_custom_param() {
 		return array(
-			'param exists and is truthy' => array(
+			'param exists and is truthy'       => array(
 				'custom_params' => array( 'test_param' => 'value' ),
 				'param_name'    => 'test_param',
 				'expected'      => true,
@@ -66,37 +66,37 @@ class Query_Params_Generator_Core_Tests extends TestCase {
 				'param_name'    => 'test_param',
 				'expected'      => false,
 			),
-			'param exists but is empty array' => array(
+			'param exists but is empty array'  => array(
 				'custom_params' => array( 'test_param' => array() ),
 				'param_name'    => 'test_param',
 				'expected'      => false,
 			),
-			'param exists but is null' => array(
+			'param exists but is null'         => array(
 				'custom_params' => array( 'test_param' => null ),
 				'param_name'    => 'test_param',
 				'expected'      => false,
 			),
-			'param exists but is false' => array(
+			'param exists but is false'        => array(
 				'custom_params' => array( 'test_param' => false ),
 				'param_name'    => 'test_param',
 				'expected'      => false,
 			),
-			'param exists but is zero' => array(
+			'param exists but is zero'         => array(
 				'custom_params' => array( 'test_param' => 0 ),
 				'param_name'    => 'test_param',
 				'expected'      => false,
 			),
-			'param does not exist' => array(
+			'param does not exist'             => array(
 				'custom_params' => array( 'other_param' => 'value' ),
 				'param_name'    => 'test_param',
 				'expected'      => false,
 			),
-			'param exists with integer value' => array(
+			'param exists with integer value'  => array(
 				'custom_params' => array( 'test_param' => 123 ),
 				'param_name'    => 'test_param',
 				'expected'      => true,
 			),
-			'param exists with array value' => array(
+			'param exists with array value'    => array(
 				'custom_params' => array( 'test_param' => array( 'item' ) ),
 				'param_name'    => 'test_param',
 				'expected'      => true,
@@ -126,17 +126,17 @@ class Query_Params_Generator_Core_Tests extends TestCase {
 	 */
 	public function data_get_custom_param() {
 		return array(
-			'param exists with string value' => array(
+			'param exists with string value'   => array(
 				'custom_params' => array( 'test_param' => 'test_value' ),
 				'param_name'    => 'test_param',
 				'expected'      => 'test_value',
 			),
-			'param exists with integer value' => array(
+			'param exists with integer value'  => array(
 				'custom_params' => array( 'test_param' => 42 ),
 				'param_name'    => 'test_param',
 				'expected'      => 42,
 			),
-			'param exists with array value' => array(
+			'param exists with array value'    => array(
 				'custom_params' => array( 'test_param' => array( 'a', 'b' ) ),
 				'param_name'    => 'test_param',
 				'expected'      => array( 'a', 'b' ),
@@ -146,7 +146,7 @@ class Query_Params_Generator_Core_Tests extends TestCase {
 				'param_name'    => 'test_param',
 				'expected'      => false, // has_custom_param returns false for empty
 			),
-			'param does not exist' => array(
+			'param does not exist'             => array(
 				'custom_params' => array(),
 				'param_name'    => 'test_param',
 				'expected'      => false,
