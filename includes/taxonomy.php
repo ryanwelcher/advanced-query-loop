@@ -7,6 +7,9 @@
 
 namespace AdvancedQueryLoop\Taxonomy;
 
+// Prevent direct access.
+defined( 'ABSPATH' ) || exit;
+
 function convert_names_to_ids( $names, $tax ) {
 	$rtn = [];
 	foreach ( $names as $name ) {

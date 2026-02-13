@@ -7,6 +7,9 @@
 
 namespace AdvancedQueryLoop;
 
+// Prevent direct access.
+defined( 'ABSPATH' ) || exit;
+
 // Bail on unit tests.
 if ( ! function_exists( 'add_filter' ) ) {
 	return;
