@@ -47,7 +47,7 @@ class Multiple_Post_Types_Tests extends TestCase {
 	 *
 	 * @dataProvider data_returns_empty_array
 	 */
-	public function test_meta_query_returns_empty( $default_data, $custom_data ) {
+	public function test_multiple_posts_returns_empty( $default_data, $custom_data ) {
 
 		$qpg = new Query_Params_Generator( $default_data, $custom_data );
 		$qpg->process_all();
