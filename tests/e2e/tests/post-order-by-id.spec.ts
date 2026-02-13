@@ -82,7 +82,9 @@ test.describe( 'Post Order By ID', () => {
 		await insertAQL( { editor, page } );
 
 		// Increase posts per page to show all test posts
-		await page.getByRole( 'spinbutton', { name: 'Items per page' } ).fill( '10' );
+		await page
+			.getByRole( 'spinbutton', { name: 'Items per page' } )
+			.fill( '10' );
 		await page.waitForTimeout( 500 );
 
 		// Select "Post ID" from the order by dropdown
@@ -150,7 +152,9 @@ test.describe( 'Post Order By ID', () => {
 		await insertAQL( { editor, page } );
 
 		// Increase posts per page to show all test posts
-		await page.getByRole( 'spinbutton', { name: 'Items per page' } ).fill( '10' );
+		await page
+			.getByRole( 'spinbutton', { name: 'Items per page' } )
+			.fill( '10' );
 		await page.waitForTimeout( 500 );
 
 		// Select "Post ID" from the order by dropdown
@@ -269,7 +273,9 @@ test.describe( 'Post Order By ID', () => {
 		await insertAQL( { editor, page } );
 
 		// Increase posts per page to show all test posts
-		await page.getByRole( 'spinbutton', { name: 'Items per page' } ).fill( '10' );
+		await page
+			.getByRole( 'spinbutton', { name: 'Items per page' } )
+			.fill( '10' );
 		await page.waitForTimeout( 500 );
 
 		// Start with Date ordering (default)
@@ -319,10 +325,7 @@ test.describe( 'Post Order By ID', () => {
 
 		// Verify that the order changed
 		// (only if we have multiple posts with different dates and IDs)
-		if (
-			uniqueIdsByDate.length > 1 &&
-			uniqueIdsByPostId.length > 1
-		) {
+		if ( uniqueIdsByDate.length > 1 && uniqueIdsByPostId.length > 1 ) {
 			expect( uniqueIdsByPostId ).not.toEqual( uniqueIdsByDate );
 
 			// Verify that Post ID order is actually sorted by ID
