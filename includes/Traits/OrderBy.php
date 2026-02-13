@@ -59,6 +59,7 @@ trait OrderBy {
 	 *
 	 * @return void
 	 */
+	// phpcs:ignore WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid
 	public function process_orderBy(): void {
 		// Retrieve the orderBy parameter from the block's custom parameters.
 		$order_by = $this->custom_params['orderBy'] ?? null;
