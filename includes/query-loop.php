@@ -91,6 +91,15 @@ if ( ! function_exists( 'add_filter' ) ) {
 	2
 );
 
+\add_filter(
+	'aql_query_vars',
+	function( $query_args, $block_query ){
+		return $query_args;
+	},
+	10,
+	2
+);
+
 /**
  * Updates the query vars for the Query Loop block in the block editor
  */

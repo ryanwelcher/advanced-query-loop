@@ -7,6 +7,54 @@
 		{
 			"step": "activatePlugin",
 			"pluginPath": "/wordpress/wp-content/plugins/advanced-query-loop/index.php"
+		},
+		{
+			"step": "runPHP",
+			"code": "<?php\nrequire_once '/wordpress/wp-load.php';\n$posts = get_posts(array('post_type' => 'post', 'posts_per_page' => -1, 'post_status' => 'any'));\nforeach ($posts as $post) {\n\twp_delete_post($post->ID, true);\n}\necho 'Deleted ' . count($posts) . ' existing posts';\n?>"
+		},
+		{
+			"step": "wp-cli",
+			"command": "wp post create --post_title='Test Post - ID: will be updated' --post_content='Test content for verifying Post ID ordering functionality.' --post_status=publish --post_date='2024-06-15 14:30:00' --porcelain"
+		},
+		{
+			"step": "wp-cli",
+			"command": "wp post create --post_title='Test Post - ID: will be updated' --post_content='Test content for verifying Post ID ordering functionality.' --post_status=publish --post_date='2024-02-10 09:15:00' --porcelain"
+		},
+		{
+			"step": "wp-cli",
+			"command": "wp post create --post_title='Test Post - ID: will be updated' --post_content='Test content for verifying Post ID ordering functionality.' --post_status=publish --post_date='2024-09-22 16:45:00' --porcelain"
+		},
+		{
+			"step": "wp-cli",
+			"command": "wp post create --post_title='Test Post - ID: will be updated' --post_content='Test content for verifying Post ID ordering functionality.' --post_status=publish --post_date='2024-01-05 08:00:00' --porcelain"
+		},
+		{
+			"step": "wp-cli",
+			"command": "wp post create --post_title='Test Post - ID: will be updated' --post_content='Test content for verifying Post ID ordering functionality.' --post_status=publish --post_date='2024-11-30 11:20:00' --porcelain"
+		},
+		{
+			"step": "wp-cli",
+			"command": "wp post create --post_title='Test Post - ID: will be updated' --post_content='Test content for verifying Post ID ordering functionality.' --post_status=publish --post_date='2024-03-18 13:00:00' --porcelain"
+		},
+		{
+			"step": "wp-cli",
+			"command": "wp post create --post_title='Test Post - ID: will be updated' --post_content='Test content for verifying Post ID ordering functionality.' --post_status=publish --post_date='2024-07-07 15:30:00' --porcelain"
+		},
+		{
+			"step": "wp-cli",
+			"command": "wp post create --post_title='Test Post - ID: will be updated' --post_content='Test content for verifying Post ID ordering functionality.' --post_status=publish --post_date='2024-04-25 12:15:00' --porcelain"
+		},
+		{
+			"step": "wp-cli",
+			"command": "wp post create --post_title='Test Post - ID: will be updated' --post_content='Test content for verifying Post ID ordering functionality.' --post_status=publish --post_date='2024-12-12 10:45:00' --porcelain"
+		},
+		{
+			"step": "wp-cli",
+			"command": "wp post create --post_title='Test Post - ID: will be updated' --post_content='Test content for verifying Post ID ordering functionality.' --post_status=publish --post_date='2024-05-08 17:00:00' --porcelain"
+		},
+		{
+			"step": "runPHP",
+			"code": "<?php\nrequire_once '/wordpress/wp-load.php';\n\n// Update post titles to include their actual IDs\n$posts = get_posts(array(\n\t'post_type' => 'post',\n\t'posts_per_page' => -1,\n\t'post_status' => 'publish',\n\t'orderby' => 'ID',\n\t'order' => 'ASC'\n));\n\nforeach ($posts as $post) {\n\tif (strpos($post->post_title, 'will be updated') !== false) {\n\t\twp_update_post(array(\n\t\t\t'ID' => $post->ID,\n\t\t\t'post_title' => 'Test Post - ID: ' . $post->ID\n\t\t));\n\t}\n}\n\necho 'Cleaned and created ' . count($posts) . ' test posts';\n?>"
 		}
 	]
 }
