@@ -67,11 +67,14 @@ npm run format             # Format code using WordPress standards
 Each trait in the Traits directory handles a specific query modification:
 - `Date_Query.php` - Before/after/relative date filtering
 - `Disable_Pagination.php` - Performance optimization by disabling pagination
+- `Enable_Caching.php` - Transient caching for query results
 - `Exclude_Current.php` - Remove current post from results
+- `Exclude_Posts.php` - Exclude specific posts by ID
 - `Exclude_Taxonomies.php` - Exclude posts by taxonomy terms
 - `Include_Posts.php` - Manually select specific posts
 - `Meta_Query.php` - Post meta filtering with multiple conditions
 - `Multiple_Posts.php` - Multiple post type selection
+- `OrderBy.php` - Post ordering with WP_Query compatibility normalization (e.g., 'id' → 'ID')
 - `Post_Parent.php` - Child post filtering
 - `Tax_Query.php` - Advanced taxonomy queries with AND/OR logic
 
@@ -149,6 +152,32 @@ Developers can extend AQL in two ways:
 2. **PHP Filter Hook**: Modify query arguments via `aql_query_vars` filter
 
 See `extending-aql.md` for detailed examples.
+
+## Important Implementation Notes
+
+### WP_Query Parameter Normalization
+
+WordPress REST API and WP_Query handle parameter values differently:
+
+- **REST API**: More lenient, automatically normalizes values (e.g., `orderby=id` → `orderby=ID`)
+- **WP_Query**: Case-sensitive, requires exact values (e.g., must use `orderby=ID` not `orderby=id`)
+
+This can cause discrepancies where queries work in the block editor (REST API) but fail on the frontend (WP_Query). The `OrderBy` trait handles this by normalizing `'id'` → `'ID'` to ensure consistent behavior across both contexts.
+
+**When adding new orderby options:**
+1. Check WordPress WP_Query documentation for the correct case/format
+2. Add normalization in the `OrderBy` trait if the REST API and WP_Query values differ
+3. Test both in the block editor (REST API) and on the frontend (WP_Query)
+
+### Adding New Query Parameter Traits
+
+To add a new query parameter type:
+
+1. Create a new trait in `includes/Traits/` with a `process_{param_name}()` method
+2. Add the trait to `Query_Params_Generator.php`
+3. Add a mapping in `Query_Params_Generator::ALLOWED_CONTROLS` array
+4. Create corresponding UI controls in `src/components/`
+5. The trait's process method should populate `$this->custom_args` with WP_Query-compatible parameters
 
 ## Testing
 
