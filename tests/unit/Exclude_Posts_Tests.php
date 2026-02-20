@@ -62,41 +62,46 @@ class Exclude_Posts_Tests extends TestCase {
 	 */
 	public function data_basic_exclude_posts() {
 		return array(
-			array(
+			'exclude two posts'   => array(
 				// Default values.
 				array(),
 				// Custom data.
 				array( 'exclude_posts' => array( 12, 13 ) ),
+				// Expected results.
+				array(
+					'post__not_in' => array( 12, 13 ),
+					'is_aql'       => true,
+				),
 			),
-			array(
+			'exclude three posts' => array(
 				// Default values.
 				array(),
 				// Custom data.
 				array(
-					'exclude_posts' => array( 12, 13 ),
+					'exclude_posts' => array( 14, 15, 16 ),
+				),
+				// Expected results.
+				array(
+					'post__not_in' => array( 14, 15, 16 ),
+					'is_aql'       => true,
 				),
 			),
 		);
 	}
 
 	/**
-	 * Test that basics of setting an ID
+	 * Test that basics of excluding posts
 	 *
 	 * @param array $default_data The params coming from the default block.
 	 * @param array $custom_data  The params coming from AQL.
+	 * @param array $expected     The expected results.
 	 *
 	 * @dataProvider data_basic_exclude_posts
 	 */
-	public function test_basic_exclude_posts( $default_data, $custom_data ) {
+	public function test_basic_exclude_posts( $default_data, $custom_data, $expected ) {
 		$qpg = new Query_Params_Generator( $default_data, $custom_data );
 		$qpg->process_all();
 
-		$this->assertEquals(
-			array(
-				'post__not_in' => array( 12, 13 ),
-				'is_aql'       => true,
-			),
-			$qpg->get_query_args()
-		);
+		$this->assertEquals( $expected, $qpg->get_query_args() );
 	}
 }
