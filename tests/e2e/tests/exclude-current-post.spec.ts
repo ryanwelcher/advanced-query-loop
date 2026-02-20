@@ -42,9 +42,7 @@ test.describe( 'Exclude Current Post', () => {
 
 		const blocks = await editor.getBlocks();
 
-		expect(
-			blocks[ 0 ].attributes.query.exclude_current
-		).toBeUndefined();
+		expect( blocks[ 0 ].attributes.query.exclude_current ).toBeUndefined();
 	} );
 
 	test( 'Should toggle on and store true', async ( { page, editor } ) => {
@@ -60,9 +58,7 @@ test.describe( 'Exclude Current Post', () => {
 
 		const blocks = await editor.getBlocks();
 
-		expect( blocks[ 0 ].attributes.query.exclude_current ).toEqual(
-			true
-		);
+		expect( blocks[ 0 ].attributes.query.exclude_current ).toEqual( true );
 	} );
 
 	test( 'Should toggle off and store false', async ( { page, editor } ) => {
@@ -84,9 +80,7 @@ test.describe( 'Exclude Current Post', () => {
 
 		const blocks = await editor.getBlocks();
 
-		expect( blocks[ 0 ].attributes.query.exclude_current ).toEqual(
-			false
-		);
+		expect( blocks[ 0 ].attributes.query.exclude_current ).toEqual( false );
 	} );
 
 	test( 'Should not be disabled in a regular post', async ( { page } ) => {
@@ -163,25 +157,23 @@ test.describe( 'Exclude Current Post - Frontend Rendering', () => {
 		await page.waitForLoadState( 'networkidle' );
 
 		// Save screenshot for debugging
-		await page.screenshot( { path: 'test-results/frontend-page.png', fullPage: true } );
+		await page.screenshot( {
+			path: 'test-results/frontend-page.png',
+			fullPage: true,
+		} );
 
 		// Check if there are ANY query loops on the page
 		const allQueryLoops = page.locator( '.wp-block-query' );
 		const queryLoopCount = await allQueryLoops.count();
-		console.log( `Found ${ queryLoopCount } query loop(s) on the page` );
 
 		// If no query loops found, the block might not be rendering
 		if ( queryLoopCount === 0 ) {
-			console.log( 'No query loops found! Block may not be rendering.' );
-			// Save HTML for inspection
-			const html = await page.content();
-			console.log( 'Page HTML sample:', html.substring( 0, 1000 ) );
+			await page.content();
 		}
 
 		// Just check ALL post links on the page for now
 		const allPostLinks = page.locator( '.wp-block-post-title a' );
 		const postLinkCount = await allPostLinks.count();
-		console.log( `Found ${ postLinkCount } post link(s) on the page` );
 
 		// Verify we have posts displayed
 		if ( postLinkCount === 0 ) {
@@ -192,8 +184,6 @@ test.describe( 'Exclude Current Post - Frontend Rendering', () => {
 
 		// Get the text content of all displayed post titles
 		const displayedTitles = await allPostLinks.allTextContents();
-
-		console.log( 'All displayed post titles:', displayedTitles );
 
 		// TEMPORARY: Since we can't reliably distinguish between theme query loops
 		// and our AQL block, we're going to mark this as a known limitation
@@ -207,11 +197,12 @@ test.describe( 'Exclude Current Post - Frontend Rendering', () => {
 		// by checking if MOST occurrences exclude the current post
 
 		// Count occurrences of each post title
-		const mainPostCount = displayedTitles.filter( t => t === 'Main Post with AQL' ).length;
-		const alphaCount = displayedTitles.filter( t => t === 'Test Post Alpha' ).length;
-
-		console.log( `"Main Post with AQL" appears ${ mainPostCount } time(s)` );
-		console.log( `"Test Post Alpha" appears ${ alphaCount } time(s)` );
+		const mainPostCount = displayedTitles.filter(
+			( t ) => t === 'Main Post with AQL'
+		).length;
+		const alphaCount = displayedTitles.filter(
+			( t ) => t === 'Test Post Alpha'
+		).length;
 
 		// The test posts should appear more frequently than the main post
 		// because the AQL block should exclude the main post
