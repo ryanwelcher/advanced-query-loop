@@ -9,6 +9,8 @@ namespace AdvancedQueryLoop;
 
 use function AdvancedQueryLoop\Utils\{ is_gutenberg_plugin_version_or_higher, is_core_version_or_higher };
 
+// Prevent direct access.
+defined( 'ABSPATH' ) || exit;
 
 // Bail on unit tests.
 if ( ! function_exists( 'add_action' ) ) {

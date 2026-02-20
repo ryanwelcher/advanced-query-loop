@@ -2,7 +2,7 @@
 Contributors: welcher
 Tags: Query Loop, Custom Queries, Advanced Queries, Post Meta, Taxonomy
 Requires at least: 6.2
-Tested up to: 6.8.1
+Tested up to: 6.9
 Stable tag: 4.3.0
 Requires PHP: 7.4
 License: GPL v2 or later
