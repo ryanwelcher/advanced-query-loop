@@ -69,7 +69,7 @@ Improve the performance of the query by disabling pagination.
 
 #### Enable Caching
 
-Store query results in a transient for one hour to reduce database load on subsequent page loads. Caching is disabled automatically when the order is set to Random. Found in the **AQL: Performance Controls** panel.
+Store query results in a transient for one hour to reduce database load on subsequent page loads. The caching toggle is unavailable when the order is set to Random, and switching to Random order will clear any existing caching setting. Found in the **AQL: Performance Controls** panel.
 
 ## Filtering the available controls
 

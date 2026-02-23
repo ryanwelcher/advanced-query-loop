@@ -94,6 +94,9 @@ export const PostOrderControls = ( {
 						query: {
 							...attributes.query,
 							orderBy: newOrderBy,
+							...( newOrderBy === 'rand' && {
+								enable_caching: false,
+							} ),
 						},
 					} );
 				} }

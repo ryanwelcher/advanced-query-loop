@@ -87,7 +87,7 @@ Sort your content exactly how you want:
 ==== ⚡ Performance Optimization ====
 
 * **Disable pagination**: Reduce query overhead by turning off pagination when it is not needed
-* **Enable caching**: Store query results in a transient for one hour to reduce database load on subsequent page loads. Automatically disabled when the order is set to Random
+* **Enable caching**: Store query results in a transient for one hour to reduce database load on subsequent page loads. The caching toggle is unavailable when the order is set to Random, and switching to Random order will clear any existing caching setting
 * **Efficient queries**: Optimized database queries for better performance
 
 === Customization & Extensibility ===
