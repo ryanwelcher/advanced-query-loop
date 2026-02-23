@@ -65,7 +65,11 @@ Sort in ascending or descending order by:
 
 #### Disable Pagination
 
-Improve the performance of the query by disabling pagination. This is done automatically when there is now Pagination block in teh Post Template.
+Improve the performance of the query by disabling pagination.
+
+#### Enable Caching
+
+Store query results in a transient for one hour to reduce database load on subsequent page loads. Caching is disabled automatically when the order is set to Random. Found in the **AQL: Performance Controls** panel.
 
 ## Filtering the available controls
 
@@ -103,6 +107,7 @@ add_filter(
 -   `'date_query_dynamic_range'`
 -   `'date_query_relationship'`
 -   `'pagination'`
+-   `'enable_caching'`
 
 ## Extending AQL
 

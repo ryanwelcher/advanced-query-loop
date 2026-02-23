@@ -86,9 +86,9 @@ Sort your content exactly how you want:
 
 ==== ⚡ Performance Optimization ====
 
-* **Smart pagination**: Automatically disable pagination when not needed
+* **Disable pagination**: Reduce query overhead by turning off pagination when it is not needed
+* **Enable caching**: Store query results in a transient for one hour to reduce database load on subsequent page loads. Automatically disabled when the order is set to Random
 * **Efficient queries**: Optimized database queries for better performance
-* **Caching friendly**: Works seamlessly with popular caching plugins
 
 === Customization & Extensibility ===
 
@@ -116,11 +116,13 @@ add_filter(
 * `'post_meta_query'` - Meta field queries
 * `'post_order'` - Sorting options
 * `'exclude_current_post'` - Current post exclusion
+* `'exclude_posts'` - Exclude a curated list of posts
 * `'include_posts'` - Manual post inclusion
 * `'child_items_only'` - Child post filtering
 * `'date_query_dynamic_range'` - Date range queries
 * `'date_query_relationship'` - Date query logic
 * `'pagination'` - Pagination controls
+* `'enable_caching'` - Query result caching
 
 ==== Developer-Friendly ====
 
