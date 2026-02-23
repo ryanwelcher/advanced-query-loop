@@ -14,6 +14,25 @@ For example, a control that makes changes to the content types being displayed m
 
 Both SlotFills are passed all `props` from the main block and are available on the `window.aql` object for use.
 
+##### Available props
+
+In addition to the standard block props (`attributes`, `setAttributes`, `clientId`, etc.), every component receives an enriched `context` object with the following values:
+
+| Property | Type | Description |
+|---|---|---|
+| `context.currentPostId` | `number` | The ID of the post or page currently open in the editor. Returns `0` when editing a template. |
+| `context.currentPostType` | `string` | The post type of the currently edited entity, e.g. `'post'`, `'page'`, or `'wp_template'`. |
+
+Any other context values that `core/query` already receives from its parent are also preserved.
+
+```js
+const MyControl = ( { attributes, setAttributes, context } ) => {
+	const { currentPostId, currentPostType } = context;
+	// currentPostId: e.g. 42
+	// currentPostType: e.g. 'post'
+};
+```
+
 The example below adds a new control to only show content from the from currently logged in user regardless of the status of `Inherit query from template`.
 
 ```js
@@ -22,8 +41,9 @@ import { registerPlugin } from '@wordpress/plugins';
 import { ToggleControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
-const LoggedInUserControl = ( { attributes, setAttributes } ) => {
+const LoggedInUserControl = ( { attributes, setAttributes, context } ) => {
 	const { query: { authorContent = false } = {} } = attributes;
+	const { currentPostId, currentPostType } = context;
 	return (
 		<>
 			<ToggleControl
@@ -137,8 +157,9 @@ import { registerPlugin } from '@wordpress/plugins';
 import { ToggleControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
-const LoggedInUserControl = ( { attributes, setAttributes } ) => {
+const LoggedInUserControl = ( { attributes, setAttributes, context } ) => {
 	const { query: { authorContent = false } = {} } = attributes;
+	const { currentPostId, currentPostType } = context;
 	return (
 		<>
 			<ToggleControl

@@ -94,6 +94,10 @@ Each trait in the Traits directory handles a specific query modification:
 - Conditionally renders different control sets based on `query.inherit` attribute
 - When `inherit: false` - Shows all advanced controls in the "Advanced Query Settings" panel
 - When `inherit: true` - Shows limited controls (only PostOrderControls and inherited query slot)
+- Builds `propsWithControls` passed to every component; extends the original block props with:
+  - `allowedControls` — array of permitted control keys
+  - `context.currentPostId` — numeric ID of the currently edited post/page (`0` in template context)
+  - `context.currentPostType` — post type string, e.g. `'post'`, `'page'`, `'wp_template'`
 
 **UI Components** (`src/components/`):
 Each component corresponds to a query feature:
