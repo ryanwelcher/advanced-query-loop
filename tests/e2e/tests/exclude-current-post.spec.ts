@@ -156,57 +156,20 @@ test.describe( 'Exclude Current Post - Frontend Rendering', () => {
 		// Wait for the page to load
 		await page.waitForLoadState( 'networkidle' );
 
-		// Save screenshot for debugging
-		await page.screenshot( {
-			path: 'test-results/frontend-page.png',
-			fullPage: true,
-		} );
+		// The AQL block is the first query loop inserted into the post content.
+		// The theme may also render its own query loops (e.g. a "More posts"
+		// section), so we scope to the first .wp-block-query to isolate our block.
+		const aqlQueryLoop = page.locator( '.wp-block-query' ).first();
+		await expect( aqlQueryLoop ).toBeVisible();
 
-		// Check if there are ANY query loops on the page
-		const allQueryLoops = page.locator( '.wp-block-query' );
-		const queryLoopCount = await allQueryLoops.count();
+		const postTitlesInAQL = aqlQueryLoop.locator( '.wp-block-post-title' );
+		const aqlTitles = await postTitlesInAQL.allTextContents();
 
-		// If no query loops found, the block might not be rendering
-		if ( queryLoopCount === 0 ) {
-			await page.content();
-		}
+		// The AQL block should NOT include the current post in its results.
+		expect( aqlTitles ).not.toContain( 'Main Post with AQL' );
 
-		// Just check ALL post links on the page for now
-		const allPostLinks = page.locator( '.wp-block-post-title a' );
-		const postLinkCount = await allPostLinks.count();
-
-		// Verify we have posts displayed
-		if ( postLinkCount === 0 ) {
-			throw new Error( 'No post links found on the page' );
-		}
-
-		await expect( allPostLinks.first() ).toBeVisible();
-
-		// Get the text content of all displayed post titles
-		const displayedTitles = await allPostLinks.allTextContents();
-
-		// TEMPORARY: Since we can't reliably distinguish between theme query loops
-		// and our AQL block, we're going to mark this as a known limitation
-		// and adjust our test expectations
-
-		// The theme's query loop will show ALL posts
-		// Our AQL block should NOT show the current post
-		// But we can't easily tell them apart in the rendered HTML
-
-		// For now, let's verify that our AQL-specific functionality works
-		// by checking if MOST occurrences exclude the current post
-
-		// Count occurrences of each post title
-		const mainPostCount = displayedTitles.filter(
-			( t ) => t === 'Main Post with AQL'
-		).length;
-		const alphaCount = displayedTitles.filter(
-			( t ) => t === 'Test Post Alpha'
-		).length;
-
-		// The test posts should appear more frequently than the main post
-		// because the AQL block should exclude the main post
-		expect( mainPostCount ).toBeLessThan( alphaCount );
+		// Other posts should still appear.
+		expect( aqlTitles ).toContain( 'Test Post Alpha' );
 	} );
 
 	test( 'Should include current post when exclude_current is false', async ( {
