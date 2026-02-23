@@ -52,13 +52,22 @@ const isAdvancedQueryLoop = ( props ) => {
  * @return {Element} BlockEdit instance
  */
 const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
-	const { currentPostId, currentPostType } = useSelect( ( select ) => {
-		const editor = select( editorStore );
-		return {
-			currentPostId: editor.getCurrentPostId(),
-			currentPostType: editor.getCurrentPostType(),
-		};
-	} );
+	const { currentPostId, currentPostType } = useSelect(
+		( select ) => {
+			if ( ! isAdvancedQueryLoop( props ) ) {
+				return {
+					currentPostId: undefined,
+					currentPostType: undefined,
+				};
+			}
+			const editor = select( editorStore );
+			return {
+				currentPostId: editor.getCurrentPostId(),
+				currentPostType: editor.getCurrentPostType(),
+			};
+		},
+		[ props?.attributes?.namespace ]
+	);
 
 	// If the is the correct variation, add the custom controls.
 	if ( isAdvancedQueryLoop( props ) ) {
