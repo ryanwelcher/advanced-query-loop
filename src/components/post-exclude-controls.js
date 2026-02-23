@@ -91,9 +91,15 @@ const ExcludeCurrentPostControl = ( {
 
 	const isDisabled = () => {
 		// If the user is not an admin, they cannot edit template anyway
-		if ( ! isAdmin ) {
+		if ( ! isAdmin || ! currentPost ) {
 			return false;
 		}
+
+		// Only disable if we're editing a template AND it's in the list
+		if ( currentPost.type !== 'wp_template' ) {
+			return false;
+		}
+
 		const templatesToExclude = [ 'archive', 'search' ];
 		const {
 			show_on_front: showOnFront, // What is the front page set to show? Options: 'posts' or 'page'
@@ -102,10 +108,7 @@ const ExcludeCurrentPostControl = ( {
 			...templatesToExclude,
 			...( showOnFront === 'posts' ? [ 'home', 'front-page' ] : [] ),
 		];
-		return (
-			currentPost.type === 'wp_template' &&
-			disabledTemplates.includes( currentPost.slug )
-		);
+		return disabledTemplates.includes( currentPost.slug );
 	};
 
 	return (
@@ -118,7 +121,7 @@ const ExcludeCurrentPostControl = ( {
 				setAttributes( {
 					query: {
 						...attributes.query,
-						exclude_current: value ? currentPost.id : 0,
+						exclude_current: value,
 					},
 				} );
 			} }

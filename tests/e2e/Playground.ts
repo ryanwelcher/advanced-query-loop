@@ -30,7 +30,7 @@ export class Playground {
 				},
 			],
 			blueprint,
-			port: 8889,
+			port: 9876,
 			quiet: true,
 		} );
 		this.handler = this.cliServer.requestHandler;
