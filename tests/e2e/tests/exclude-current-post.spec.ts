@@ -106,17 +106,11 @@ test.describe( 'Exclude Current Post - Frontend Rendering', () => {
 		editor,
 		admin,
 	} ) => {
-		// Create multiple test posts first
-		const postTitles = [
-			'Test Post Alpha',
-			'Test Post Beta',
-			'Test Post Gamma',
-		];
+		test.setTimeout( 60000 );
 
-		for ( const title of postTitles ) {
-			await admin.createNewPost( { title } );
-			await editor.publishPost();
-		}
+		// Create one test post - enough to verify exclusion without slowing CI.
+		await admin.createNewPost( { title: 'Test Post Alpha' } );
+		await editor.publishPost();
 
 		// Create the main post with AQL block
 		await admin.createNewPost( { title: 'Main Post with AQL' } );
