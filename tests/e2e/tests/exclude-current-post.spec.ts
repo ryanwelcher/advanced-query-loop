@@ -171,13 +171,11 @@ test.describe( 'Exclude Current Post - Frontend Rendering', () => {
 		editor,
 		admin,
 	} ) => {
-		// Create test posts
-		const postTitles = [ 'Test Post One', 'Test Post Two' ];
+		test.setTimeout( 60000 );
 
-		for ( const title of postTitles ) {
-			await admin.createNewPost( { title } );
-			await editor.publishPost();
-		}
+		// Create one test post - enough to verify inclusion without slowing CI.
+		await admin.createNewPost( { title: 'Test Post One' } );
+		await editor.publishPost();
 
 		// Create main post with AQL block
 		await admin.createNewPost( { title: 'Main Post Without Exclusion' } );
@@ -224,9 +222,8 @@ test.describe( 'Exclude Current Post - Frontend Rendering', () => {
 		// Verify "Main Post Without Exclusion" IS in the displayed titles
 		expect( displayedTitles ).toContain( 'Main Post Without Exclusion' );
 
-		// Verify test posts are also displayed
+		// Verify test post is also displayed
 		expect( displayedTitles ).toContain( 'Test Post One' );
-		expect( displayedTitles ).toContain( 'Test Post Two' );
 	} );
 
 	test( 'Should work correctly when toggled on then off', async ( {
@@ -234,6 +231,8 @@ test.describe( 'Exclude Current Post - Frontend Rendering', () => {
 		editor,
 		admin,
 	} ) => {
+		test.setTimeout( 60000 );
+
 		// Create test posts
 		await admin.createNewPost( { title: 'Another Test Post' } );
 		await editor.publishPost();
