@@ -4,6 +4,7 @@
  */
 import { addFilter } from '@wordpress/hooks';
 import { InspectorControls } from '@wordpress/block-editor';
+import { useSelect } from '@wordpress/data';
 import {
 	PanelBody,
 	__experimentalVStack as VStack,
@@ -11,6 +12,7 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { createBlock } from '@wordpress/blocks';
+import { store as editorStore } from '@wordpress/editor';
 
 /**
  *  Internal dependencies
@@ -50,6 +52,14 @@ const isAdvancedQueryLoop = ( props ) => {
  * @return {Element} BlockEdit instance
  */
 const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
+	const { currentPostId, currentPostType } = useSelect( ( select ) => {
+		const editor = select( editorStore );
+		return {
+			currentPostId: editor.getCurrentPostId(),
+			currentPostType: editor.getCurrentPostType(),
+		};
+	} );
+
 	// If the is the correct variation, add the custom controls.
 	if ( isAdvancedQueryLoop( props ) ) {
 		const { allowedControls } = window?.aql;
@@ -58,6 +68,11 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 		const propsWithControls = {
 			...props,
 			allowedControls: allowedControlsArray,
+			context: {
+				...props.context,
+				currentPostId,
+				currentPostType,
+			},
 		};
 		// If the inherit prop is false or undefined, add all the controls.
 		if ( ! attributes.query.inherit ) {
