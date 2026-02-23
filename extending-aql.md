@@ -33,7 +33,7 @@ const MyControl = ( { attributes, setAttributes, context } ) => {
 };
 ```
 
-The example below adds a new control to only show content from the from currently logged in user regardless of the status of `Inherit query from template`.
+The example below adds a new control to only show content from the currently logged in user regardless of the status of `Inherit query from template`.
 
 ```js
 const { AQLControls, AQLControlsInheritedQuery } = window.aql;
