@@ -11,6 +11,8 @@ import { insertAQL } from '../utils';
 /**
  * Opens the AQL Performance Controls panel options menu and selects
  * the Caching item so the toggle becomes visible in the panel.
+ *
+ * @param {import('@playwright/test').Page} page Playwright page object.
  */
 const addCachingControl = async ( page ) => {
 	await page
@@ -120,7 +122,9 @@ test.describe( 'Enable Caching toggle', () => {
 
 		// Use the panel's Reset All option.
 		await page
-			.getByRole( 'button', { name: 'AQL: Performance Controls options' } )
+			.getByRole( 'button', {
+				name: 'AQL: Performance Controls options',
+			} )
 			.click();
 		await page.getByRole( 'menuitem', { name: 'Reset all' } ).click();
 
@@ -254,7 +258,9 @@ test.describe( 'Enable Caching - Frontend Rendering', () => {
 		// The query loop should render with posts visible.
 		const queryLoop = page.locator( '.wp-block-query' ).first();
 		await expect( queryLoop ).toBeVisible();
-		await expect( queryLoop.locator( '.wp-block-post-title' ).first() ).toBeVisible();
+		await expect(
+			queryLoop.locator( '.wp-block-post-title' ).first()
+		).toBeVisible();
 	} );
 
 	test( 'Repeated loads of a cached page return consistent results', async ( {
