@@ -179,6 +179,8 @@ add_filter(
 
 		if ( ! $query->is_admin &&
 			isset( $query->query['is_aql'] ) &&
+			isset( $query->query['enable_caching'] ) &&
+			true === $query->query['enable_caching'] &&
 			! isset( $_GET['context'] ) && // phpcs:ignore
 			! isset( $_GET['canvas'] ) // phpcs:ignore
 		) {
@@ -204,6 +206,8 @@ add_filter(
 	function ( $posts, $query ) {
 		if ( ! $query->is_admin &&
 			isset( $query->query['is_aql'] ) &&
+			isset( $query->query['enable_caching'] ) &&
+			true === $query->query['enable_caching'] &&
 			! isset( $_GET['context'] ) && // phpcs:ignore
 			! isset( $_GET['canvas'] ) // phpcs:ignore
 		) {
