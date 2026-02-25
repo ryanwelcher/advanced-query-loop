@@ -3,7 +3,7 @@ Contributors: welcher
 Tags: Query Loop, Custom Queries, Advanced Queries, Post Meta, Taxonomy
 Requires at least: 6.2
 Tested up to: 6.9
-Stable tag: 4.3.0
+Stable tag: 4.4.0
 Requires PHP: 7.4
 License: GPL v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -156,6 +156,18 @@ Advanced Query Loop is built with developers in mind:
 3. Query posts before a date, after a date or between two dates.
 
 == Changelog ==
+
+= 4.4.0 =
+* Add transient caching for query results and related UI control.
+* Add current post ID and post type to context for SlotFill extensions.
+* Add E2E tests using Playground and expand unit test coverage.
+* Add static linting for PHP and JavaScript.
+* Fix and improve caching controls.
+* Fix TypeError crash when window.aql.allowedControls is undefined.
+* Fix Exclude Current Post for synced patterns and templates.
+* Fix Post ID ordering not working on the frontend.
+* Fix post meta fetching to include all selected post types.
+* Small fixes to pass Plugin Check plugin tests.
 
 = 4.3.0 =
 * Exclude posts (props @darylldoyle, @Pulsar-X).
