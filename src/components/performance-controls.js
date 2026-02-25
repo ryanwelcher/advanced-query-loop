@@ -11,17 +11,33 @@ import {
 
 import { __ } from '@wordpress/i18n';
 
-export const PerformanceControls = ( { attributes, setAttributes } ) => {
+export const PerformanceControls = ( {
+	attributes,
+	setAttributes,
+	allowedControls,
+} ) => {
 	const { query: { enable_caching: enableCaching, orderBy } = {} } =
 		attributes;
+
+	if ( ! allowedControls.includes( 'enable_caching' ) ) {
+		return null;
+	}
+
 	return (
 		<ToolsPanel
-			label={ __( 'AQL: Performance Controls' ) }
-			resetAll={ () => {} }
+			label={ __( 'AQL: Performance Controls', 'advanced-query-loop' ) }
+			resetAll={ () =>
+				setAttributes( {
+					query: {
+						...attributes.query,
+						enable_caching: false,
+					},
+				} )
+			}
 		>
 			<ToolsPanelItem
 				hasValue={ () => !! enableCaching }
-				label={ __( 'Caching' ) }
+				label={ __( 'Caching', 'advanced-query-loop' ) }
 				onDeselect={ () =>
 					setAttributes( {
 						query: {

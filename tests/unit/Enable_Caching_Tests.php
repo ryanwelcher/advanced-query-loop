@@ -217,6 +217,86 @@ class Enable_Caching_Tests extends TestCase {
 	}
 
 	/**
+	 * Test that only boolean true satisfies the strict filter check.
+	 *
+	 * The posts_pre_query and the_posts filters use `true === $query->query['enable_caching']`.
+	 * Only PHP boolean true passes this check; truthy values like 1, "1", or "true" do not.
+	 */
+	public function test_boolean_true_stored_with_strict_equality() {
+		$qpg = new Query_Params_Generator( array(), array( 'enable_caching' => true ) );
+		$qpg->process_all();
+
+		$result = $qpg->get_query_args();
+
+		// assertSame enforces type — only true (boolean) satisfies the filter's `true ===` check.
+		$this->assertSame( true, $result['enable_caching'] );
+	}
+
+	/**
+	 * Test that truthy non-boolean values are stored by the trait but won't trigger caching.
+	 *
+	 * The caching filters use a strict `true ===` comparison, so values like 1, "1", and "true"
+	 * will be present in query args but will not satisfy the filter condition.
+	 */
+	public function test_truthy_non_boolean_values_will_not_satisfy_filter() {
+		$non_boolean_truthy = array( 1, '1', 'true' );
+
+		foreach ( $non_boolean_truthy as $value ) {
+			$qpg = new Query_Params_Generator( array(), array( 'enable_caching' => $value ) );
+			$qpg->process_all();
+
+			$result = $qpg->get_query_args();
+
+			// The value is stored in args by the trait...
+			$this->assertArrayHasKey( 'enable_caching', $result );
+
+			// ...but it does NOT satisfy the strict `true ===` filter condition.
+			$this->assertNotSame( true, $result['enable_caching'] );
+		}
+	}
+
+	/**
+	 * Test that disabling caching removes the key entirely from query args.
+	 *
+	 * The caching filters check isset() first, so the key must be absent (not merely
+	 * falsy) for the isset() guard to correctly short-circuit and skip caching.
+	 */
+	public function test_false_caching_key_is_absent_not_just_falsy() {
+		$qpg = new Query_Params_Generator( array(), array( 'enable_caching' => false ) );
+		$qpg->process_all();
+
+		$result = $qpg->get_query_args();
+
+		// Key must be absent so that isset( $query->query['enable_caching'] ) returns false.
+		$this->assertArrayNotHasKey( 'enable_caching', $result );
+
+		// is_aql must still be present (the first condition the filters check).
+		$this->assertArrayHasKey( 'is_aql', $result );
+		$this->assertSame( true, $result['is_aql'] );
+	}
+
+	/**
+	 * Test that both conditions required by the caching filters are satisfied together.
+	 *
+	 * The filters check: is_aql is set AND enable_caching === true.
+	 * Both must be present for caching to be triggered.
+	 */
+	public function test_both_filter_conditions_met_when_caching_enabled() {
+		$qpg = new Query_Params_Generator( array(), array( 'enable_caching' => true ) );
+		$qpg->process_all();
+
+		$result = $qpg->get_query_args();
+
+		// Condition 1: isset( $query->query['is_aql'] )
+		$this->assertArrayHasKey( 'is_aql', $result );
+		$this->assertSame( true, $result['is_aql'] );
+
+		// Condition 2: true === $query->query['enable_caching']
+		$this->assertArrayHasKey( 'enable_caching', $result );
+		$this->assertSame( true, $result['enable_caching'] );
+	}
+
+	/**
 	 * Test enable_caching and disable_pagination can work together
 	 */
 	public function test_caching_with_pagination_disabled() {
