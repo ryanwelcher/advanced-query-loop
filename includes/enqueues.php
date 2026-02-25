@@ -40,7 +40,7 @@ if ( ! function_exists( 'add_action' ) ) {
 			// Add inline script.
 			wp_add_inline_script(
 				'advanced-query-loop',
-				'aql.allowedControls = "' . implode( ',', Query_Params_Generator::get_allowed_controls() ) . '";'
+				'window.aql = window.aql || {}; window.aql.allowedControls = "' . implode( ',', Query_Params_Generator::get_allowed_controls() ) . '";'
 			);
 		}
 

@@ -46,6 +46,25 @@ const isAdvancedQueryLoop = ( props ) => {
 };
 
 /**
+ * Fallback list of all control identifiers, used when window.aql.allowedControls
+ * is not available (e.g. due to script loading order issues from caching plugins).
+ */
+const ALL_CONTROLS = [
+	'additional_post_types',
+	'taxonomy_query_builder',
+	'post_meta_query',
+	'post_order',
+	'exclude_current_post',
+	'include_posts',
+	'child_items_only',
+	'date_query_dynamic_range',
+	'date_query_relationship',
+	'pagination',
+	'exclude_posts',
+	'enable_caching',
+];
+
+/**
  * Custom controls
  *
  * @param {*} BlockEdit
@@ -71,9 +90,10 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 
 	// If the is the correct variation, add the custom controls.
 	if ( isAdvancedQueryLoop( props ) ) {
-		const { allowedControls } = window?.aql;
+		const { allowedControls } = window?.aql ?? {};
 		const { attributes } = props;
-		const allowedControlsArray = allowedControls.split( ',' );
+		const allowedControlsArray =
+			allowedControls?.split( ',' ) ?? ALL_CONTROLS;
 		const propsWithControls = {
 			...props,
 			allowedControls: allowedControlsArray,
