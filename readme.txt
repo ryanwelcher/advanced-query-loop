@@ -52,7 +52,6 @@ Take full control over which posts appear in your query:
 Keep your queries clean and relevant:
 * **Exclude current post**: Automatically hide the post being viewed
 * **Exclude a list of posts**: Curate a list of posts to exclude from the query
-* **Category filtering**: Exclude posts from specific categories
 
 ==== 🔍 Advanced Post Meta Queries ====
 
@@ -83,6 +82,7 @@ Sort your content exactly how you want:
 * **Name**: Sort by post slug
 * **Post ID**: Sort by post ID
 * **Comment Count**: Sort by engagement
+* **Included Posts**: Sort by post inclusion order
 
 ==== ⚡ Performance Optimization ====
 

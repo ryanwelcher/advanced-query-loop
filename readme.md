@@ -6,7 +6,7 @@
 
 ## Description
 
-This plugin introduces a Query Loop block variation that will empower users to be able to do much more complicated queries with the Query Loop block, such number of posts to display and post meta
+This plugin introduces a Query Loop block variation that will empower users to be able to do much more complicated queries with the Query Loop block, such as taxonomy queries, post meta queries, date queries, post ordering, and more
 
 ### Support/Issues
 
@@ -30,10 +30,6 @@ Choose the posts you want to display manually or only the children of the curren
 
 Remove the current post from the query.
 
-#### Exclude posts by category
-
-Choose to exclude posts from a list of categories.
-
 #### Exclude posts list
 
 Curate a list of posts to exclude from the query.
@@ -51,17 +47,17 @@ Query items before/after the current or selected or choose to show the post from
 Sort in ascending or descending order by:
 
 -   Author
+-   Comment Count
 -   Date
+-   Included Posts
 -   Last Modified Date
--   Title
+-   Menu Order (props to @jvanja)
 -   Meta Value
 -   Meta Value Num
--   Random
--   Menu Order (props to @jvanja)
 -   Name (props @philbee)
 -   Post ID (props to @markhowellsmead)
-
-**Please note that this is a slight duplication of the existing sorting controls. They both work interchangeably but it just looks a bit odd in the UI**
+-   Random
+-   Title
 
 #### Disable Pagination
 
