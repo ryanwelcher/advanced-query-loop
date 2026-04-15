@@ -20,14 +20,10 @@ trait Meta_Query {
 
 			if ( isset( $meta_query_data['queries'] ) ) {
 				foreach ( $meta_query_data['queries'] as $query ) {
-					if ( in_array( $query['meta_type'] ?? '', [ 'DATETIME', 'DATE', 'TIME' ], true ) ) {
-						$query['meta_value'] = $this->map_date_functions( $query['meta_value'] ?? '' );
-					}
-					
 					$meta_queries[] = array_filter(
 						array(
 							'key'     => $query['meta_key'] ?? '',
-							'value'   => $query['meta_value'] ?? '',
+							'value'   => $this->map_date_functions( $query['meta_value'] ?? '' ),
 							'compare' => $query['meta_compare'] ?? '',
 							'type'    => $query['meta_type'] ?? '',
 						)
@@ -45,7 +41,7 @@ trait Meta_Query {
 	 * @param string $value Argument to be passed to WP_Meta_Query.
 	 */
 	protected function map_date_functions( $value ) {
-		$value = str_ireplace(
+		return str_ireplace(
 			[
 				'NOW()',
 				'HOUR()',
@@ -66,7 +62,5 @@ trait Meta_Query {
 			],
 			$value
 		);
-	
-		return $value;
 	}
 }
