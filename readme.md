@@ -38,6 +38,8 @@ Curate a list of posts to exclude from the query.
 
 Generate complicated post meta queries using an interface that allows you to create a query based on `meta_key`, `meta_value` and the `compare` options. Combine multiple queries and determine if they combine results (OR) or narrow them down (AND).
 
+You can use MySQL date functions as meta query values for dynamic queries. Supported functions are `NOW()`, `HOUR()`, `DAY()`, `MONTH()`, `YEAR()`, `WEEK()`, and `UNIX_TIMESTAMP()`.
+
 #### Date Query
 
 Query items before/after the current or selected or choose to show the post from the last 1, 3, 6 and 12 months.
