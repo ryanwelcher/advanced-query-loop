@@ -60,6 +60,7 @@ Create powerful meta queries without touching code:
 * **Flexible comparisons**: Use equals, not equals, greater than, less than, and more
 * **Logical operators**: Combine queries with AND/OR logic
 * **ACF integration**: Works seamlessly with Advanced Custom Fields
+* **Dynamic date functions**: Use MySQL date functions when casting meta as DATETIME
 
 ==== 📅 Dynamic Date Queries ====
 
