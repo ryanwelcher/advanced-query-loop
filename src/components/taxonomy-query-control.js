@@ -67,7 +67,7 @@ export const TaxonomyQueryControl = ( {
 						onClick={ onToggle }
 						aria-haspopup="true"
 						aria-expanded={ isOpen }
-						disabled={ availableTaxonomies.length === 0 }
+						disabled={ availableTaxonomies?.length === 0 }
 					>
 						{ isOpen
 							? __(
