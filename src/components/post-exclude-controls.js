@@ -8,6 +8,7 @@ import {
 } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useEntityRecord, store as coreDataStore } from '@wordpress/core-data';
+import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { decodeEntities } from '@wordpress/html-entities';
 
@@ -166,6 +167,8 @@ const ExcludePostsControl = ( {
 		} = {},
 	} = attributes;
 
+	const [ searchTerm, setSearchTerm ] = useState( '' );
+
 	// Get the posts for all post types used in the query.
 	const posts = useSelect(
 		( select ) => {
@@ -174,16 +177,16 @@ const ExcludePostsControl = ( {
 			// Fetch posts for each post type and combine them into one array
 			return [ ...multiplePosts, postType ].reduce(
 				( accumulator, type ) => {
-					// Depending on the number of posts this could take a while, since we can't paginate here
 					const records = getEntityRecords( 'postType', type, {
-						per_page: -1,
+						per_page: 25,
+						search: searchTerm,
 					} );
 					return [ ...accumulator, ...( records || [] ) ];
 				},
 				[]
 			);
 		},
-		[ postType, multiplePosts ]
+		[ postType, multiplePosts, searchTerm ]
 	);
 
 	if ( ! allowedControls.includes( 'exclude_posts' ) ) {
@@ -220,6 +223,7 @@ const ExcludePostsControl = ( {
 				suggestions={ posts.map( ( post ) =>
 					decodeEntities( post.title.rendered.trim() )
 				) }
+				onInputChange={ ( value ) => setSearchTerm( value ) }
 				onChange={ ( titles ) => {
 					// Converts the Titles to Post IDs before saving them
 					setAttributes( {
