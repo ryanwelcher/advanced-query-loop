@@ -8,7 +8,7 @@ import {
 } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useEntityRecord, store as coreDataStore } from '@wordpress/core-data';
-import { useState } from '@wordpress/element';
+import { useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { decodeEntities } from '@wordpress/html-entities';
 
@@ -169,24 +169,57 @@ const ExcludePostsControl = ( {
 
 	const [ searchTerm, setSearchTerm ] = useState( '' );
 
+	// Cache every post we resolve so title lookups survive search resets.
+	const postCacheRef = useRef( new Map() );
+
 	// Get the posts for all post types used in the query.
 	const posts = useSelect(
 		( select ) => {
 			const { getEntityRecords } = select( 'core' );
 
+			// Fetch already-selected posts by ID so saved selections are never lost.
+			let selectedPosts = [];
+			if ( excludePosts.length > 0 ) {
+				selectedPosts =
+					getEntityRecords( 'postType', postType, {
+						include: excludePosts,
+						per_page: excludePosts.length,
+						_fields: 'id,title',
+					} ) || [];
+			}
+
 			// Fetch posts for each post type and combine them into one array
-			return [ ...multiplePosts, postType ].reduce(
+			const searchResults = [ ...multiplePosts, postType ].reduce(
 				( accumulator, type ) => {
 					const records = getEntityRecords( 'postType', type, {
-						per_page: 25,
+						per_page: 10,
 						search: searchTerm,
+						search_columns: 'post_title',
+						_fields: 'id,title',
 					} );
 					return [ ...accumulator, ...( records || [] ) ];
 				},
 				[]
 			);
+
+			// Merge selected posts with search results, deduplicating by ID.
+			const seenIds = new Set( selectedPosts.map( ( p ) => p.id ) );
+			const merged = [ ...selectedPosts ];
+			for ( const post of searchResults ) {
+				if ( ! seenIds.has( post.id ) ) {
+					seenIds.add( post.id );
+					merged.push( post );
+				}
+			}
+
+			// Update the cache with all resolved posts.
+			for ( const post of merged ) {
+				postCacheRef.current.set( post.id, post );
+			}
+
+			return merged;
 		},
-		[ postType, multiplePosts, searchTerm ]
+		[ postType, multiplePosts, searchTerm, excludePosts ]
 	);
 
 	if ( ! allowedControls.includes( 'exclude_posts' ) ) {
@@ -200,9 +233,13 @@ const ExcludePostsControl = ( {
 	};
 
 	const titleToId = ( title ) => {
-		const post = posts.find(
-			( p ) => decodeEntities( p.title.rendered.trim() ) === title
-		);
+		const post =
+			posts.find(
+				( p ) => decodeEntities( p.title.rendered.trim() ) === title
+			) ||
+			[ ...postCacheRef.current.values() ].find(
+				( p ) => decodeEntities( p.title.rendered.trim() ) === title
+			);
 		return post ? [ post.id ] : [];
 	};
 
