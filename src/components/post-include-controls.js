@@ -111,7 +111,7 @@ export const PostIncludeControls = ( {
 					decodeEntities( post.title.rendered.trim() ) === postTitle
 			);
 
-		return foundPost.title.rendered
+		return foundPost?.title.rendered
 			? { id: foundPost.id, title: foundPost.title.rendered }
 			: foundPost;
 	};
@@ -170,7 +170,7 @@ export const PostIncludeControls = ( {
 								include_posts:
 									titles.map( ( title ) =>
 										getPostId( title )
-									) || [],
+									).filter( t => !!t ) || [],
 							},
 						} );
 						setSearchArg( '' );
