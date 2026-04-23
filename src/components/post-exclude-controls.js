@@ -9,7 +9,8 @@ import {
 import { useSelect } from '@wordpress/data';
 import { useEntityRecord, store as coreDataStore } from '@wordpress/core-data';
 import { useRef, useState } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { useDebounce } from '@wordpress/compose';
+import { __, sprintf } from '@wordpress/i18n';
 import { decodeEntities } from '@wordpress/html-entities';
 
 /**
@@ -168,28 +169,39 @@ const ExcludePostsControl = ( {
 	} = attributes;
 
 	const [ searchTerm, setSearchTerm ] = useState( '' );
+	const debouncedSetSearchTerm = useDebounce( setSearchTerm, 500 ); // Debouncing so fast typers don't flood the server with requests.
 
 	// Cache every post we resolve so title lookups survive search resets.
 	const postCacheRef = useRef( new Map() );
 
 	// Get the posts for all post types used in the query.
-	const posts = useSelect(
+	const { posts, isLoading } = useSelect(
 		( select ) => {
 			const { getEntityRecords } = select( 'core' );
+			const defaultResult = {
+				posts: [],
+				isLoading: false
+			};
 
 			// Fetch already-selected posts by ID so saved selections are never lost.
-			let selectedPosts = [];
+			let selectedPosts = {
+				posts: [],
+				isLoading: false,
+			};
 			if ( excludePosts.length > 0 ) {
-				selectedPosts =
-					getEntityRecords( 'postType', postType, {
-						include: excludePosts,
-						per_page: excludePosts.length,
-						_fields: 'id,title',
-					} ) || [];
+				const records = getEntityRecords( 'postType', postType, {
+					include: excludePosts,
+					per_page: excludePosts.length,
+					_fields: 'id,title',
+				} );
+				selectedPosts = {
+					posts: records || [],
+					isLoading: records === null
+				}
 			}
 
 			// Fetch posts for each post type and combine them into one array
-			const searchResults = [ ...multiplePosts, postType ].reduce(
+			const searchResults = searchTerm ? [ ...multiplePosts, postType ].reduce(
 				( accumulator, type ) => {
 					const records = getEntityRecords( 'postType', type, {
 						per_page: 10,
@@ -197,15 +209,18 @@ const ExcludePostsControl = ( {
 						search_columns: 'post_title',
 						_fields: 'id,title',
 					} );
-					return [ ...accumulator, ...( records || [] ) ];
+					return {
+						posts: [ ...accumulator.posts, ...( records || [] ) ],
+						isLoading: records === null
+					}
 				},
-				[]
-			);
+				defaultResult
+			) : defaultResult;
 
 			// Merge selected posts with search results, deduplicating by ID.
-			const seenIds = new Set( selectedPosts.map( ( p ) => p.id ) );
-			const merged = [ ...selectedPosts ];
-			for ( const post of searchResults ) {
+			const seenIds = new Set( selectedPosts.posts.map( ( p ) => p.id ) );
+			const merged = [ ...selectedPosts.posts ];
+			for ( const post of searchResults.posts ) {
 				if ( ! seenIds.has( post.id ) ) {
 					seenIds.add( post.id );
 					merged.push( post );
@@ -217,7 +232,10 @@ const ExcludePostsControl = ( {
 				postCacheRef.current.set( post.id, post );
 			}
 
-			return merged;
+			return {
+				posts: merged,
+				isLoading: selectedPosts.isLoading || searchResults.isLoading
+			};
 		},
 		[ postType, multiplePosts, searchTerm, excludePosts ]
 	);
@@ -247,6 +265,25 @@ const ExcludePostsControl = ( {
 		return <div>{ __( 'Loading…', 'advanced-query-loop' ) }</div>;
 	}
 
+	// We're going to handle a couple of cases for the suggestions in order to improve the user experience.
+	let suggestions;
+	if ( isLoading && searchTerm ) {
+		// There's a search arg and the useSelect hook is still fetching. Show a message saying we're searching.
+		// Note, we include the searchTerm in the string because the FormTokenField component does its own filtering
+		// if it has a search term, so our placeholder must match something, otherwise "No items found" shows.
+		/* translators: 1: search string. */
+		suggestions = [ sprintf( __( 'Searching "%1$s"', 'advanced-query-loop' ), searchTerm ) ];
+	} else if ( ! searchTerm ) {
+		// We don't have a search arg, and we're not loading. Show an instruction.
+		suggestions = [ __( 'Type to search by title', 'advanced-query-loop' ) ];
+	} else {
+		// User has searched and we have results.  Casting the results into a spread set to eliminate duplicates,
+		// which cause problems in the control.
+		suggestions = [ ...new Set( posts.map( ( post ) =>
+			decodeEntities( ( post?.title?.rendered ) || '' )
+		) ) ];
+	}
+
 	return (
 		<BaseControl
 			help={ __(
@@ -257,10 +294,8 @@ const ExcludePostsControl = ( {
 			<FormTokenField
 				label={ __( 'Posts to Exclude', 'advanced-query-loop' ) }
 				value={ excludePosts.flatMap( ( id ) => idToTitle( id ) ) }
-				suggestions={ posts.map( ( post ) =>
-					decodeEntities( post.title.rendered.trim() )
-				) }
-				onInputChange={ ( value ) => setSearchTerm( value ) }
+				suggestions={ suggestions }
+				onInputChange={ ( value ) => debouncedSetSearchTerm( value ) }
 				onChange={ ( titles ) => {
 					// Converts the Titles to Post IDs before saving them
 					setAttributes( {
@@ -269,9 +304,10 @@ const ExcludePostsControl = ( {
 							exclude_posts:
 								titles.flatMap( ( title ) =>
 									titleToId( title )
-								) || [],
+								).filter( t => !!t ) || [],
 						},
 					} );
+					setSearchTerm('');
 				} }
 				__experimentalExpandOnFocus
 				__experimentalShowHowTo={ false }

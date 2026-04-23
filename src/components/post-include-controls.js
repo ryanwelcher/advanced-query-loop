@@ -4,8 +4,9 @@
 import { BaseControl, FormTokenField } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useEffect, useState } from '@wordpress/element';
+import { useDebounce } from '@wordpress/compose';
 import { decodeEntities } from '@wordpress/html-entities';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 
 /**
  * Generates a post include control component.
@@ -27,27 +28,43 @@ export const PostIncludeControls = ( {
 		} = {},
 	} = attributes;
 	const [ searchArg, setSearchArg ] = useState( '' );
+	const debouncedSetSearchArg = useDebounce( setSearchArg, 500 ); // Debouncing so fast typers don't flood the server with requests.
 	const [ multiplePostsState, setMultiplePostsState ] =
 		useState( multiplePosts );
 
-	const posts = useSelect(
+	const { posts, isLoading } = useSelect(
 		( select ) => {
 			const { getEntityRecords } = select( 'core' );
+			const defaultResult = {
+				posts: [],
+				isLoading: false,
+			};
+
+
+			if ( ! searchArg ) {
+				// Save the initial call to the server if they haven't searched for anything.
+				return defaultResult;
+			}
 
 			return [ ...multiplePosts, postType ].reduce(
-				( totalRecords, currentPostType ) => {
+				( accumulator, currentPostType ) => {
 					const records = getEntityRecords(
 						'postType',
 						currentPostType,
 						{
 							per_page: 10,
 							search: searchArg,
+							search_columns: 'post_title',
+							_fields: 'id,title',
 							exclude: excludeCurrent ? [ excludeCurrent ] : [],
 						}
 					);
-					return [ ...totalRecords, ...( records || [] ) ];
+					return {
+						posts: [ ...accumulator.posts, ...( records || [] ) ],
+						isLoading: accumulator.isLoading || records === null // if getEntityRecords is calling the server, records will be null until it returns
+					}
 				},
-				[]
+				defaultResult
 			);
 		},
 		[ postType, multiplePosts, excludeCurrent, searchArg ]
@@ -94,7 +111,7 @@ export const PostIncludeControls = ( {
 					decodeEntities( post.title.rendered.trim() ) === postTitle
 			);
 
-		return foundPost.title.rendered
+		return foundPost?.title.rendered
 			? { id: foundPost.id, title: foundPost.title.rendered }
 			: foundPost;
 	};
@@ -106,6 +123,25 @@ export const PostIncludeControls = ( {
 	// If the first post in the posts array does not have a title, don't render the component.
 	if ( posts.length > 0 && ! posts[ 0 ].title ) {
 		return null;
+	}
+
+	// We're going to handle a couple of cases for the suggestions in order to improve the user experience.
+	let suggestions;
+	if ( isLoading && searchArg ) {
+		// There's a search arg and the useSelect hook is still fetching. Show a message saying we're searching.
+		// Note, we include the searchArg in the string because the FormTokenField component does its own filtering
+		// if it has a search term, so our placeholder must match something, otherwise "No items found" shows.
+		/* translators: 1: search string. */
+		suggestions = [ sprintf( __( 'Searching "%1$s"', 'advanced-query-loop' ), searchArg ) ];
+	} else if ( ! searchArg ) {
+		// We don't have a search arg, and we're not loading. Show an instruction.
+		suggestions = [ __( 'Type to search by title', 'advanced-query-loop' ) ];
+	} else {
+		// User has searched and we have results.  Casting the results into a spread set to eliminate duplicates,
+		// which cause problems in the control.
+		suggestions = [ ...new Set( posts.map( ( post ) =>
+			decodeEntities( ( post?.title?.rendered ) || '' )
+		) ) ];
 	}
 
 	return (
@@ -123,11 +159,9 @@ export const PostIncludeControls = ( {
 					value={ includePosts.map( ( item ) =>
 						decodeEntities( item.title )
 					) }
-					suggestions={ posts.map( ( post ) =>
-						decodeEntities( post?.title?.rendered || '' )
-					) }
+					suggestions={suggestions}
 					onInputChange={ ( searchPost ) =>
-						setSearchArg( searchPost )
+						debouncedSetSearchArg( searchPost )
 					}
 					onChange={ ( titles ) => {
 						setAttributes( {
@@ -136,7 +170,7 @@ export const PostIncludeControls = ( {
 								include_posts:
 									titles.map( ( title ) =>
 										getPostId( title )
-									) || [],
+									).filter( t => !!t ) || [],
 							},
 						} );
 						setSearchArg( '' );
