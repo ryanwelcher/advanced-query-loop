@@ -60,7 +60,7 @@ class Exclude_Posts_Tests extends TestCase {
 	 *
 	 * @return array
 	 */
-	public function data_basic_exclude_posts() {
+	public function data_legacy_exclude_posts() {
 		return array(
 			'exclude two posts'   => array(
 				// Default values.
@@ -79,6 +79,80 @@ class Exclude_Posts_Tests extends TestCase {
 				// Custom data.
 				array(
 					'exclude_posts' => array( 14, 15, 16 ),
+				),
+				// Expected results.
+				array(
+					'post__not_in' => array( 14, 15, 16 ),
+					'is_aql'       => true,
+				),
+			),
+		);
+	}
+
+	/**
+	 * Test that basics of excluding posts
+	 *
+	 * @param array $default_data The params coming from the default block.
+	 * @param array $custom_data  The params coming from AQL.
+	 * @param array $expected     The expected results.
+	 *
+	 * @dataProvider data_basic_exclude_posts
+	 */
+	public function test_legacy_exclude_posts( $default_data, $custom_data, $expected ) {
+		$qpg = new Query_Params_Generator( $default_data, $custom_data );
+		$qpg->process_all();
+
+		$this->assertEquals( $expected, $qpg->get_query_args() );
+	}
+
+	/**
+	 * Data provider for the non-empty array tests
+	 *
+	 * @return array
+	 */
+	public function data_basic_exclude_posts() {
+		return array(
+			'exclude two posts'   => array(
+				// Default values.
+				array(),
+				// Custom data.
+				array(
+					'exclude_posts' => array(
+						array(
+							'id'    => 12,
+							'title' => 'post 12',
+						),
+						array(
+							'id'    => 13,
+							'title' => 'post 13',
+						),
+					),
+				),
+				// Expected results.
+				array(
+					'post__not_in' => array( 12, 13 ),
+					'is_aql'       => true,
+				),
+			),
+			'exclude three posts' => array(
+				// Default values.
+				array(),
+				// Custom data.
+				array(
+					'exclude_posts' => array(
+						array(
+							'id'    => 14,
+							'title' => 'post 14',
+						),
+						array(
+							'id'    => 15,
+							'title' => 'post 15',
+						),
+						array(
+							'id'    => 16,
+							'title' => 'post 16',
+						),
+					),
 				),
 				// Expected results.
 				array(
