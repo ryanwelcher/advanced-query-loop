@@ -8,7 +8,9 @@
 namespace AdvancedQueryLoop\Utils;
 
 // Prevent direct access.
-defined( 'ABSPATH' ) || exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	return;
+}
 
 /**
  * Helper to determine if the Gutenberg plugin is installed and if so, if it is at or higher a given version.
