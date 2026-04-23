@@ -8,6 +8,8 @@ import { useDebounce } from '@wordpress/compose';
 import { decodeEntities } from '@wordpress/html-entities';
 import { __, sprintf } from '@wordpress/i18n';
 
+const EMPTY_RESULT = { posts: [], isLoading: false };
+
 /**
  * Generates a post picker control component.
  *
@@ -86,17 +88,12 @@ export const PostPickerControl = ( {
 
 	const { posts, isLoading } = useSelect(
 		( select ) => {
-			const { getEntityRecords } = select( 'core' );
-			const defaultResult = {
-				posts: [],
-				isLoading: false,
-			};
-
 			if ( ! searchArg ) {
 				// Save the initial call to the server if they haven't searched for anything.
-				return defaultResult;
+				return EMPTY_RESULT;
 			}
 
+			const { getEntityRecords } = select( 'core' );
 			return [ ...multiplePosts, postType ].reduce(
 				( accumulator, currentPostType ) => {
 					const records = getEntityRecords(
@@ -114,7 +111,7 @@ export const PostPickerControl = ( {
 						isLoading: accumulator.isLoading || records === null, // if getEntityRecords is calling the server, records will be null until it returns
 					};
 				},
-				defaultResult
+				EMPTY_RESULT
 			);
 		},
 		[ postType, multiplePosts, searchArg ]
