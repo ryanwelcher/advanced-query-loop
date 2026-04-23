@@ -39,7 +39,7 @@ export const PostExcludeControls = ( {
 				allowedControls={ allowedControls }
 			/>
 			<PostPickerControl
-				title={ __( 'Exclude Posts', 'advanced-query-loop' ) }
+				title={ __( 'Posts to Exclude', 'advanced-query-loop' ) }
 				queryField="exclude_posts"
 				attributes={ attributes }
 				setAttributes={ setAttributes }

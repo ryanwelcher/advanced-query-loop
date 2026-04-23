@@ -96,7 +96,7 @@ class Exclude_Posts_Tests extends TestCase {
 	 * @param array $custom_data  The params coming from AQL.
 	 * @param array $expected     The expected results.
 	 *
-	 * @dataProvider data_basic_exclude_posts
+	 * @dataProvider data_legacy_exclude_posts
 	 */
 	public function test_legacy_exclude_posts( $default_data, $custom_data, $expected ) {
 		$qpg = new Query_Params_Generator( $default_data, $custom_data );

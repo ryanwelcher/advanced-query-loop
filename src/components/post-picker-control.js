@@ -137,8 +137,9 @@ export const PostPickerControl = ( {
 		}
 	}, [ multiplePosts ] );
 
-	// If the control is not allowed, return null.``
-	if ( ! allowedControls.includes( 'include_posts' ) ) {
+	// If the control is not allowed, return null.
+	// In the context of this control, queryField will be include_posts or exclude_posts, so allowedControls.includes works with it.
+	if ( ! allowedControls.includes( queryField ) ) {
 		return null;
 	}
 
@@ -204,7 +205,6 @@ export const PostPickerControl = ( {
 
 	return (
 		<>
-			<h2>{ title }</h2>
 			<BaseControl
 				help={ __(
 					'Start typing to search for a post title or manually enter one.',
@@ -213,7 +213,7 @@ export const PostPickerControl = ( {
 				__nextHasNoMarginBottom
 			>
 				<FormTokenField
-					label={ __( 'Posts', 'advanced-query-loop' ) }
+					label={title}
 					value={ selectedPosts
 						.map( ( item ) =>
 							item.title ? decodeEntities( item.title ) : null

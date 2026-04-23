@@ -34,8 +34,16 @@ trait Exclude_Posts {
 
 		if ( is_numeric( $to_exclude ) ) {
 			$to_exclude = [ $to_exclude ];
-		} elseif ( is_array( $to_exclude ) && isset( $to_exclude[0]['id'] ) ) {
-			$to_exclude = array_column( $to_exclude, 'id' );
+		} elseif ( is_array( $to_exclude ) ) {
+			$normalized = [];
+			foreach ( $to_exclude as $item ) {
+				if ( is_numeric( $item ) ) {
+					$normalized[] = $item;
+				} elseif ( is_array( $item ) && isset( $item['id'] ) ) {
+					$normalized[] = $item['id'];
+				}
+			}
+			$to_exclude = $normalized;
 		}
 		$exclude_ids = array_unique( array_merge( $exclude_ids, (array) $to_exclude ) );
 
