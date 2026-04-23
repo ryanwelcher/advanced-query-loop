@@ -8,7 +8,6 @@ import { useDebounce } from '@wordpress/compose';
 import { decodeEntities } from '@wordpress/html-entities';
 import { __, sprintf } from '@wordpress/i18n';
 
-const EMPTY_RESULT = { posts: [], isLoading: false };
 
 /**
  * Generates a post picker control component.
@@ -69,7 +68,9 @@ export const PostPickerControl = ( {
 				}
 			);
 
-			// Once it's done loading, we can update the attributes.
+			// Once it's done loading, we can update the attributes.  This gets only called once all getEntityRecords calls have resolved.
+			// After it sets the attributes, the if statement at the beginning of this useSelect kicks in and so we won't ever get here again.
+			// This setAttributes will only be called once.  It's cleaner to keep it in here than factoring it out into a useEffect.
 			if ( ! reduced.isLoading ) {
 				setAttributes( {
 					query: {
@@ -86,15 +87,15 @@ export const PostPickerControl = ( {
 		[ postType, multiplePosts, selectedPosts ]
 	);
 
-	const { posts, isLoading } = useSelect(
+	const { encodedPosts, isLoading } = useSelect(
 		( select ) => {
 			if ( ! searchArg ) {
 				// Save the initial call to the server if they haven't searched for anything.
-				return EMPTY_RESULT;
+				return { encodedPosts: '[]', isLoading: false };
 			}
 
 			const { getEntityRecords } = select( 'core' );
-			return [ ...multiplePosts, postType ].reduce(
+			const result = [ ...multiplePosts, postType ].reduce(
 				( accumulator, currentPostType ) => {
 					const records = getEntityRecords(
 						'postType',
@@ -111,11 +112,17 @@ export const PostPickerControl = ( {
 						isLoading: accumulator.isLoading || records === null, // if getEntityRecords is calling the server, records will be null until it returns
 					};
 				},
-				EMPTY_RESULT
+				{ posts: [], isLoading: false }
 			);
+			return {
+				encodedPosts: JSON.stringify( result.posts ),
+				isLoading: result.isLoading,
+			};
 		},
 		[ postType, multiplePosts, searchArg ]
 	);
+	// We're returning a primitive string for the posts to avoid unnecessary re-renders from a different array object being returned.
+	const posts = JSON.parse( encodedPosts );
 
 	/**
 	 * This useEffect hook is triggered whenever the multiplePosts variable changes.
