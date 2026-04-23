@@ -8,7 +8,6 @@ import { useDebounce } from '@wordpress/compose';
 import { decodeEntities } from '@wordpress/html-entities';
 import { __, sprintf } from '@wordpress/i18n';
 
-
 /**
  * Generates a post picker control component.
  *
@@ -220,7 +219,7 @@ export const PostPickerControl = ( {
 				__nextHasNoMarginBottom
 			>
 				<FormTokenField
-					label={title}
+					label={ title }
 					value={ selectedPosts
 						.map( ( item ) =>
 							item.title ? decodeEntities( item.title ) : null
