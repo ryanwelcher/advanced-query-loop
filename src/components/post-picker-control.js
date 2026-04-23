@@ -22,7 +22,7 @@ export const PostPickerControl = ( {
 } ) => {
 	const {
 		query: {
-			[queryField]: selectedPosts = [],
+			[ queryField ]: selectedPosts = [],
 			postType,
 			multiple_posts: multiplePosts = [],
 		} = {},
@@ -36,8 +36,10 @@ export const PostPickerControl = ( {
 	// update the attributes to have the newer form of {id,title}
 	useSelect(
 		( select ) => {
-
-			if ( ! selectedPosts.length || typeof selectedPosts[0] === 'object' ) {
+			if (
+				! selectedPosts.length ||
+				typeof selectedPosts[ 0 ] === 'object'
+			) {
 				// Nothing to do, either empty or already in the shape we want.
 				return;
 			}
@@ -56,8 +58,8 @@ export const PostPickerControl = ( {
 					);
 					return {
 						posts: [ ...accumulator.posts, ...( records || [] ) ],
-						isLoading: accumulator.isLoading || records === null // if getEntityRecords is calling the server, records will be null until it returns
-					}
+						isLoading: accumulator.isLoading || records === null, // if getEntityRecords is calling the server, records will be null until it returns
+					};
 				},
 				{
 					posts: [],
@@ -70,11 +72,11 @@ export const PostPickerControl = ( {
 				setAttributes( {
 					query: {
 						...attributes.query,
-						[queryField]: reduced.posts.map( post => {
-							return ( post.id && post.title.rendered  )
+						[ queryField ]: reduced.posts.map( ( post ) => {
+							return post.id && post.title.rendered
 								? { id: post.id, title: post.title.rendered }
-								: post
-						})
+								: post;
+						} ),
 					},
 				} );
 			}
@@ -89,7 +91,6 @@ export const PostPickerControl = ( {
 				posts: [],
 				isLoading: false,
 			};
-
 
 			if ( ! searchArg ) {
 				// Save the initial call to the server if they haven't searched for anything.
@@ -110,8 +111,8 @@ export const PostPickerControl = ( {
 					);
 					return {
 						posts: [ ...accumulator.posts, ...( records || [] ) ],
-						isLoading: accumulator.isLoading || records === null // if getEntityRecords is calling the server, records will be null until it returns
-					}
+						isLoading: accumulator.isLoading || records === null, // if getEntityRecords is calling the server, records will be null until it returns
+					};
 				},
 				defaultResult
 			);
@@ -132,7 +133,7 @@ export const PostPickerControl = ( {
 			setAttributes( {
 				query: {
 					...attributes.query,
-					[queryField]: [],
+					[ queryField ]: [],
 				},
 			} );
 			setMultiplePostsState( multiplePosts );
@@ -181,21 +182,32 @@ export const PostPickerControl = ( {
 		// Note, we include the searchArg in the string because the FormTokenField component does its own filtering
 		// if it has a search term, so our placeholder must match something, otherwise "No items found" shows.
 		/* translators: 1: search string. */
-		suggestions = [ sprintf( __( 'Searching "%1$s"', 'advanced-query-loop' ), searchArg ) ];
+		suggestions = [
+			sprintf(
+				__( 'Searching "%1$s"', 'advanced-query-loop' ),
+				searchArg
+			),
+		];
 	} else if ( ! searchArg ) {
 		// We don't have a search arg, and we're not loading. Show an instruction.
-		suggestions = [ __( 'Type to search by title', 'advanced-query-loop' ) ];
+		suggestions = [
+			__( 'Type to search by title', 'advanced-query-loop' ),
+		];
 	} else {
 		// User has searched and we have results.  Casting the results into a spread set to eliminate duplicates,
 		// which cause problems in the control.
-		suggestions = [ ...new Set( posts.map( ( post ) =>
-			decodeEntities( ( post?.title?.rendered ) || '' )
-		) ) ];
+		suggestions = [
+			...new Set(
+				posts.map( ( post ) =>
+					decodeEntities( post?.title?.rendered || '' )
+				)
+			),
+		];
 	}
 
 	return (
 		<>
-			<h2>{title}</h2>
+			<h2>{ title }</h2>
 			<BaseControl
 				help={ __(
 					'Start typing to search for a post title or manually enter one.',
@@ -205,10 +217,12 @@ export const PostPickerControl = ( {
 			>
 				<FormTokenField
 					label={ __( 'Posts', 'advanced-query-loop' ) }
-					value={ selectedPosts.map( ( item ) =>
-						item.title ? decodeEntities( item.title ) : null
-					).filter( t => !!t ) }
-					suggestions={suggestions}
+					value={ selectedPosts
+						.map( ( item ) =>
+							item.title ? decodeEntities( item.title ) : null
+						)
+						.filter( ( t ) => !! t ) }
+					suggestions={ suggestions }
 					onInputChange={ ( searchPost ) =>
 						debouncedSetSearchArg( searchPost )
 					}
@@ -216,10 +230,10 @@ export const PostPickerControl = ( {
 						setAttributes( {
 							query: {
 								...attributes.query,
-								[queryField]:
-									titles.map( ( title ) =>
-										getPostId( title )
-									).filter( t => !!t ) || [],
+								[ queryField ]:
+									titles
+										.map( ( title ) => getPostId( title ) )
+										.filter( ( t ) => !! t ) || [],
 							},
 						} );
 						setSearchArg( '' );

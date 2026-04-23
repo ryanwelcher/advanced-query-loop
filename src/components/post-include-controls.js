@@ -10,8 +10,10 @@ import { PostPickerControl } from './post-picker-control';
  *@return {Element} PostIncludeControls
  */
 
-export const PostIncludeControls = props => <PostPickerControl
-	title={__( 'Include Posts', 'advanced-query-loop' )}
-	queryField="include_posts"
-	{...props}
-/>;
+export const PostIncludeControls = ( props ) => (
+	<PostPickerControl
+		title={ __( 'Include Posts', 'advanced-query-loop' ) }
+		queryField="include_posts"
+		{ ...props }
+	/>
+);
