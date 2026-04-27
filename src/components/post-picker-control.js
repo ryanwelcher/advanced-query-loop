@@ -11,7 +11,14 @@ import { __, sprintf } from '@wordpress/i18n';
 /**
  * Generates a post picker control component.
  *
- *@return {Element} PostPickerControl
+ * @param {Object}   props                 Component props
+ * @param {Object}   props.attributes      Block attributes
+ * @param {Function} props.setAttributes   Block attributes setter
+ * @param {Array}    props.allowedControls Allowed controls
+ * @param {String}   props.queryField      Either include_posts or exclude_posts
+ * @param {String}   props.title           Label for the picker field
+ *
+ * @return {Element} PostPickerControl
  */
 export const PostPickerControl = ( {
 	attributes,
@@ -130,14 +137,12 @@ export const PostPickerControl = ( {
 				{ posts: [], isLoading: false }
 			);
 			return {
-				encodedPosts: JSON.stringify( result.posts ),
+				encodedPosts: JSON.stringify( result.posts ), // We're returning a primitive string for the posts to avoid unnecessary re-renders from a different array object being returned.
 				isLoading: result.isLoading,
 			};
 		},
 		[ postType, multiplePosts, searchArg ]
 	);
-	// We're returning a primitive string for the posts to avoid unnecessary re-renders from a different array object being returned.
-	const posts = JSON.parse( encodedPosts );
 
 	/**
 	 * This useEffect hook is triggered whenever the multiplePosts variable changes.
@@ -160,8 +165,8 @@ export const PostPickerControl = ( {
 	}, [ multiplePosts ] );
 
 	// If the control is not allowed, return null.
-	// In the context of this control, queryField will be include_posts or exclude_posts, so allowedControls.includes works with it.
-	if ( ! allowedControls.includes( queryField ) ) {
+	// In the context of this control, queryField must be include_posts or exclude_posts, so allowedControls.includes works with it.
+	if ( ! [ 'include_posts', 'exclude_posts' ].includes( queryField ) || ! allowedControls.includes( queryField ) ) {
 		return null;
 	}
 
@@ -186,6 +191,7 @@ export const PostPickerControl = ( {
 			: foundPost;
 	};
 
+	const posts = JSON.parse( encodedPosts );
 	if ( ! posts ) {
 		return <div>{ __( 'Loading…', 'advanced-query-loop' ) }</div>;
 	}
@@ -201,9 +207,9 @@ export const PostPickerControl = ( {
 		// There's a search arg and the useSelect hook is still fetching. Show a message saying we're searching.
 		// Note, we include the searchArg in the string because the FormTokenField component does its own filtering
 		// if it has a search term, so our placeholder must match something, otherwise "No items found" shows.
-		/* translators: 1: search string. */
 		suggestions = [
 			sprintf(
+				/* translators: 1: search string. */
 				__( 'Searching "%1$s"', 'advanced-query-loop' ),
 				searchArg
 			),
@@ -251,7 +257,7 @@ export const PostPickerControl = ( {
 								...attributes.query,
 								[ queryField ]:
 									titles
-										.map( ( title ) => getPostId( title ) )
+										.map( ( t ) => getPostId( t ) )
 										.filter( ( t ) => !! t ) || [],
 							},
 						} );
