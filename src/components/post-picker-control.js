@@ -15,8 +15,8 @@ import { __, sprintf } from '@wordpress/i18n';
  * @param {Object}   props.attributes      Block attributes
  * @param {Function} props.setAttributes   Block attributes setter
  * @param {Array}    props.allowedControls Allowed controls
- * @param {String}   props.queryField      Either include_posts or exclude_posts
- * @param {String}   props.title           Label for the picker field
+ * @param {string}   props.queryField      Either include_posts or exclude_posts
+ * @param {string}   props.title           Label for the picker field
  *
  * @return {Element} PostPickerControl
  */
@@ -166,7 +166,10 @@ export const PostPickerControl = ( {
 
 	// If the control is not allowed, return null.
 	// In the context of this control, queryField must be include_posts or exclude_posts, so allowedControls.includes works with it.
-	if ( ! [ 'include_posts', 'exclude_posts' ].includes( queryField ) || ! allowedControls.includes( queryField ) ) {
+	if (
+		! [ 'include_posts', 'exclude_posts' ].includes( queryField ) ||
+		! allowedControls.includes( queryField )
+	) {
 		return null;
 	}
 
