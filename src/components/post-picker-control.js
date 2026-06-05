@@ -7,6 +7,7 @@ import { useEffect, useState } from '@wordpress/element';
 import { useDebounce } from '@wordpress/compose';
 import { decodeEntities } from '@wordpress/html-entities';
 import { __, sprintf } from '@wordpress/i18n';
+import useLegacySelectedPosts from '../hooks/useLegacySelectedPosts';
 
 /**
  * Generates a post picker control component.
@@ -34,80 +35,11 @@ export const PostPickerControl = ( {
 			multiple_posts: multiplePosts = [],
 		} = {},
 	} = attributes;
+	useLegacySelectedPosts( queryField, attributes, setAttributes );
 	const [ searchArg, setSearchArg ] = useState( '' );
 	const debouncedSetSearchArg = useDebounce( setSearchArg, 500 ); // Debouncing so fast typers don't flood the server with requests.
 	const [ multiplePostsState, setMultiplePostsState ] =
 		useState( multiplePosts );
-
-	// For backwards compatibility, if selectedPosts is an array of post ids, we're going to select them and then
-	// update the attributes to have the newer form of {id,title}
-	const { encodedNormalizedLegacyPosts, normalizedLegacyIsLoading } =
-		useSelect(
-			( select ) => {
-				if (
-					! selectedPosts.length ||
-					typeof selectedPosts[ 0 ] === 'object'
-				) {
-					// Nothing to do, either empty or already in the shape we want.
-					return {
-						encodedNormalizedLegacyPosts: '[]',
-						normalizedLegacyIsLoading: true, // explicitly prevents the setAttributes in the subsequent useEffect from firing.
-					};
-				}
-
-				const { getEntityRecords } = select( 'core' );
-				const reduced = [ ...multiplePosts, postType ].reduce(
-					( accumulator, currentPostType ) => {
-						const records = getEntityRecords(
-							'postType',
-							currentPostType,
-							{
-								per_page: selectedPosts.length,
-								include_posts: selectedPosts,
-								_fields: 'id,title',
-							}
-						);
-						return {
-							posts: [
-								...accumulator.posts,
-								...( records || [] ),
-							],
-							isLoading:
-								accumulator.isLoading || records === null, // if getEntityRecords is calling the server, records will be null until it returns
-						};
-					},
-					{
-						posts: [],
-						isLoading: false,
-					}
-				);
-
-				return {
-					encodedNormalizedLegacyPosts: JSON.stringify(
-						reduced.posts
-					),
-					normalizedLegacyIsLoading: reduced.isLoading,
-				};
-			},
-			[ postType, multiplePosts, selectedPosts ]
-		);
-	useEffect( () => {
-		if ( ! normalizedLegacyIsLoading ) {
-			const posts = JSON.parse( encodedNormalizedLegacyPosts );
-			if ( posts.length ) {
-				setAttributes( {
-					query: {
-						...attributes.query,
-						[ queryField ]: posts.map( ( post ) => {
-							return post.id && post.title.rendered
-								? { id: post.id, title: post.title.rendered }
-								: post;
-						} ),
-					},
-				} );
-			}
-		}
-	}, [ encodedNormalizedLegacyPosts, normalizedLegacyIsLoading ] );
 
 	const { encodedPosts, isLoading } = useSelect(
 		( select ) => {
