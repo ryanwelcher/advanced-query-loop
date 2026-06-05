@@ -12,19 +12,17 @@ import useLegacySelectedPosts from '../hooks/useLegacySelectedPosts';
 /**
  * Generates a post picker control component.
  *
- * @param {Object}   props                 Component props
- * @param {Object}   props.attributes      Block attributes
- * @param {Function} props.setAttributes   Block attributes setter
- * @param {Array}    props.allowedControls Allowed controls
- * @param {string}   props.queryField      Either include_posts or exclude_posts
- * @param {string}   props.title           Label for the picker field
+ * @param {Object}   props               Component props
+ * @param {Object}   props.attributes    Block attributes
+ * @param {Function} props.setAttributes Block attributes setter
+ * @param {string}   props.queryField    Either include_posts or exclude_posts
+ * @param {string}   props.title         Label for the picker field
  *
  * @return {Element} PostPickerControl
  */
 export const PostPickerControl = ( {
 	attributes,
 	setAttributes,
-	allowedControls,
 	queryField,
 	title,
 } ) => {
@@ -96,12 +94,8 @@ export const PostPickerControl = ( {
 		}
 	}, [ multiplePosts ] );
 
-	// If the control is not allowed, return null.
-	// In the context of this control, queryField must be include_posts or exclude_posts, so allowedControls.includes works with it.
-	if (
-		! [ 'include_posts', 'exclude_posts' ].includes( queryField ) ||
-		! allowedControls.includes( queryField )
-	) {
+	// In the context of this control, queryField must be include_posts or exclude_posts.
+	if ( ! [ 'include_posts', 'exclude_posts' ].includes( queryField ) ) {
 		return null;
 	}
 

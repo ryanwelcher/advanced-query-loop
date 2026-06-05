@@ -22,7 +22,7 @@ export const PostExcludeControls = ( {
 	setAttributes,
 	allowedControls,
 } ) => {
-	// If the control is not allowed, return null.
+	// If neither control is allowed, return null.
 	if (
 		! allowedControls.includes( 'exclude_current_post' ) &&
 		! allowedControls.includes( 'exclude_posts' )
@@ -33,18 +33,21 @@ export const PostExcludeControls = ( {
 	return (
 		<>
 			<h2> { __( 'Exclude Posts', 'advanced-query-loop' ) }</h2>
-			<ExcludeCurrentPostControl
-				attributes={ attributes }
-				setAttributes={ setAttributes }
-				allowedControls={ allowedControls }
-			/>
-			<PostPickerControl
-				title={ __( 'Posts to Exclude', 'advanced-query-loop' ) }
-				queryField="exclude_posts"
-				attributes={ attributes }
-				setAttributes={ setAttributes }
-				allowedControls={ allowedControls }
-			/>
+			{ allowedControls.includes( 'exclude_current_post' ) && (
+				<ExcludeCurrentPostControl
+					attributes={ attributes }
+					setAttributes={ setAttributes }
+					allowedControls={ allowedControls }
+				/>
+			) }
+			{ allowedControls.includes( 'exclude_posts' ) && (
+				<PostPickerControl
+					title={ __( 'Posts to Exclude', 'advanced-query-loop' ) }
+					queryField="exclude_posts"
+					attributes={ attributes }
+					setAttributes={ setAttributes }
+				/>
+			) }
 		</>
 	);
 };
@@ -54,18 +57,13 @@ export const PostExcludeControls = ( {
  * of advanced query loop settings. It toggles the exclusion of the current post
  * or content associated with the current template from query results.
  *
- * @param {Object}   props                 The properties passed to the component.
- * @param {Object}   props.attributes      The block attributes.
- * @param {Function} props.setAttributes   Function to update block attributes.
- * @param {Array}    props.allowedControls List of control identifiers that are allowed for this block.
+ * @param {Object}   props               The properties passed to the component.
+ * @param {Object}   props.attributes    The block attributes.
+ * @param {Function} props.setAttributes Function to update block attributes.
  *
- * @return {Element|null} A `ToggleControl` component if the control is allowed, or `null` if not.
+ * @return {Element|null} A `ToggleControl` component.
  */
-const ExcludeCurrentPostControl = ( {
-	attributes,
-	setAttributes,
-	allowedControls,
-} ) => {
+const ExcludeCurrentPostControl = ( { attributes, setAttributes } ) => {
 	const { query: { exclude_current: excludeCurrent } = {} } = attributes;
 
 	const { record: siteOptions } = useEntityRecord( 'root', 'site' );
@@ -78,10 +76,6 @@ const ExcludeCurrentPostControl = ( {
 			} ),
 		};
 	}, [] );
-
-	if ( ! allowedControls.includes( 'exclude_current_post' ) ) {
-		return null;
-	}
 
 	if ( ! currentPost ) {
 		return <div>{ __( 'Loading…', 'advanced-query-loop' ) }</div>;
