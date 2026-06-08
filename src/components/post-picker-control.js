@@ -99,6 +99,16 @@ export const PostPickerControl = ( {
 		return null;
 	}
 
+	const posts = JSON.parse( encodedPosts );
+	if ( ! posts ) {
+		return <div>{ __( 'Loading…', 'advanced-query-loop' ) }</div>;
+	}
+
+	// If the first post in the posts array does not have a title, don't render the component.
+	if ( posts.length > 0 && ! posts[ 0 ].title ) {
+		return null;
+	}
+
 	/**
 	 * Retrieves the ID of a post based on its title.
 	 *
@@ -119,16 +129,6 @@ export const PostPickerControl = ( {
 			? { id: foundPost.id, title: foundPost.title.rendered }
 			: foundPost;
 	};
-
-	const posts = JSON.parse( encodedPosts );
-	if ( ! posts ) {
-		return <div>{ __( 'Loading…', 'advanced-query-loop' ) }</div>;
-	}
-
-	// If the first post in the posts array does not have a title, don't render the component.
-	if ( posts.length > 0 && ! posts[ 0 ].title ) {
-		return null;
-	}
 
 	// We're going to handle a couple of cases for the suggestions in order to improve the user experience.
 	let suggestions;
