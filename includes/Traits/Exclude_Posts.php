@@ -28,6 +28,23 @@ trait Exclude_Posts {
 		// If there are already posts to be excluded, we need to add to them.
 		$exclude_ids = $this->custom_args['post__not_in'] ?? array();
 
+		if ( empty( $to_exclude ) ) {
+			return $exclude_ids;
+		}
+
+		if ( is_numeric( $to_exclude ) ) {
+			$to_exclude = [ $to_exclude ];
+		} elseif ( is_array( $to_exclude ) ) {
+			$normalized = [];
+			foreach ( $to_exclude as $item ) {
+				if ( is_numeric( $item ) ) {
+					$normalized[] = $item;
+				} elseif ( is_array( $item ) && isset( $item['id'] ) ) {
+					$normalized[] = $item['id'];
+				}
+			}
+			$to_exclude = $normalized;
+		}
 		$exclude_ids = array_unique( array_merge( $exclude_ids, (array) $to_exclude ) );
 
 		return $exclude_ids;
