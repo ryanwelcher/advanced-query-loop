@@ -3,7 +3,7 @@ Contributors: welcher
 Tags: Query Loop, Custom Queries, Advanced Queries, Post Meta, Taxonomy
 Requires at least: 6.2
 Tested up to: 6.9
-Stable tag: 4.4.0
+Stable tag: 4.4.1
 Requires PHP: 7.4
 License: GPL v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -156,6 +156,9 @@ Advanced Query Loop is built with developers in mind:
 3. Query posts before a date, after a date or between two dates.
 
 == Changelog ==
+= 4.4.1 =
+* Add optional chaining to fix crash on templates
+* Fix ExcludePostsControl fetching all posts (props @PatelUtkars)
 
 = 4.4.0 =
 * Add transient caching for query results and related UI control.
