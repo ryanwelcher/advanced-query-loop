@@ -33,7 +33,7 @@ export const PerformanceControls = ( {
 
 	return (
 		<ToolsPanel
-			label={ __( 'AQL: Performance Controls', 'advanced-query-loop' ) }
+			label={ __( 'AQL: Performance', 'advanced-query-loop' ) }
 			resetAll={ () => {
 				const updates = {};
 				if ( allowedControls.includes( 'enable_caching' ) ) {

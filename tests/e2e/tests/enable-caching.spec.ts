@@ -16,7 +16,7 @@ import { insertAQL } from '../utils';
  */
 const addCachingControl = async ( page ) => {
 	await page
-		.getByRole( 'button', { name: 'AQL: Performance Controls options' } )
+		.getByRole( 'button', { name: 'AQL: Performance options' } )
 		.click();
 	await page.getByRole( 'menuitemcheckbox', { name: 'Caching' } ).click();
 	await page.keyboard.press( 'Escape' );
@@ -39,9 +39,7 @@ test.describe( 'Enable Caching toggle', () => {
 	} );
 
 	test( 'AQL: Performance Controls panel is visible', async ( { page } ) => {
-		await expect(
-			page.getByText( 'AQL: Performance Controls' )
-		).toBeVisible();
+		await expect( page.getByText( 'AQL: Performance' ) ).toBeVisible();
 	} );
 
 	test( 'Caching control can be added from the panel options menu', async ( {
@@ -123,7 +121,7 @@ test.describe( 'Enable Caching toggle', () => {
 		// Use the panel's Reset All option.
 		await page
 			.getByRole( 'button', {
-				name: 'AQL: Performance Controls options',
+				name: 'AQL: Performance options',
 			} )
 			.click();
 		await page.getByRole( 'menuitem', { name: 'Reset all' } ).click();
