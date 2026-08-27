@@ -31,6 +31,7 @@ import { PostIncludeControls } from '../components/post-include-controls';
 import { PaginationToggle } from '../components/pagination-toggle';
 import { ChildItemsToggle } from '../components/child-items-toggle';
 import { PerformanceControls } from '../components/performance-controls';
+import { QueryIdControl } from '../components/query-id-control';
 
 /**
  * Determines if the active variation is this one
@@ -62,6 +63,7 @@ const ALL_CONTROLS = [
 	'pagination',
 	'exclude_posts',
 	'enable_caching',
+	'query_id',
 ];
 
 /**
@@ -119,6 +121,7 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 								fillProps={ { ...propsWithControls } }
 							/>
 
+							<QueryIdControl { ...propsWithControls } />
 							<MultiplePostSelect { ...propsWithControls } />
 							<BaseControl
 								label={ __(
@@ -162,6 +165,7 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 							'advanced-query-loop'
 						) }
 					>
+						<QueryIdControl { ...propsWithControls } />
 						<PostOrderControls { ...propsWithControls } />
 						<AQLControlsInheritedQuery.Slot
 							fillProps={ { ...propsWithControls } }

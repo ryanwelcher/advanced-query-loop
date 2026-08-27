@@ -104,6 +104,7 @@ add_filter(
 -   `'date_query_relationship'`
 -   `'pagination'`
 -   `'enable_caching'`
+-   `'query_id'`
 
 ## Extending AQL
 
