@@ -42,7 +42,22 @@ class Query_Id_Tests extends TestCase {
 				// Expected - null is falsy, not processed.
 				array( 'is_aql' => true ),
 			),
-		);
+			'whitespace aql_query_id'   => array(
+				// Custom data.
+				array(
+					'aql_query_id' => '   ',
+				),
+				// Expected - whitespace-only should be treated as empty.
+				array( 'is_aql' => true ),
+			),
+			'array aql_query_id'        => array(
+				// Custom data.
+				array(
+					'aql_query_id' => array( 'not-a-string' ),
+				),
+				// Expected - non-scalar values should be ignored.
+				array( 'is_aql' => true ),
+			),
 	}
 
 	/**
