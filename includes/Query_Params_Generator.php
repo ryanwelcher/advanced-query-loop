@@ -23,6 +23,7 @@ class Query_Params_Generator {
 	use Traits\Post_Parent;
 	use Traits\Enable_Caching;
 	use Traits\OrderBy;
+	use Traits\Query_Id;
 
 	/**
 	 * The list of allowed controls and their associated params in the query.
@@ -40,6 +41,7 @@ class Query_Params_Generator {
 		'pagination'               => 'disable_pagination',
 		'exclude_posts'            => 'exclude_posts',
 		'enable_caching'           => 'enable_caching',
+		'query_id'                 => 'aql_query_id',
 	);
 
 

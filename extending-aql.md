@@ -111,6 +111,28 @@ function aql_extension_show_current_author_only( $query_args, $block_query, $inh
 \add_filter( 'aql_query_vars', 'aql_extension_show_current_author_only', 10, 3 );
 ```
 
+#### Targeting a specific block
+
+Every AQL block has an optional Query identifier control. The value is stored in the `aql_query_id` query variable and is available in the `$block_query` parameter of the `aql_query_vars` filter (and in `$query_args` for non-inherited queries), making it easy to modify the query for a single block when a site contains multiple AQL blocks.
+
+```php
+/**
+ * Only modify the query for the block identified as `homepage-featured`.
+ *
+ * @param array   $query_args  Arguments to be passed to WP_Query.
+ * @param array   $block_query The query attribute retrieved from the block.
+ * @param boolean $inherited   Whether the query is being inherited.
+ */
+function aql_extension_target_homepage_featured( $query_args, $block_query, $inherited ) {
+	if ( isset( $block_query['aql_query_id'] ) && 'homepage-featured' === $block_query['aql_query_id'] ) {
+		$query_args['posts_per_page'] = 3;
+	}
+	return $query_args;
+}
+
+\add_filter( 'aql_query_vars', 'aql_extension_target_homepage_featured', 10, 3 );
+```
+
 ### Tutorial
 
 Using he example code above, you can make a custom extension plugin for AQL that will filter the displayed posts by author.

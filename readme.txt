@@ -123,6 +123,7 @@ add_filter(
 * `'date_query_relationship'` - Date query logic
 * `'pagination'` - Pagination controls
 * `'enable_caching'` - Query result caching
+* `'query_id'` - Query identifier for targeting a specific block in the `aql_query_vars` filter
 
 ==== Developer-Friendly ====
 

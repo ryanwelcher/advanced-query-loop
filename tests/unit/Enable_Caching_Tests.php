@@ -287,11 +287,9 @@ class Enable_Caching_Tests extends TestCase {
 
 		$result = $qpg->get_query_args();
 
-		// Condition 1: isset( $query->query['is_aql'] )
 		$this->assertArrayHasKey( 'is_aql', $result );
 		$this->assertSame( true, $result['is_aql'] );
 
-		// Condition 2: true === $query->query['enable_caching']
 		$this->assertArrayHasKey( 'enable_caching', $result );
 		$this->assertSame( true, $result['enable_caching'] );
 	}
