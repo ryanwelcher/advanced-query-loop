@@ -23,10 +23,10 @@ import AQLControlsInheritedQuery from '../slots/aql-controls-inherited-query';
 import AQLLegacyControls from '../slots/aql-legacy-controls';
 import { PostMetaQueryControls } from '../components/post-meta-query-controls';
 import { PostOrderControls } from '../components/post-order-controls';
-import { TaxonomyQueryControl } from '../components/taxonomy-query-control';
 import { PerformanceControls } from '../components/performance-controls';
 import { OrderControls } from '../groups/order';
 import { PostParametersControls } from '../groups/post-parameters';
+import { TaxonomyQueryGroupControls } from '../groups/taxonomy-query';
 import { DateQueryControls } from '../groups/date-query';
 import { AdvancedControls } from '../groups/advanced';
 
@@ -126,9 +126,6 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 								id="query-builders"
 							>
 								<VStack alignment="center">
-									<TaxonomyQueryControl
-										{ ...propsWithControls }
-									/>
 									<PostMetaQueryControls
 										{ ...propsWithControls }
 									/>
@@ -139,6 +136,7 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 							/>
 						</PanelBody>
 						<PostParametersControls { ...propsWithControls } />
+						<TaxonomyQueryGroupControls { ...propsWithControls } />
 						<OrderControls { ...propsWithControls } />
 						<DateQueryControls { ...propsWithControls } />
 						<PerformanceControls { ...propsWithControls } />
