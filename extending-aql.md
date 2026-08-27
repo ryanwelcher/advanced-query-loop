@@ -113,7 +113,7 @@ function aql_extension_show_current_author_only( $query_args, $block_query, $inh
 
 #### Targeting a specific block
 
-Every AQL block has an optional Query identifier control. The value is stored in the `aql_query_id` query variable and is available in the `aql_query_vars` filter, making it easy to modify the query for a single block when a site contains multiple AQL blocks.
+Every AQL block has an optional Query identifier control. The value is stored in the `aql_query_id` query variable and is available in the `$block_query` parameter of the `aql_query_vars` filter (and in `$query_args` for non-inherited queries), making it easy to modify the query for a single block when a site contains multiple AQL blocks.
 
 ```php
 /**
