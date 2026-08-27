@@ -12,7 +12,10 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import { PostOrderControls } from '../components/post-order-controls';
+import {
+	PostOrderControls,
+	SecondaryOrderControls,
+} from '../components/post-order-controls';
 import { useToolsPanelDropdownMenuProps } from './use-dropdown-menu-props';
 
 // Core Query block defaults — order/orderBy always exist on the query attribute.
@@ -34,14 +37,33 @@ export const OrderControls = ( props ) => {
 			...CORE_DEFAULTS,
 		};
 		delete newQuery.orderby_meta_key;
+		setAttributes( { query: newQuery } );
+	};
+
+	const removeSecondary = () => {
+		const newQuery = { ...attributes.query };
 		delete newQuery.secondary_orderby;
 		setAttributes( { query: newQuery } );
 	};
 
+	const resetAll = () => {
+		const newQuery = {
+			...attributes.query,
+			...CORE_DEFAULTS,
+		};
+		delete newQuery.orderby_meta_key;
+		delete newQuery.secondary_orderby;
+		setAttributes( { query: newQuery } );
+	};
+
+	// A secondary sort is meaningless with a random primary sort, and
+	// inherited queries never run the AQL generator on the frontend.
+	const showSecondaryItem = query.orderBy !== 'rand' && ! query.inherit;
+
 	return (
 		<ToolsPanel
 			label={ __( 'AQL: Order by', 'advanced-query-loop' ) }
-			resetAll={ resetOrder }
+			resetAll={ resetAll }
 			dropdownMenuProps={ dropdownMenuProps }
 		>
 			<ToolsPanelItem
@@ -50,13 +72,34 @@ export const OrderControls = ( props ) => {
 				hasValue={ () =>
 					query.orderBy !== CORE_DEFAULTS.orderBy ||
 					query.order !== CORE_DEFAULTS.order ||
-					!! query.orderby_meta_key ||
-					!! query.secondary_orderby
+					!! query.orderby_meta_key
 				}
 				onDeselect={ resetOrder }
 			>
 				<PostOrderControls { ...props } />
 			</ToolsPanelItem>
+			{ showSecondaryItem && (
+				<ToolsPanelItem
+					label={ __( 'Secondary sort', 'advanced-query-loop' ) }
+					hasValue={ () => !! query.secondary_orderby }
+					onSelect={ () => {
+						if ( ! query.secondary_orderby ) {
+							setAttributes( {
+								query: {
+									...attributes.query,
+									secondary_orderby: {
+										order_by: 'date',
+										order: 'desc',
+									},
+								},
+							} );
+						}
+					} }
+					onDeselect={ removeSecondary }
+				>
+					<SecondaryOrderControls { ...props } />
+				</ToolsPanelItem>
+			) }
 		</ToolsPanel>
 	);
 };

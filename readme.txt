@@ -85,7 +85,7 @@ Sort your content exactly how you want:
 * **Post ID**: Sort by post ID
 * **Comment Count**: Sort by engagement
 * **Included Posts**: Sort by post inclusion order
-* **Multi-property ordering**: Order by multiple properties (primary + secondary sort), including meta values
+* **Multi-property ordering**: Order by multiple properties (primary + secondary sort), including meta values; posts without the meta key sort last in descending order. Applies to non-inherited queries only
 
 ==== ⚡ Performance Optimization ====
 
@@ -161,7 +161,7 @@ Advanced Query Loop is built with developers in mind:
 
 == Changelog ==
 = Unreleased =
-* Order by multiple properties (primary + secondary sort), including meta values.
+* Order by multiple properties (primary + secondary sort), including meta values, for non-inherited queries.
 * Reorganize inspector controls into grouped panels (AQL: Post, Taxonomy, Meta, Date, Order by, Performance, Advanced).
 * Add an "AQL: Extensions" panel for third-party controls (formerly inside "Advanced Query Settings"), shown only when extensions are registered.
 * Add a control for excluding taxonomy terms.

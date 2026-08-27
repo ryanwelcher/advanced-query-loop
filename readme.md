@@ -61,7 +61,7 @@ Sort in ascending or descending order by:
 -   Random
 -   Title
 
-Order by multiple properties (primary + secondary sort), including meta values.
+Order by multiple properties (primary + secondary sort), including meta values; posts without the meta key sort last in descending order. Multi-property ordering (the meta sort key and the secondary sort) applies to non-inherited queries only — when `Inherit query from template` is enabled, only the primary order and direction are used.
 
 #### Disable Pagination
 
