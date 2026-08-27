@@ -12,7 +12,7 @@ For example, a control that makes changes to the content types being displayed m
 -   AQLControls
 -   AQLControlsInheritedQuery
 
-Both SlotFills are passed all `props` from the main block and are available on the `window.aql` object for use.
+Both SlotFills are passed all `props` from the main block and are available on the `window.aql` object for use. Built-in AQL controls now live in their own grouped panels (Post Parameters, Taxonomy Query, Meta Query, Date Query, Post Order, Performance, and Advanced); fills registered via these SlotFills render in a separate, trailing "Advanced Query Settings" panel.
 
 ##### Available props
 

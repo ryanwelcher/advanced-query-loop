@@ -14,6 +14,8 @@ Please use the either the [support](https://wordpress.org/support/plugin/advance
 
 ### Available Controls
 
+Controls are organized into grouped panels in the block inspector: Post Parameters, Taxonomy Query, Meta Query, Date Query, Post Order, Performance, and Advanced.
+
 #### Taxonomy queries
 
 Built complicated taxonomy queries!

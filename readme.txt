@@ -32,6 +32,8 @@ Need help? We've got you covered!
 
 === Powerful Features at Your Fingertips ===
 
+Controls are organized into grouped panels in the block inspector: Post Parameters, Taxonomy Query, Meta Query, Date Query, Post Order, Performance, and Advanced.
+
 ==== 🏷️ Advanced Taxonomy Queries ====
 
 Build sophisticated taxonomy queries that let you filter content by multiple categories, tags, or custom taxonomies. Create complex relationships between different taxonomy terms to display exactly the content you want.

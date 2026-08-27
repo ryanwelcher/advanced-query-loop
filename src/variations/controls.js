@@ -104,6 +104,13 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 				<>
 					<BlockEdit { ...props } />
 					<InspectorControls>
+						<PostParametersControls { ...propsWithControls } />
+						<TaxonomyQueryGroupControls { ...propsWithControls } />
+						<MetaQueryGroupControls { ...propsWithControls } />
+						<DateQueryControls { ...propsWithControls } />
+						<OrderControls { ...propsWithControls } />
+						<PerformanceControls { ...propsWithControls } />
+						<AdvancedControls { ...propsWithControls } />
 						<PanelBody
 							title={ __(
 								'Advanced Query Settings',
@@ -117,13 +124,6 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 								fillProps={ { ...propsWithControls } }
 							/>
 						</PanelBody>
-						<PostParametersControls { ...propsWithControls } />
-						<TaxonomyQueryGroupControls { ...propsWithControls } />
-						<MetaQueryGroupControls { ...propsWithControls } />
-						<OrderControls { ...propsWithControls } />
-						<DateQueryControls { ...propsWithControls } />
-						<PerformanceControls { ...propsWithControls } />
-						<AdvancedControls { ...propsWithControls } />
 					</InspectorControls>
 				</>
 			);
