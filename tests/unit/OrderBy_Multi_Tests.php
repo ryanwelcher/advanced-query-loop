@@ -106,32 +106,46 @@ class OrderBy_Multi_Tests extends TestCase {
 		);
 
 		$this->assertSame( array( 'aql_orderby_primary' => 'DESC' ), $args['orderby'] );
+
+		// The REFERENCED clause (the one orderby points at) must be the keyed
+		// NOT EXISTS clause; the unrestricted EXISTS clause is the sibling.
 		$this->assertSame(
 			array(
 				'relation'                   => 'OR',
 				'aql_orderby_primary'        => array(
 					'key'     => '_is_ns_featured_post',
-					'compare' => 'EXISTS',
-				),
-				'aql_orderby_primary_absent' => array(
-					'key'     => '_is_ns_featured_post',
 					'compare' => 'NOT EXISTS',
+				),
+				'aql_orderby_primary_exists' => array(
+					'key'     => '_is_ns_featured_post',
+					'compare' => 'EXISTS',
 				),
 			),
 			$args['meta_query']
 		);
 	}
 
-	public function test_meta_value_num_sets_numeric_type() {
+	public function test_meta_value_num_sets_numeric_type_on_referenced_clause() {
 		$args = $this->generate(
 			array(
 				'orderBy'          => 'meta_value_num',
 				'orderby_meta_key' => 'price',
 			)
 		);
+
+		// NUMERIC belongs on the clause the orderby references, since that is
+		// the value WP_Query casts and sorts on.
 		$this->assertSame(
 			'NUMERIC',
 			$args['meta_query']['aql_orderby_primary']['type']
+		);
+		$this->assertArrayNotHasKey(
+			'type',
+			$args['meta_query']['aql_orderby_primary_exists']
+		);
+		$this->assertSame(
+			'NOT EXISTS',
+			$args['meta_query']['aql_orderby_primary']['compare']
 		);
 	}
 
@@ -176,8 +190,20 @@ class OrderBy_Multi_Tests extends TestCase {
 			),
 			$args['orderby']
 		);
-		$this->assertArrayHasKey( 'aql_orderby_secondary', $args['meta_query'] );
-		$this->assertArrayHasKey( 'aql_orderby_secondary_absent', $args['meta_query'] );
+		$this->assertSame(
+			array(
+				'key'     => 'subtitle',
+				'compare' => 'NOT EXISTS',
+			),
+			$args['meta_query']['aql_orderby_secondary']
+		);
+		$this->assertSame(
+			array(
+				'key'     => 'subtitle',
+				'compare' => 'EXISTS',
+			),
+			$args['meta_query']['aql_orderby_secondary_exists']
+		);
 	}
 
 	public function test_ordering_clauses_merge_with_user_meta_query() {
@@ -204,6 +230,57 @@ class OrderBy_Multi_Tests extends TestCase {
 		$ordering_group = end( $args['meta_query'] );
 		$this->assertSame( 'OR', $ordering_group['relation'] );
 		$this->assertArrayHasKey( 'aql_orderby_primary', $ordering_group );
+	}
+
+	/**
+	 * The REST path (block editor preview) sends the primary sort under the
+	 * lowercase 'orderby' key. Same inputs must produce identical output.
+	 */
+	public function test_lowercase_orderby_matches_camel_case() {
+		$input = array(
+			'order'             => 'desc',
+			'orderby_meta_key'  => '_is_ns_featured_post',
+			'secondary_orderby' => array(
+				'order_by' => 'date',
+				'order'    => 'desc',
+			),
+		);
+
+		$camel = $this->generate( array_merge( $input, array( 'orderBy' => 'meta_value' ) ) );
+		$lower = $this->generate( array_merge( $input, array( 'orderby' => 'meta_value' ) ) );
+
+		$this->assertSame( $camel['orderby'], $lower['orderby'] );
+		$this->assertSame( $camel['meta_query'], $lower['meta_query'] );
+	}
+
+	public function test_lowercase_orderby_alone_is_processed() {
+		$args = $this->generate( array( 'orderby' => 'title' ) );
+		$this->assertSame( 'title', $args['orderby'] );
+	}
+
+	/**
+	 * A secondary sort can arrive without any primary orderBy key at all.
+	 * The primary rule is skipped entirely (no broken null entry) and the
+	 * secondary rule stands alone, keeping its own direction.
+	 */
+	public function test_secondary_without_primary_orderby_stands_alone() {
+		$args = $this->generate(
+			array(
+				'secondary_orderby' => array(
+					'order_by' => 'title',
+					'order'    => 'asc',
+				),
+			)
+		);
+		$this->assertSame( array( 'title' => 'ASC' ), $args['orderby'] );
+		$this->assertArrayNotHasKey( '', $args['orderby'] );
+	}
+
+	public function test_orderby_meta_key_alone_is_a_no_op() {
+		// Nothing to order by: no orderby arg is emitted at all.
+		$args = $this->generate( array( 'orderby_meta_key' => 'price' ) );
+		$this->assertArrayNotHasKey( 'orderby', $args );
+		$this->assertArrayNotHasKey( 'meta_query', $args );
 	}
 
 	public function test_meta_orderby_without_key_falls_back_to_plain() {
