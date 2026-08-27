@@ -163,6 +163,7 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 							fillProps={ { ...propsWithControls } }
 						/>
 					</PanelBody>
+					<AdvancedControls { ...propsWithControls } />
 				</InspectorControls>
 			</>
 		);
