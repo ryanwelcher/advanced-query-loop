@@ -34,15 +34,21 @@ export const PerformanceControls = ( {
 	return (
 		<ToolsPanel
 			label={ __( 'AQL: Performance Controls', 'advanced-query-loop' ) }
-			resetAll={ () =>
+			resetAll={ () => {
+				const updates = {};
+				if ( allowedControls.includes( 'enable_caching' ) ) {
+					updates.enable_caching = false;
+				}
+				if ( allowedControls.includes( 'pagination' ) ) {
+					updates.disable_pagination = false;
+				}
 				setAttributes( {
 					query: {
 						...attributes.query,
-						enable_caching: false,
-						disable_pagination: false,
+						...updates,
 					},
-				} )
-			}
+				} );
+			} }
 		>
 			{ allowedControls.includes( 'enable_caching' ) && (
 				<ToolsPanelItem
