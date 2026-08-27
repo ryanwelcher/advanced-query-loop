@@ -9,18 +9,20 @@ const usePostTypeMetaFields = ( postTypes ) => {
 				return meta;
 			}
 			postTypes.filter( Boolean ).forEach( ( type ) => {
-				const postInstance = select( coreDataStore ).getEntityRecords(
+				// Sample several posts — any single post may have no saved
+				// meta even when the post type uses it.
+				const postInstances = select( coreDataStore ).getEntityRecords(
 					'postType',
 					type,
-					{ per_page: 1 }
+					{ per_page: 10 }
 				);
-				if ( postInstance && postInstance?.[ 0 ]?.meta !== undefined ) {
+				( postInstances ?? [] ).forEach( ( postInstance ) => {
 					meta = {
 						...meta,
-						...postInstance?.[ 0 ]?.meta,
-						...postInstance?.[ 0 ]?.acf, // Include ACF fields if ACF is active
+						...( postInstance?.meta ?? {} ),
+						...( postInstance?.acf ?? {} ), // Include ACF fields if ACF is active
 					};
-				}
+				} );
 			} );
 			return meta;
 		},

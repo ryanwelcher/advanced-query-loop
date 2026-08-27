@@ -77,7 +77,6 @@ export const PostMetaQueryControls = ( {
 						onClick={ onToggle }
 						aria-haspopup="true"
 						aria-expanded={ isOpen }
-						disabled={ Object.keys( registeredMeta ).length === 0 }
 					>
 						{ isOpen
 							? __(
