@@ -75,19 +75,26 @@ export const PostParametersControls = ( props ) => {
 			>
 				<PostIncludeControls { ...props } />
 			</ToolsPanelItem>
-			<ToolsPanelItem
-				label={ __( 'Exclude posts', 'advanced-query-loop' ) }
-				hasValue={ () => !! query.exclude_posts?.length }
-				onDeselect={ () =>
-					removeKeys( attributes, setAttributes, [ 'exclude_posts' ] )
-				}
-			>
-				<PostPickerControl
-					{ ...props }
-					queryField="exclude_posts"
-					title={ __( 'Posts to Exclude', 'advanced-query-loop' ) }
-				/>
-			</ToolsPanelItem>
+			{ allowedControls.includes( 'exclude_posts' ) && (
+				<ToolsPanelItem
+					label={ __( 'Exclude posts', 'advanced-query-loop' ) }
+					hasValue={ () => !! query.exclude_posts?.length }
+					onDeselect={ () =>
+						removeKeys( attributes, setAttributes, [
+							'exclude_posts',
+						] )
+					}
+				>
+					<PostPickerControl
+						{ ...props }
+						queryField="exclude_posts"
+						title={ __(
+							'Posts to Exclude',
+							'advanced-query-loop'
+						) }
+					/>
+				</ToolsPanelItem>
+			) }
 			<ToolsPanelItem
 				label={ __( 'Exclude current post', 'advanced-query-loop' ) }
 				hasValue={ () => !! query.exclude_current }

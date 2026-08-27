@@ -57,13 +57,18 @@ export const PostExcludeControls = ( {
  * of advanced query loop settings. It toggles the exclusion of the current post
  * or content associated with the current template from query results.
  *
- * @param {Object}   props               The properties passed to the component.
- * @param {Object}   props.attributes    The block attributes.
- * @param {Function} props.setAttributes Function to update block attributes.
+ * @param {Object}   props                 The properties passed to the component.
+ * @param {Object}   props.attributes      The block attributes.
+ * @param {Function} props.setAttributes   Function to update block attributes.
+ * @param {Array}    props.allowedControls Allowed controls.
  *
  * @return {Element|null} A `ToggleControl` component.
  */
-export const ExcludeCurrentPostToggle = ( { attributes, setAttributes } ) => {
+export const ExcludeCurrentPostToggle = ( {
+	attributes,
+	setAttributes,
+	allowedControls,
+} ) => {
 	const { query: { exclude_current: excludeCurrent } = {} } = attributes;
 
 	const { record: siteOptions } = useEntityRecord( 'root', 'site' );
@@ -76,6 +81,11 @@ export const ExcludeCurrentPostToggle = ( { attributes, setAttributes } ) => {
 			} ),
 		};
 	}, [] );
+
+	// If the control is not allowed, return null.
+	if ( ! allowedControls.includes( 'exclude_current_post' ) ) {
+		return null;
+	}
 
 	if ( ! currentPost ) {
 		return <div>{ __( 'Loading…', 'advanced-query-loop' ) }</div>;
