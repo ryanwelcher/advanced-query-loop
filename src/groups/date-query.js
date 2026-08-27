@@ -12,7 +12,25 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import { PostDateQueryControls } from '../components/post-date-query-controls';
+import {
+	DateDynamicRangeControls,
+	DateRelationshipControls,
+} from '../components/post-date-query-controls';
+
+// Deletes the given keys from the date_query attribute, removing date_query
+// entirely once it no longer has any keys left.
+const removeDateQueryKeys = ( attributes, setAttributes, keys ) => {
+	const newDateQuery = { ...( attributes.query.date_query || {} ) };
+	keys.forEach( ( key ) => delete newDateQuery[ key ] );
+
+	const newQuery = { ...attributes.query };
+	if ( Object.keys( newDateQuery ).length === 0 ) {
+		delete newQuery.date_query;
+	} else {
+		newQuery.date_query = newDateQuery;
+	}
+	setAttributes( { query: newQuery } );
+};
 
 export const DateQueryControls = ( props ) => {
 	const { attributes, setAttributes, allowedControls } = props;
@@ -36,17 +54,36 @@ export const DateQueryControls = ( props ) => {
 			label={ __( 'AQL: Date', 'advanced-query-loop' ) }
 			resetAll={ resetDateQuery }
 		>
-			<ToolsPanelItem
-				label={ __( 'Date filters', 'advanced-query-loop' ) }
-				isShownByDefault
-				hasValue={ () =>
-					!! query.date_query &&
-					Object.keys( query.date_query ).length > 0
-				}
-				onDeselect={ resetDateQuery }
-			>
-				<PostDateQueryControls { ...props } />
-			</ToolsPanelItem>
+			{ allowedControls.includes( 'date_query_dynamic_range' ) && (
+				<ToolsPanelItem
+					label={ __( 'Dynamic range', 'advanced-query-loop' ) }
+					hasValue={ () => !! query.date_query?.range }
+					onDeselect={ () =>
+						removeDateQueryKeys( attributes, setAttributes, [
+							'range',
+							'current_date_in_range',
+						] )
+					}
+				>
+					<DateDynamicRangeControls { ...props } />
+				</ToolsPanelItem>
+			) }
+			{ allowedControls.includes( 'date_query_relationship' ) && (
+				<ToolsPanelItem
+					label={ __( 'Date relationship', 'advanced-query-loop' ) }
+					hasValue={ () => !! query.date_query?.relation }
+					onDeselect={ () =>
+						removeDateQueryKeys( attributes, setAttributes, [
+							'relation',
+							'date_primary',
+							'date_secondary',
+							'inclusive',
+						] )
+					}
+				>
+					<DateRelationshipControls { ...props } />
+				</ToolsPanelItem>
+			) }
 		</ToolsPanel>
 	);
 };

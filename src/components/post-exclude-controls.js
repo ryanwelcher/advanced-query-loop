@@ -5,52 +5,6 @@ import { ToggleControl } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useEntityRecord, store as coreDataStore } from '@wordpress/core-data';
 import { __ } from '@wordpress/i18n';
-import { PostPickerControl } from './post-picker-control';
-
-/**
- * A component that lets you pick posts to be excluded from the query
- *
- * @param {Object}   props                 Component props
- * @param {Object}   props.attributes      Block attributes
- * @param {Function} props.setAttributes   Block attributes setter
- * @param {Array}    props.allowedControls Allowed controls
- *
- * @return {Element} PostExcludeControls
- */
-export const PostExcludeControls = ( {
-	attributes,
-	setAttributes,
-	allowedControls,
-} ) => {
-	// If neither control is allowed, return null.
-	if (
-		! allowedControls.includes( 'exclude_current_post' ) &&
-		! allowedControls.includes( 'exclude_posts' )
-	) {
-		return null;
-	}
-
-	return (
-		<>
-			<h2> { __( 'Exclude Posts', 'advanced-query-loop' ) }</h2>
-			{ allowedControls.includes( 'exclude_current_post' ) && (
-				<ExcludeCurrentPostToggle
-					attributes={ attributes }
-					setAttributes={ setAttributes }
-					allowedControls={ allowedControls }
-				/>
-			) }
-			{ allowedControls.includes( 'exclude_posts' ) && (
-				<PostPickerControl
-					title={ __( 'Posts to Exclude', 'advanced-query-loop' ) }
-					queryField="exclude_posts"
-					attributes={ attributes }
-					setAttributes={ setAttributes }
-				/>
-			) }
-		</>
-	);
-};
 
 /**
  * ExcludeCurrentPostToggle is a React functional component used within the context

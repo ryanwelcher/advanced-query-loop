@@ -54,27 +54,33 @@ export const PostParametersControls = ( props ) => {
 				] )
 			}
 		>
-			<ToolsPanelItem
-				label={ __( 'Post types', 'advanced-query-loop' ) }
-				isShownByDefault
-				hasValue={ () => !! query.multiple_posts?.length }
-				onDeselect={ () =>
-					removeKeys( attributes, setAttributes, [
-						'multiple_posts',
-					] )
-				}
-			>
-				<MultiplePostSelect { ...props } />
-			</ToolsPanelItem>
-			<ToolsPanelItem
-				label={ __( 'Include posts', 'advanced-query-loop' ) }
-				hasValue={ () => !! query.include_posts?.length }
-				onDeselect={ () =>
-					removeKeys( attributes, setAttributes, [ 'include_posts' ] )
-				}
-			>
-				<PostIncludeControls { ...props } />
-			</ToolsPanelItem>
+			{ allowedControls.includes( 'additional_post_types' ) && (
+				<ToolsPanelItem
+					label={ __( 'Post types', 'advanced-query-loop' ) }
+					isShownByDefault
+					hasValue={ () => !! query.multiple_posts?.length }
+					onDeselect={ () =>
+						removeKeys( attributes, setAttributes, [
+							'multiple_posts',
+						] )
+					}
+				>
+					<MultiplePostSelect { ...props } />
+				</ToolsPanelItem>
+			) }
+			{ allowedControls.includes( 'include_posts' ) && (
+				<ToolsPanelItem
+					label={ __( 'Include posts', 'advanced-query-loop' ) }
+					hasValue={ () => !! query.include_posts?.length }
+					onDeselect={ () =>
+						removeKeys( attributes, setAttributes, [
+							'include_posts',
+						] )
+					}
+				>
+					<PostIncludeControls { ...props } />
+				</ToolsPanelItem>
+			) }
 			{ allowedControls.includes( 'exclude_posts' ) && (
 				<ToolsPanelItem
 					label={ __( 'Exclude posts', 'advanced-query-loop' ) }
@@ -95,26 +101,35 @@ export const PostParametersControls = ( props ) => {
 					/>
 				</ToolsPanelItem>
 			) }
-			<ToolsPanelItem
-				label={ __( 'Exclude current post', 'advanced-query-loop' ) }
-				hasValue={ () => !! query.exclude_current }
-				onDeselect={ () =>
-					removeKeys( attributes, setAttributes, [
-						'exclude_current',
-					] )
-				}
-			>
-				<ExcludeCurrentPostToggle { ...props } />
-			</ToolsPanelItem>
-			<ToolsPanelItem
-				label={ __( 'Child items only', 'advanced-query-loop' ) }
-				hasValue={ () => query.post_parent !== undefined }
-				onDeselect={ () =>
-					removeKeys( attributes, setAttributes, [ 'post_parent' ] )
-				}
-			>
-				<ChildItemsToggle { ...props } />
-			</ToolsPanelItem>
+			{ allowedControls.includes( 'exclude_current_post' ) && (
+				<ToolsPanelItem
+					label={ __(
+						'Exclude current post',
+						'advanced-query-loop'
+					) }
+					hasValue={ () => !! query.exclude_current }
+					onDeselect={ () =>
+						removeKeys( attributes, setAttributes, [
+							'exclude_current',
+						] )
+					}
+				>
+					<ExcludeCurrentPostToggle { ...props } />
+				</ToolsPanelItem>
+			) }
+			{ allowedControls.includes( 'child_items_only' ) && (
+				<ToolsPanelItem
+					label={ __( 'Child items only', 'advanced-query-loop' ) }
+					hasValue={ () => !! query.post_parent }
+					onDeselect={ () =>
+						removeKeys( attributes, setAttributes, [
+							'post_parent',
+						] )
+					}
+				>
+					<ChildItemsToggle { ...props } />
+				</ToolsPanelItem>
+			) }
 		</ToolsPanel>
 	);
 };

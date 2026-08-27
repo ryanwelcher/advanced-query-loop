@@ -5,14 +5,168 @@ import {
 	DatePicker,
 	SelectControl,
 	CheckboxControl,
+	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
+	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
-export const PostDateQueryControls = ( {
-	attributes,
-	setAttributes,
-	allowedControls,
-} ) => {
+/**
+ * Removes the date-relationship keys from a date_query object so that the
+ * dynamic range and date relationship families of controls never coexist.
+ *
+ * @param {Object} dateQuery The current date_query object.
+ * @return {Object} A shallow copy of dateQuery without the relationship keys.
+ */
+const withoutRelationshipKeys = ( dateQuery ) => {
+	const newDateQuery = { ...dateQuery };
+	delete newDateQuery.relation;
+	delete newDateQuery.date_primary;
+	delete newDateQuery.date_secondary;
+	delete newDateQuery.inclusive;
+	return newDateQuery;
+};
+
+/**
+ * Removes the dynamic-range keys from a date_query object so that the
+ * dynamic range and date relationship families of controls never coexist.
+ *
+ * @param {Object} dateQuery The current date_query object.
+ * @return {Object} A shallow copy of dateQuery without the dynamic range keys.
+ */
+const withoutDynamicRangeKeys = ( dateQuery ) => {
+	const newDateQuery = { ...dateQuery };
+	delete newDateQuery.range;
+	delete newDateQuery.current_date_in_range;
+	return newDateQuery;
+};
+
+/**
+ * Controls for the dynamic date range (last month, last 3 months, etc).
+ *
+ * Mutually exclusive with DateRelationshipControls — setting a dynamic
+ * range clears any date relationship values from the date_query attribute.
+ *
+ * @param {Object}   props               Component props
+ * @param {Object}   props.attributes    Block attributes
+ * @param {Function} props.setAttributes Block attributes setter
+ *
+ * @return {Element} DateDynamicRangeControls
+ */
+export const DateDynamicRangeControls = ( { attributes, setAttributes } ) => {
+	const {
+		query: {
+			date_query: {
+				range = '',
+				current_date_in_range: currentDateInRange = false,
+				relation: relationFromQuery = '',
+			} = {},
+		} = {},
+	} = attributes;
+
+	// A date relationship is active — lock these controls out until it's cleared.
+	const isLockedByRelationship = !! relationFromQuery;
+
+	return (
+		<VStack spacing={ 4 }>
+			<SelectControl
+				label={ __( 'Dynamic Range', 'advanced-query-loop' ) }
+				help={
+					isLockedByRelationship
+						? __(
+								'Clear the date relationship to use a dynamic range.',
+								'advanced-query-loop'
+						  )
+						: __(
+								'Show posts from the last month, 3 months, 6 months, or 12 months. Posts are shown from the 1st of the month.',
+								'advanced-query-loop'
+						  )
+				}
+				value={ range }
+				disabled={ isLockedByRelationship }
+				options={ [
+					{
+						label: __( 'None', 'advanced-query-loop' ),
+						value: '',
+					},
+					{
+						label: __( 'Last month', 'advanced-query-loop' ),
+						value: 'last-month',
+					},
+					{
+						label: __( 'Last 3 months', 'advanced-query-loop' ),
+						value: 'three-months',
+					},
+					{
+						label: __( 'Last 6 months', 'advanced-query-loop' ),
+						value: 'six-months',
+					},
+					{
+						label: __( 'Last 12 months', 'advanced-query-loop' ),
+						value: 'twelve-months',
+					},
+				] }
+				onChange={ ( newRange ) => {
+					setAttributes( {
+						query: {
+							...attributes.query,
+							date_query: {
+								...withoutRelationshipKeys(
+									attributes.query.date_query
+								),
+								range: newRange,
+							},
+						},
+					} );
+				} }
+				__nextHasNoMarginBottom
+			/>
+			{ range !== '' && ! isLockedByRelationship && (
+				<CheckboxControl
+					label={ __(
+						'Include up to current date',
+						'advanced-query-loop'
+					) }
+					help={ __(
+						'Should the dynamic range include up to the current date?',
+						'advanced-query-loop'
+					) }
+					disabled={ range === '' }
+					checked={ currentDateInRange }
+					onChange={ ( newCurrentDateInRange ) => {
+						setAttributes( {
+							query: {
+								...attributes.query,
+								date_query: {
+									...withoutRelationshipKeys(
+										attributes.query.date_query
+									),
+									current_date_in_range:
+										newCurrentDateInRange,
+								},
+							},
+						} );
+					} }
+				/>
+			) }
+		</VStack>
+	);
+};
+
+/**
+ * Controls for filtering by date relationship (before/after/between
+ * specific or current dates).
+ *
+ * Mutually exclusive with DateDynamicRangeControls — setting a date
+ * relationship clears any dynamic range values from the date_query
+ * attribute.
+ *
+ * @param {Object}   props               Component props
+ * @param {Object}   props.attributes    Block attributes
+ * @param {Function} props.setAttributes Block attributes setter
+ *
+ * @return {Element} DateRelationshipControls
+ */
+export const DateRelationshipControls = ( { attributes, setAttributes } ) => {
 	const {
 		query: {
 			date_query: {
@@ -21,161 +175,92 @@ export const PostDateQueryControls = ( {
 				date_secondary: dateSecondary = new Date(),
 				inclusive: isInclusive = false,
 				range = '',
-				current_date_in_range: currentDateInRange = false,
 			} = {},
 		} = {},
 	} = attributes;
+
+	// A dynamic range is active — lock these controls out until it's cleared.
+	const isLockedByRange = !! range;
+
 	return (
-		<>
-			{ allowedControls.includes( 'date_query_dynamic_range' ) && (
-				<SelectControl
-					label={ __( 'Dynamic Range', 'advanced-query-loop' ) }
-					help={ __(
-						'Show posts from the last month, 3 months, 6 months, or 12 months. Posts are shown from the 1st of the month.',
-						'advanced-query-loop'
-					) }
-					value={ range }
-					disabled={ relationFromQuery !== '' }
-					options={ [
-						{
-							label: __( 'None', 'advanced-query-loop' ),
-							value: '',
-						},
-						{
-							label: __( 'Last month', 'advanced-query-loop' ),
-							value: 'last-month',
-						},
-						{
-							label: __( 'Last 3 months', 'advanced-query-loop' ),
-							value: 'three-months',
-						},
-						{
-							label: __( 'Last 6 months', 'advanced-query-loop' ),
-							value: 'six-months',
-						},
-						{
-							label: __(
-								'Last 12 months',
+		<VStack spacing={ 4 }>
+			<SelectControl
+				label={ __( 'Date Relationship', 'advanced-query-loop' ) }
+				help={
+					isLockedByRange
+						? __(
+								'Clear the dynamic range to use a date relationship.',
 								'advanced-query-loop'
-							),
-							value: 'twelve-months',
-						},
-					] }
-					onChange={ ( newRange ) => {
-						setAttributes( {
-							query: {
-								...attributes.query,
-								date_query: {
-									...attributes.query.date_query,
-									range: newRange,
-								},
-							},
-						} );
-					} }
-					__nextHasNoMarginBottom
-				/>
-			) }
-			{ range !== '' &&
-				allowedControls.includes( 'date_query_dynamic_range' ) && (
-					<CheckboxControl
-						label={ __(
-							'Include up to current date',
+						  )
+						: __(
+								'Show posts before or after the current date, or before, after, or between specific dates.',
+								'advanced-query-loop'
+						  )
+				}
+				value={ relationFromQuery }
+				disabled={ isLockedByRange }
+				options={ [
+					{
+						label: __( 'None', 'advanced-query-loop' ),
+						value: '',
+					},
+					{
+						label: __(
+							'Before current date',
 							'advanced-query-loop'
-						) }
-						help={ __(
-							'Should the dynamic range include up to the current date?',
+						),
+						value: 'before-current',
+					},
+					{
+						label: __(
+							'After current date',
 							'advanced-query-loop'
-						) }
-						disabled={ range === '' }
-						checked={ currentDateInRange }
-						onChange={ ( newCurrentDateInRange ) => {
-							setAttributes( {
-								query: {
-									...attributes.query,
-									date_query: {
-										...attributes.query.date_query,
-										current_date_in_range:
-											newCurrentDateInRange,
-									},
-								},
-							} );
-						} }
-					/>
-				) }
-			{ allowedControls.includes( 'date_query_relationship' ) && (
-				<SelectControl
-					label={ __( 'Date Relationship', 'advanced-query-loop' ) }
-					help={ __(
-						'Show posts before or after the current date, or before, after, or between specific dates.',
-						'advanced-query-loop'
-					) }
-					value={ relationFromQuery }
-					disabled={
-						allowedControls.includes(
-							'date_query_dynamic_range'
-						) && range !== ''
-					}
-					options={ [
-						{
-							label: __( 'None', 'advanced-query-loop' ),
-							value: '',
+						),
+						value: 'after-current',
+					},
+					{
+						label: __(
+							'Before specific date',
+							'advanced-query-loop'
+						),
+						value: 'before',
+					},
+					{
+						label: __(
+							'After specific date',
+							'advanced-query-loop'
+						),
+						value: 'after',
+					},
+					{
+						label: __(
+							'Between specific dates',
+							'advanced-query-loop'
+						),
+						value: 'between',
+					},
+				] }
+				onChange={ ( relation ) => {
+					setAttributes( {
+						query: {
+							...attributes.query,
+							date_query:
+								relation !== ''
+									? {
+											...withoutDynamicRangeKeys(
+												attributes.query.date_query
+											),
+											relation,
+									  }
+									: '',
 						},
-						{
-							label: __(
-								'Before current date',
-								'advanced-query-loop'
-							),
-							value: 'before-current',
-						},
-						{
-							label: __(
-								'After current date',
-								'advanced-query-loop'
-							),
-							value: 'after-current',
-						},
-						{
-							label: __(
-								'Before specific date',
-								'advanced-query-loop'
-							),
-							value: 'before',
-						},
-						{
-							label: __(
-								'After specific date',
-								'advanced-query-loop'
-							),
-							value: 'after',
-						},
-						{
-							label: __(
-								'Between specific dates',
-								'advanced-query-loop'
-							),
-							value: 'between',
-						},
-					] }
-					onChange={ ( relation ) => {
-						setAttributes( {
-							query: {
-								...attributes.query,
-								date_query:
-									relation !== ''
-										? {
-												...attributes.query.date_query,
-												relation,
-										  }
-										: '',
-							},
-						} );
-					} }
-					__nextHasNoMarginBottom
-				/>
-			) }
+					} );
+				} }
+				__nextHasNoMarginBottom
+			/>
 			{ relationFromQuery !== '' &&
 				! relationFromQuery.includes( 'current' ) &&
-				allowedControls.includes( 'date_query_relationship' ) && (
+				! isLockedByRange && (
 					<>
 						{ relationFromQuery === 'between' && (
 							<h4>
@@ -189,7 +274,9 @@ export const PostDateQueryControls = ( {
 									query: {
 										...attributes.query,
 										date_query: {
-											...attributes.query.date_query,
+											...withoutDynamicRangeKeys(
+												attributes.query.date_query
+											),
 											date_primary: newDate,
 										},
 									},
@@ -209,8 +296,10 @@ export const PostDateQueryControls = ( {
 											query: {
 												...attributes.query,
 												date_query: {
-													...attributes.query
-														.date_query,
+													...withoutDynamicRangeKeys(
+														attributes.query
+															.date_query
+													),
 													date_secondary: newDate,
 												},
 											},
@@ -220,7 +309,6 @@ export const PostDateQueryControls = ( {
 							</>
 						) }
 
-						<br />
 						<CheckboxControl
 							label={ __(
 								'Include selected date(s)',
@@ -236,7 +324,9 @@ export const PostDateQueryControls = ( {
 									query: {
 										...attributes.query,
 										date_query: {
-											...attributes.query.date_query,
+											...withoutDynamicRangeKeys(
+												attributes.query.date_query
+											),
 											inclusive: newIsInclusive,
 										},
 									},
@@ -245,6 +335,6 @@ export const PostDateQueryControls = ( {
 						/>
 					</>
 				) }
-		</>
+		</VStack>
 	);
 };
