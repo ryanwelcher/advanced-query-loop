@@ -1,38 +1,39 @@
 name: PHPUnit
 
 on:
-    push:
-        branches: ['trunk']
-    pull_request:
-        branches: ['trunk']
+  push:
+    branches: [ "trunk" ]
+  pull_request:
+    branches: [ "trunk" ]
 
 permissions:
-    contents: read
+  contents: read
 
 jobs:
-    build:
-        runs-on: ubuntu-latest
+  build:
 
-        steps:
-            - uses: actions/checkout@v4
+    runs-on: ubuntu-latest
 
-            - name: Validate composer.json and composer.lock
-              run: composer validate --strict
+    steps:
+    - uses: actions/checkout@v4
 
-            - name: Cache Composer packages
-              id: composer-cache
-              uses: actions/cache@v3
-              with:
-                  path: vendor
-                  key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-                  restore-keys: |
-                      ${{ runner.os }}-php-
+    - name: Validate composer.json and composer.lock
+      run: composer validate --strict
 
-            - name: Install dependencies
-              run: composer install --prefer-dist --no-progress
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v3
+      with:
+        path: vendor
+        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-php-
 
-            # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
-            # Docs: https://getcomposer.org/doc/articles/scripts.md
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress
 
-            - name: Run test suite
-              run: composer run-script phpunit
+    # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
+    # Docs: https://getcomposer.org/doc/articles/scripts.md
+
+    - name: Run test suite
+      run: composer run-script phpunit
