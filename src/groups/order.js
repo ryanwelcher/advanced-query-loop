@@ -28,13 +28,15 @@ export const OrderControls = ( props ) => {
 		return null;
 	}
 
-	const resetOrder = () =>
-		setAttributes( {
-			query: {
-				...attributes.query,
-				...CORE_DEFAULTS,
-			},
-		} );
+	const resetOrder = () => {
+		const newQuery = {
+			...attributes.query,
+			...CORE_DEFAULTS,
+		};
+		delete newQuery.orderby_meta_key;
+		delete newQuery.secondary_orderby;
+		setAttributes( { query: newQuery } );
+	};
 
 	return (
 		<ToolsPanel
@@ -47,7 +49,9 @@ export const OrderControls = ( props ) => {
 				isShownByDefault
 				hasValue={ () =>
 					query.orderBy !== CORE_DEFAULTS.orderBy ||
-					query.order !== CORE_DEFAULTS.order
+					query.order !== CORE_DEFAULTS.order ||
+					!! query.orderby_meta_key ||
+					!! query.secondary_orderby
 				}
 				onDeselect={ resetOrder }
 			>

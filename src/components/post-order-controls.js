@@ -2,6 +2,7 @@
  * WordPress dependencies
  */
 import {
+	FormTokenField,
 	SelectControl,
 	ToggleControl,
 	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
@@ -71,7 +72,17 @@ export const PostOrderControls = ( {
 	setAttributes,
 	allowedControls,
 } ) => {
-	const { query: { order, orderBy } = {} } = attributes;
+	const {
+		query: {
+			order,
+			orderBy,
+			orderby_meta_key: orderbyMetaKey,
+			secondary_orderby: secondaryOrderby,
+		} = {},
+	} = attributes;
+
+	const isMetaSort = ( value ) =>
+		value === 'meta_value' || value === 'meta_value_num';
 
 	// If the control is not allowed, return null.
 	if ( ! allowedControls.includes( 'post_order' ) ) {
@@ -84,9 +95,9 @@ export const PostOrderControls = ( {
 				label={ __( 'Post Order By', 'advanced-query-loop' ) }
 				value={ orderBy }
 				help={
-					orderBy === 'meta_value' || orderBy === 'meta_value_num'
+					isMetaSort( orderBy ) && ! orderbyMetaKey
 						? __(
-								'Meta Value and Meta Value Num require that Meta Key is set in the Meta Query section.',
+								'Set the meta key to sort by. Posts without the key are included after posts that have it.',
 								'advanced-query-loop'
 						  )
 						: ''
@@ -95,18 +106,40 @@ export const PostOrderControls = ( {
 					a.label.localeCompare( b.label )
 				) }
 				onChange={ ( newOrderBy ) => {
-					setAttributes( {
-						query: {
-							...attributes.query,
-							orderBy: newOrderBy,
-							...( newOrderBy === 'rand' && {
-								enable_caching: false,
-							} ),
-						},
-					} );
+					const newQuery = {
+						...attributes.query,
+						orderBy: newOrderBy,
+						...( newOrderBy === 'rand' && {
+							enable_caching: false,
+						} ),
+					};
+					if ( newOrderBy === 'rand' ) {
+						delete newQuery.secondary_orderby;
+					}
+					if ( ! isMetaSort( newOrderBy ) ) {
+						delete newQuery.orderby_meta_key;
+					}
+					setAttributes( { query: newQuery } );
 				} }
 				__nextHasNoMarginBottom
 			/>
+			{ isMetaSort( orderBy ) && (
+				<FormTokenField
+					label={ __( 'Meta key to sort by', 'advanced-query-loop' ) }
+					value={ orderbyMetaKey ? [ orderbyMetaKey ] : [] }
+					maxLength={ 1 }
+					onChange={ ( [ newKey ] ) => {
+						const newQuery = { ...attributes.query };
+						if ( newKey ) {
+							newQuery.orderby_meta_key = newKey;
+						} else {
+							delete newQuery.orderby_meta_key;
+						}
+						setAttributes( { query: newQuery } );
+					} }
+					__nextHasNoMarginBottom
+				/>
+			) }
 			<ToggleControl
 				label={ __( 'Ascending Order', 'advanced-query-loop' ) }
 				checked={ order === 'asc' }
@@ -120,6 +153,109 @@ export const PostOrderControls = ( {
 				} }
 				__nextHasNoMarginBottom
 			/>
+			{ orderBy !== 'rand' && (
+				<ToggleControl
+					label={ __( 'Add secondary sort', 'advanced-query-loop' ) }
+					checked={ !! secondaryOrderby }
+					onChange={ () => {
+						const newQuery = { ...attributes.query };
+						if ( secondaryOrderby ) {
+							delete newQuery.secondary_orderby;
+						} else {
+							newQuery.secondary_orderby = {
+								order_by: 'date',
+								order: 'desc',
+							};
+						}
+						setAttributes( { query: newQuery } );
+					} }
+					__nextHasNoMarginBottom
+				/>
+			) }
+			{ orderBy !== 'rand' && !! secondaryOrderby && (
+				<>
+					<SelectControl
+						label={ __(
+							'Secondary Order By',
+							'advanced-query-loop'
+						) }
+						value={ secondaryOrderby.order_by }
+						options={ sortOptions
+							.filter(
+								( { value } ) =>
+									value !== 'rand' &&
+									value !== 'post__in' &&
+									value !== orderBy
+							)
+							.sort( ( a, b ) =>
+								a.label.localeCompare( b.label )
+							) }
+						onChange={ ( newOrderBy ) => {
+							setAttributes( {
+								query: {
+									...attributes.query,
+									secondary_orderby: {
+										...secondaryOrderby,
+										order_by: newOrderBy,
+									},
+								},
+							} );
+						} }
+						__nextHasNoMarginBottom
+					/>
+					{ isMetaSort( secondaryOrderby.order_by ) && (
+						<FormTokenField
+							label={ __(
+								'Secondary meta key to sort by',
+								'advanced-query-loop'
+							) }
+							value={
+								secondaryOrderby.meta_key
+									? [ secondaryOrderby.meta_key ]
+									: []
+							}
+							maxLength={ 1 }
+							onChange={ ( [ newKey ] ) => {
+								const next = { ...secondaryOrderby };
+								if ( newKey ) {
+									next.meta_key = newKey;
+								} else {
+									delete next.meta_key;
+								}
+								setAttributes( {
+									query: {
+										...attributes.query,
+										secondary_orderby: next,
+									},
+								} );
+							} }
+							__nextHasNoMarginBottom
+						/>
+					) }
+					<ToggleControl
+						label={ __(
+							'Secondary Ascending Order',
+							'advanced-query-loop'
+						) }
+						checked={ secondaryOrderby.order === 'asc' }
+						onChange={ () => {
+							setAttributes( {
+								query: {
+									...attributes.query,
+									secondary_orderby: {
+										...secondaryOrderby,
+										order:
+											secondaryOrderby.order === 'asc'
+												? 'desc'
+												: 'asc',
+									},
+								},
+							} );
+						} }
+						__nextHasNoMarginBottom
+					/>
+				</>
+			) }
 		</VStack>
 	);
 };
