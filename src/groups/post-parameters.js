@@ -17,6 +17,7 @@ import { PostIncludeControls } from '../components/post-include-controls';
 import { ExcludeCurrentPostToggle } from '../components/post-exclude-controls';
 import { PostPickerControl } from '../components/post-picker-control';
 import { ChildItemsToggle } from '../components/child-items-toggle';
+import { useToolsPanelDropdownMenuProps } from './use-dropdown-menu-props';
 
 const GROUP_CONTROLS = [
 	'additional_post_types',
@@ -36,6 +37,7 @@ const removeKeys = ( attributes, setAttributes, keys ) => {
 export const PostParametersControls = ( props ) => {
 	const { attributes, setAttributes, allowedControls } = props;
 	const { query } = attributes;
+	const dropdownMenuProps = useToolsPanelDropdownMenuProps();
 
 	if ( ! GROUP_CONTROLS.some( ( c ) => allowedControls.includes( c ) ) ) {
 		return null;
@@ -44,6 +46,7 @@ export const PostParametersControls = ( props ) => {
 	return (
 		<ToolsPanel
 			label={ __( 'AQL: Post', 'advanced-query-loop' ) }
+			dropdownMenuProps={ dropdownMenuProps }
 			resetAll={ () =>
 				removeKeys( attributes, setAttributes, [
 					'multiple_posts',

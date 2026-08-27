@@ -13,10 +13,12 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import { PostMetaQueryControls } from '../components/post-meta-query-controls';
+import { useToolsPanelDropdownMenuProps } from './use-dropdown-menu-props';
 
 export const MetaQueryGroupControls = ( props ) => {
 	const { attributes, setAttributes, allowedControls } = props;
 	const { query } = attributes;
+	const dropdownMenuProps = useToolsPanelDropdownMenuProps();
 
 	if ( ! allowedControls.includes( 'post_meta_query' ) ) {
 		return null;
@@ -32,6 +34,7 @@ export const MetaQueryGroupControls = ( props ) => {
 		<ToolsPanel
 			label={ __( 'AQL: Meta', 'advanced-query-loop' ) }
 			resetAll={ resetMetaQuery }
+			dropdownMenuProps={ dropdownMenuProps }
 		>
 			<ToolsPanelItem
 				label={ __( 'Meta filters', 'advanced-query-loop' ) }

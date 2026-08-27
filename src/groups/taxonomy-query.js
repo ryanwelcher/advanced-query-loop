@@ -14,10 +14,12 @@ import { __ } from '@wordpress/i18n';
  */
 import { TaxonomyQueryControl } from '../components/taxonomy-query-control';
 import { ExcludeTaxonomies } from '../components/exclude-taxonomies';
+import { useToolsPanelDropdownMenuProps } from './use-dropdown-menu-props';
 
 export const TaxonomyQueryGroupControls = ( props ) => {
 	const { attributes, setAttributes, allowedControls } = props;
 	const { query } = attributes;
+	const dropdownMenuProps = useToolsPanelDropdownMenuProps();
 
 	if ( ! allowedControls.includes( 'taxonomy_query_builder' ) ) {
 		return null;
@@ -32,6 +34,7 @@ export const TaxonomyQueryGroupControls = ( props ) => {
 	return (
 		<ToolsPanel
 			label={ __( 'AQL: Taxonomy', 'advanced-query-loop' ) }
+			dropdownMenuProps={ dropdownMenuProps }
 			resetAll={ () => {
 				const newQuery = { ...attributes.query };
 				delete newQuery.tax_query;

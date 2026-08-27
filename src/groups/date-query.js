@@ -16,6 +16,7 @@ import {
 	DateDynamicRangeControls,
 	DateRelationshipControls,
 } from '../components/post-date-query-controls';
+import { useToolsPanelDropdownMenuProps } from './use-dropdown-menu-props';
 
 // Deletes the given keys from the date_query attribute, removing date_query
 // entirely once it no longer has any keys left.
@@ -35,6 +36,7 @@ const removeDateQueryKeys = ( attributes, setAttributes, keys ) => {
 export const DateQueryControls = ( props ) => {
 	const { attributes, setAttributes, allowedControls } = props;
 	const { query } = attributes;
+	const dropdownMenuProps = useToolsPanelDropdownMenuProps();
 
 	if (
 		! allowedControls.includes( 'date_query_dynamic_range' ) &&
@@ -53,6 +55,7 @@ export const DateQueryControls = ( props ) => {
 		<ToolsPanel
 			label={ __( 'AQL: Date', 'advanced-query-loop' ) }
 			resetAll={ resetDateQuery }
+			dropdownMenuProps={ dropdownMenuProps }
 		>
 			{ allowedControls.includes( 'date_query_dynamic_range' ) && (
 				<ToolsPanelItem
