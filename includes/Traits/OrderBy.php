@@ -66,25 +66,84 @@ trait OrderBy {
 	 */
 	// phpcs:ignore WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid
 	public function process_orderBy(): void {
-		$primary       = $this->custom_params['orderBy'] ?? null;
-		$secondary     = $this->custom_params['secondary_orderby'] ?? array();
-		$has_secondary = is_array( $secondary ) && ! empty( $secondary['order_by'] );
+		$primary_meta_key = $this->custom_params['orderby_meta_key'] ?? '';
+		$secondary        = $this->custom_params['secondary_orderby'] ?? array();
+		$has_secondary    = is_array( $secondary ) && ! empty( $secondary['order_by'] );
 
-		if ( ! $has_secondary ) {
-			// Single-rule path — unchanged behavior.
-			$this->custom_args['orderby'] = $this->normalize_orderby_property( $primary );
+		$rules = array(
+			array(
+				'property'  => $this->custom_params['orderBy'] ?? null,
+				'direction' => $this->custom_params['order'] ?? null,
+				'meta_key'  => $primary_meta_key,
+				'name'      => 'aql_orderby_primary',
+			),
+		);
+		if ( $has_secondary ) {
+			$rules[] = array(
+				'property'  => $secondary['order_by'],
+				'direction' => $secondary['order'] ?? null,
+				'meta_key'  => $secondary['meta_key'] ?? '',
+				'name'      => 'aql_orderby_secondary',
+			);
+		}
+
+		$orderby          = array();
+		$ordering_clauses = array();
+
+		foreach ( $rules as $rule ) {
+			$is_meta = in_array( $rule['property'], array( 'meta_value', 'meta_value_num' ), true )
+				&& ! empty( $rule['meta_key'] );
+
+			if ( $is_meta ) {
+				$exists_clause = array(
+					'key'     => $rule['meta_key'],
+					'compare' => 'EXISTS',
+				);
+				if ( 'meta_value_num' === $rule['property'] ) {
+					$exists_clause['type'] = 'NUMERIC';
+				}
+				$ordering_clauses[ $rule['name'] ]             = $exists_clause;
+				$ordering_clauses[ $rule['name'] . '_absent' ] = array(
+					'key'     => $rule['meta_key'],
+					'compare' => 'NOT EXISTS',
+				);
+				$key = $rule['name'];
+			} else {
+				$key = $this->normalize_orderby_property( $rule['property'] );
+			}
+
+			$orderby[ $key ] = $this->normalize_order_direction( $rule['direction'] );
+		}
+
+		if ( ! empty( $ordering_clauses ) ) {
+			$this->merge_ordering_meta_clauses( $ordering_clauses );
+		}
+
+		// Preserve the string path when there's a single plain rule.
+		$this->custom_args['orderby'] = ( 1 === count( $orderby ) && empty( $ordering_clauses ) )
+			? array_key_first( $orderby )
+			: $orderby;
+	}
+
+	/**
+	 * Merge ordering clause pairs into custom_args['meta_query'],
+	 * preserving any user-built meta query under an outer AND.
+	 *
+	 * @param array $ordering_clauses Named EXISTS/NOT EXISTS clauses.
+	 */
+	private function merge_ordering_meta_clauses( array $ordering_clauses ): void {
+		$ordering_group = array_merge( array( 'relation' => 'OR' ), $ordering_clauses );
+
+		if ( empty( $this->custom_args['meta_query'] ) ) {
+			$this->custom_args['meta_query'] = $ordering_group;
 			return;
 		}
 
-		$orderby = array();
-
-		$orderby[ $this->normalize_orderby_property( $primary ) ] =
-			$this->normalize_order_direction( $this->custom_params['order'] ?? null );
-
-		$orderby[ $this->normalize_orderby_property( $secondary['order_by'] ) ] =
-			$this->normalize_order_direction( $secondary['order'] ?? null );
-
-		$this->custom_args['orderby'] = $orderby;
+		$this->custom_args['meta_query'] = array(
+			'relation' => 'AND',
+			$this->custom_args['meta_query'],
+			$ordering_group,
+		);
 	}
 
 	/**
