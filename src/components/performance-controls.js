@@ -24,7 +24,10 @@ export const PerformanceControls = ( {
 		} = {},
 	} = attributes;
 
-	if ( ! allowedControls.includes( 'enable_caching' ) ) {
+	if (
+		! allowedControls.includes( 'enable_caching' ) &&
+		! allowedControls.includes( 'pagination' )
+	) {
 		return null;
 	}
 
@@ -41,70 +44,77 @@ export const PerformanceControls = ( {
 				} )
 			}
 		>
-			<ToolsPanelItem
-				hasValue={ () => !! enableCaching }
-				label={ __( 'Caching', 'advanced-query-loop' ) }
-				onDeselect={ () =>
-					setAttributes( {
-						query: {
-							...attributes.query,
-							enable_caching: false,
-						},
-					} )
-				}
-			>
-				<ToggleControl
-					label={ __(
-						'Enable Caching for this query',
-						'advanced-query-loop'
-					) }
-					help={ __(
-						'Enabling caching will store the results for subsequent page loads and will work to improve your site performance. This may not be needed for simple queries.',
-						'advanced-query-loop'
-					) }
-					disabled={ orderBy === 'rand' }
-					checked={ !! enableCaching }
-					onChange={ () => {
+			{ allowedControls.includes( 'enable_caching' ) && (
+				<ToolsPanelItem
+					hasValue={ () => !! enableCaching }
+					label={ __( 'Caching', 'advanced-query-loop' ) }
+					onDeselect={ () =>
 						setAttributes( {
 							query: {
 								...attributes.query,
-								enable_caching: ! enableCaching,
+								enable_caching: false,
 							},
-						} );
-					} }
-					__nextHasNoMarginBottom
-				/>
-			</ToolsPanelItem>
-			<ToolsPanelItem
-				hasValue={ () => !! disablePagination }
-				label={ __( 'Pagination', 'advanced-query-loop' ) }
-				onDeselect={ () =>
-					setAttributes( {
-						query: {
-							...attributes.query,
-							disable_pagination: false,
-						},
-					} )
-				}
-			>
-				<ToggleControl
-					label={ __( 'Disable pagination', 'advanced-query-loop' ) }
-					help={ __(
-						'Disabling pagination will not show any pagination controls on the front end. It can also provide a performance improvement for complicated queries.',
-						'advanced-query-loop'
-					) }
-					checked={ !! disablePagination }
-					onChange={ () => {
+						} )
+					}
+				>
+					<ToggleControl
+						label={ __(
+							'Enable Caching for this query',
+							'advanced-query-loop'
+						) }
+						help={ __(
+							'Enabling caching will store the results for subsequent page loads and will work to improve your site performance. This may not be needed for simple queries.',
+							'advanced-query-loop'
+						) }
+						disabled={ orderBy === 'rand' }
+						checked={ !! enableCaching }
+						onChange={ () => {
+							setAttributes( {
+								query: {
+									...attributes.query,
+									enable_caching: ! enableCaching,
+								},
+							} );
+						} }
+						__nextHasNoMarginBottom
+					/>
+				</ToolsPanelItem>
+			) }
+			{ allowedControls.includes( 'pagination' ) && (
+				<ToolsPanelItem
+					hasValue={ () => !! disablePagination }
+					label={ __( 'Pagination', 'advanced-query-loop' ) }
+					onDeselect={ () =>
 						setAttributes( {
 							query: {
 								...attributes.query,
-								disable_pagination: ! disablePagination,
+								disable_pagination: false,
 							},
-						} );
-					} }
-					__nextHasNoMarginBottom
-				/>
-			</ToolsPanelItem>
+						} )
+					}
+				>
+					<ToggleControl
+						label={ __(
+							'Disable pagination',
+							'advanced-query-loop'
+						) }
+						help={ __(
+							'Disabling pagination will not show any pagination controls on the front end. It can also provide a performance improvement for complicated queries.',
+							'advanced-query-loop'
+						) }
+						checked={ !! disablePagination }
+						onChange={ () => {
+							setAttributes( {
+								query: {
+									...attributes.query,
+									disable_pagination: ! disablePagination,
+								},
+							} );
+						} }
+						__nextHasNoMarginBottom
+					/>
+				</ToolsPanelItem>
+			) }
 		</ToolsPanel>
 	);
 };
