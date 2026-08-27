@@ -4,9 +4,9 @@ import { store as coreDataStore } from '@wordpress/core-data';
 const usePostTypeMetaFields = ( postTypes ) => {
 	return useSelect(
 		( select ) => {
-			let meta = {};
+			const keys = new Set();
 			if ( ! Array.isArray( postTypes ) || postTypes.length === 0 ) {
-				return meta;
+				return [];
 			}
 			postTypes.filter( Boolean ).forEach( ( type ) => {
 				// Sample several posts — any single post may have no saved
@@ -17,14 +17,16 @@ const usePostTypeMetaFields = ( postTypes ) => {
 					{ per_page: 10 }
 				);
 				( postInstances ?? [] ).forEach( ( postInstance ) => {
-					meta = {
-						...meta,
-						...( postInstance?.meta ?? {} ),
-						...( postInstance?.acf ?? {} ), // Include ACF fields if ACF is active
-					};
+					Object.keys( postInstance?.meta ?? {} ).forEach( ( key ) =>
+						keys.add( key )
+					);
+					// Include ACF fields if ACF is active.
+					Object.keys( postInstance?.acf ?? {} ).forEach( ( key ) =>
+						keys.add( key )
+					);
 				} );
 			} );
-			return meta;
+			return [ ...keys ];
 		},
 		[ postTypes ]
 	);
