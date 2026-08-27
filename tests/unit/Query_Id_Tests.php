@@ -58,6 +58,7 @@ class Query_Id_Tests extends TestCase {
 				// Expected - non-scalar values should be ignored.
 				array( 'is_aql' => true ),
 			),
+		);
 	}
 
 	/**
