@@ -27,7 +27,6 @@ export const PostDateQueryControls = ( {
 	} = attributes;
 	return (
 		<>
-			<h2>{ __( 'Post Date Query', 'advanced-query-loop' ) }</h2>
 			{ allowedControls.includes( 'date_query_dynamic_range' ) && (
 				<SelectControl
 					label={ __( 'Dynamic Range', 'advanced-query-loop' ) }

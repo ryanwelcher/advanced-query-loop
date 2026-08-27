@@ -22,13 +22,13 @@ import AQLControls from '../slots/aql-controls';
 import AQLControlsInheritedQuery from '../slots/aql-controls-inherited-query';
 import AQLLegacyControls from '../slots/aql-legacy-controls';
 import { PostMetaQueryControls } from '../components/post-meta-query-controls';
-import { PostDateQueryControls } from '../components/post-date-query-controls';
 import { PostOrderControls } from '../components/post-order-controls';
 import { TaxonomyQueryControl } from '../components/taxonomy-query-control';
 import { PerformanceControls } from '../components/performance-controls';
 import { QueryIdControl } from '../components/query-id-control';
 import { OrderControls } from '../groups/order';
 import { PostParametersControls } from '../groups/post-parameters';
+import { DateQueryControls } from '../groups/date-query';
 
 /**
  * Determines if the active variation is this one
@@ -135,13 +135,13 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 									/>
 								</VStack>
 							</BaseControl>
-							<PostDateQueryControls { ...propsWithControls } />
 							<AQLControls.Slot
 								fillProps={ { ...propsWithControls } }
 							/>
 						</PanelBody>
 						<PostParametersControls { ...propsWithControls } />
 						<OrderControls { ...propsWithControls } />
+						<DateQueryControls { ...propsWithControls } />
 						<PerformanceControls { ...propsWithControls } />
 					</InspectorControls>
 				</>
