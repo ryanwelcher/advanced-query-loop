@@ -8,6 +8,47 @@ import { test, expect } from '../aql-fixtures';
  */
 import { insertAQL } from '../utils';
 
+/**
+ * Opens the AQL Order by panel options menu and selects the Secondary sort
+ * item so its controls become visible in the panel.
+ *
+ * @param {import('@playwright/test').Page} page Playwright page object.
+ */
+const addSecondarySortControl = async ( page ) => {
+	await page.getByRole( 'button', { name: 'AQL: Order by options' } ).click();
+	await page
+		.getByRole( 'menuitemcheckbox', { name: 'Secondary sort' } )
+		.click();
+	await page.keyboard.press( 'Escape' );
+};
+
+/**
+ * Extracts the seeded post IDs, in render order, from the frontend query loop.
+ *
+ * Titles read "Test Post - ID: NNN"; the container post's own title has no
+ * "ID:" so it is dropped, and the result is de-duped (a Playground rendering
+ * quirk can repeat titles).
+ *
+ * @param {import('@playwright/test').Page} page Playwright page object.
+ * @return {Promise<number[]>} Rendered post IDs in order.
+ */
+const renderedPostIds = async ( page ) => {
+	const postTitles = await page
+		.locator( '.wp-block-query .wp-block-post-title' )
+		.allTextContents();
+
+	return [
+		...new Set(
+			postTitles
+				.map( ( title ) => {
+					const match = title.match( /ID:\s*(\d+)/ );
+					return match ? parseInt( match[ 1 ], 10 ) : null;
+				} )
+				.filter( ( id ): id is number => id !== null )
+		),
+	];
+};
+
 test.describe( 'Multi-property ordering', () => {
 	test.beforeEach( async ( { page, editor, playground, admin } ) => {
 		await playground.init( { page, editor } );
@@ -27,9 +68,10 @@ test.describe( 'Multi-property ordering', () => {
 		page,
 		editor,
 	} ) => {
-		await page
-			.getByRole( 'checkbox', { name: 'Add secondary sort' } )
-			.click();
+		await addSecondarySortControl( page );
+
+		await expect( page.getByLabel( 'Secondary Order By' ) ).toBeVisible();
+
 		const blocks = await editor.getBlocks();
 		expect( blocks[ 0 ].attributes.query.secondary_orderby ).toEqual( {
 			order_by: 'date',
@@ -47,7 +89,16 @@ test.describe( 'Multi-property ordering', () => {
 		await page
 			.getByRole( 'spinbutton', { name: 'Items per page' } )
 			.fill( '20' );
-		await page.waitForTimeout( 500 );
+
+		// Wait for the editor preview to re-query rather than sleeping: the
+		// default is 3 posts, so more than 10 means the new count applied.
+		await expect
+			.poll(
+				async () =>
+					editor.canvas.locator( '.wp-block-post-title' ).count(),
+				{ timeout: 20000 }
+			)
+			.toBeGreaterThan( 10 );
 
 		// Primary: Meta Value on _test_featured, descending (the
 		// default order) so posts with the key ('yes') sort before
@@ -58,32 +109,14 @@ test.describe( 'Multi-property ordering', () => {
 			.fill( '_test_featured' );
 		await page.keyboard.press( 'Enter' );
 
-		// Secondary: Date, descending (the toggle's default).
-		await page
-			.getByRole( 'checkbox', { name: 'Add secondary sort' } )
-			.click();
+		// Secondary: Date, descending (the seeded default).
+		await addSecondarySortControl( page );
 
 		await editor.publishPost();
 		const postUrl = new URL( page.url() ).searchParams.get( 'post' );
 		await page.goto( `/?p=${ postUrl }` );
 
-		const postTitles = await page
-			.locator( '.wp-block-query .wp-block-post-title' )
-			.allTextContents();
-
-		// Extract post IDs from the "Test Post - ID: NNN" titles. This
-		// also drops the container post itself (its title doesn't
-		// contain "ID:") and de-dupes (a Playground rendering quirk).
-		const ids = [
-			...new Set(
-				postTitles
-					.map( ( title ) => {
-						const match = title.match( /ID:\s*(\d+)/ );
-						return match ? parseInt( match[ 1 ], 10 ) : null;
-					} )
-					.filter( ( id ): id is number => id !== null )
-			),
-		];
+		const ids = await renderedPostIds( page );
 
 		// The blueprint seeds 10 posts; all of them must render (none
 		// dropped by the NOT EXISTS branch of the meta ordering clause).
@@ -102,6 +135,10 @@ test.describe( 'Multi-property ordering', () => {
 		// (creation order 2). Since IDs increase with creation order,
 		// the 2024-02-10 post has the lower ID of the pair.
 		//
+		// Every seeded post also carries unrelated `_test_noise` meta, so a
+		// meta ordering clause that sorts on an unkeyed join would order the
+		// keyless posts by that noise instead of dropping them to the end.
+		//
 		// Expected render order, expressed as creation-order ranks
 		// (1 = lowest ID .. 10 = highest ID):
 		//   - Featured pair, secondary date desc: rank 2, then rank 4
@@ -116,5 +153,50 @@ test.describe( 'Multi-property ordering', () => {
 		const rankOrder = ids.map( ( id ) => sortedAsc.indexOf( id ) + 1 );
 
 		expect( rankOrder ).toEqual( expectedRankOrder );
+	} );
+
+	test( 'Ascending meta order puts posts without the key first', async ( {
+		page,
+		editor,
+	} ) => {
+		await page
+			.getByRole( 'spinbutton', { name: 'Items per page' } )
+			.fill( '20' );
+
+		await expect
+			.poll(
+				async () =>
+					editor.canvas.locator( '.wp-block-post-title' ).count(),
+				{ timeout: 20000 }
+			)
+			.toBeGreaterThan( 10 );
+
+		await page.getByLabel( 'Post Order By' ).selectOption( 'meta_value' );
+		await page
+			.getByRole( 'combobox', { name: 'Meta key to sort by' } )
+			.fill( '_test_featured' );
+		await page.keyboard.press( 'Enter' );
+
+		// MySQL sorts NULL first in ASC, so the eight keyless posts must
+		// lead and the two featured posts must trail.
+		await page.getByRole( 'checkbox', { name: 'Ascending Order' } ).click();
+
+		await editor.publishPost();
+		const postUrl = new URL( page.url() ).searchParams.get( 'post' );
+		await page.goto( `/?p=${ postUrl }` );
+
+		const ids = await renderedPostIds( page );
+		expect( ids.length ).toBe( 10 );
+
+		const sortedAsc = [ ...ids ].sort( ( a, b ) => a - b );
+		const rankOrder = ids.map( ( id ) => sortedAsc.indexOf( id ) + 1 );
+
+		// Featured posts are creation-order ranks 2 and 4 (see the test
+		// above). Ascending, they must be the LAST two rendered.
+		expect( rankOrder.slice( -2 ).sort( ( a, b ) => a - b ) ).toEqual( [
+			2, 4,
+		] );
+		expect( rankOrder.slice( 0, 8 ) ).not.toContain( 2 );
+		expect( rankOrder.slice( 0, 8 ) ).not.toContain( 4 );
 	} );
 } );

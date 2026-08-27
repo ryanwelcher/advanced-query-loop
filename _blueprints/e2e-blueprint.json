@@ -58,7 +58,7 @@
 		},
 		{
 			"step": "runPHP",
-			"code": "<?php\nrequire_once '/wordpress/wp-load.php';\n$posts = get_posts(array('post_type' => 'post', 'posts_per_page' => -1, 'orderby' => 'date', 'order' => 'ASC'));\n$flagged = 0;\nforeach ($posts as $post) {\n\tif ($flagged >= 2) { break; }\n\tupdate_post_meta($post->ID, '_test_featured', 'yes');\n\t$flagged++;\n}\necho 'Flagged ' . $flagged . ' posts as featured';\n?>"
+			"code": "<?php\nrequire_once '/wordpress/wp-load.php';\n$posts = get_posts(array('post_type' => 'post', 'posts_per_page' => -1, 'orderby' => 'date', 'order' => 'ASC'));\n$flagged = 0;\nforeach ($posts as $post) {\n\t// Unrelated noise meta on EVERY post. Without it, posts lacking the\n\t// sort key have no postmeta at all and an unkeyed EXISTS join cannot\n\t// mis-order them, hiding the bug this ordering test exists to catch.\n\tupdate_post_meta($post->ID, '_test_noise', '1758000000:' . $post->ID);\n\tif ($flagged >= 2) { continue; }\n\tupdate_post_meta($post->ID, '_test_featured', 'yes');\n\t$flagged++;\n}\necho 'Flagged ' . $flagged . ' posts as featured; noise meta on ' . count($posts) . ' posts';\n?>"
 		}
 	]
 }
