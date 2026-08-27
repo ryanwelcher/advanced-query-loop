@@ -31,7 +31,7 @@ export const TaxonomyQueryGroupControls = ( props ) => {
 
 	return (
 		<ToolsPanel
-			label={ __( 'AQL: Taxonomy Query', 'advanced-query-loop' ) }
+			label={ __( 'AQL: Taxonomy', 'advanced-query-loop' ) }
 			resetAll={ () => {
 				const newQuery = { ...attributes.query };
 				delete newQuery.tax_query;

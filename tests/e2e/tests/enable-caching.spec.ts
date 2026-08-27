@@ -38,7 +38,7 @@ test.describe( 'Enable Caching toggle', () => {
 		await playground.cleanUp();
 	} );
 
-	test( 'AQL: Performance Controls panel is visible', async ( { page } ) => {
+	test( 'AQL: Performance panel is visible', async ( { page } ) => {
 		await expect( page.getByText( 'AQL: Performance' ) ).toBeVisible();
 	} );
 

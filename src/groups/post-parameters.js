@@ -43,7 +43,7 @@ export const PostParametersControls = ( props ) => {
 
 	return (
 		<ToolsPanel
-			label={ __( 'AQL: Post Parameters', 'advanced-query-loop' ) }
+			label={ __( 'AQL: Post', 'advanced-query-loop' ) }
 			resetAll={ () =>
 				removeKeys( attributes, setAttributes, [
 					'multiple_posts',

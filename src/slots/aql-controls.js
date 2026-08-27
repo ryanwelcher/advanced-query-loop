@@ -10,9 +10,12 @@ const { Fill, Slot } = createSlotFill( 'AQLControls' );
 
 const AQLControls = ( { children } ) => <Fill>{ children }</Fill>;
 
-AQLControls.Slot = ( { fillProps } ) => (
+AQLControls.Slot = ( { fillProps, children } ) => (
 	<Slot fillProps={ fillProps }>
 		{ ( fills ) => {
+			if ( children ) {
+				return children( fills );
+			}
 			return fills.length ? fills : null;
 		} }
 	</Slot>

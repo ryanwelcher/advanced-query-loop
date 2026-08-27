@@ -32,7 +32,7 @@ Need help? We've got you covered!
 
 === Powerful Features at Your Fingertips ===
 
-Controls are organized into grouped panels in the block inspector: Post Parameters, Taxonomy Query, Meta Query, Date Query, Post Order, Performance, and Advanced.
+Controls are organized into grouped panels in the block inspector: AQL: Post, AQL: Taxonomy, AQL: Meta, AQL: Date, AQL: Order by, AQL: Performance, and AQL: Advanced. A trailing AQL: Extensions panel appears only when a third-party extension has registered controls via the AQL SlotFills.
 
 ==== 🏷️ Advanced Taxonomy Queries ====
 

@@ -36,7 +36,7 @@ export const OrderControls = ( props ) => {
 
 	return (
 		<ToolsPanel
-			label={ __( 'AQL: Order', 'advanced-query-loop' ) }
+			label={ __( 'AQL: Order by', 'advanced-query-loop' ) }
 			resetAll={ resetOrder }
 		>
 			<ToolsPanelItem

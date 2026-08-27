@@ -30,7 +30,7 @@ export const MetaQueryGroupControls = ( props ) => {
 
 	return (
 		<ToolsPanel
-			label={ __( 'AQL: Meta Query', 'advanced-query-loop' ) }
+			label={ __( 'AQL: Meta', 'advanced-query-loop' ) }
 			resetAll={ resetMetaQuery }
 		>
 			<ToolsPanelItem

@@ -33,7 +33,7 @@ export const DateQueryControls = ( props ) => {
 
 	return (
 		<ToolsPanel
-			label={ __( 'AQL: Date Query', 'advanced-query-loop' ) }
+			label={ __( 'AQL: Date', 'advanced-query-loop' ) }
 			resetAll={ resetDateQuery }
 		>
 			<ToolsPanelItem

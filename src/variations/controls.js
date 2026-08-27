@@ -111,19 +111,29 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 						<OrderControls { ...propsWithControls } />
 						<PerformanceControls { ...propsWithControls } />
 						<AdvancedControls { ...propsWithControls } />
-						<PanelBody
-							title={ __(
-								'Advanced Query Settings',
-								'advanced-query-loop'
-							) }
+						<AQLLegacyControls.Slot
+							fillProps={ { ...propsWithControls } }
 						>
-							<AQLLegacyControls.Slot
-								fillProps={ { ...propsWithControls } }
-							/>
-							<AQLControls.Slot
-								fillProps={ { ...propsWithControls } }
-							/>
-						</PanelBody>
+							{ ( legacyFills ) => (
+								<AQLControls.Slot
+									fillProps={ { ...propsWithControls } }
+								>
+									{ ( fills ) =>
+										legacyFills.length || fills.length ? (
+											<PanelBody
+												title={ __(
+													'AQL: Extensions',
+													'advanced-query-loop'
+												) }
+											>
+												{ legacyFills }
+												{ fills }
+											</PanelBody>
+										) : null
+									}
+								</AQLControls.Slot>
+							) }
+						</AQLLegacyControls.Slot>
 					</InspectorControls>
 				</>
 			);

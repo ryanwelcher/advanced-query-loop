@@ -9,15 +9,13 @@ import { test, expect } from '../aql-fixtures';
 import { insertAQL } from '../utils';
 
 /**
- * Opens the AQL Post Parameters panel options menu and selects
+ * Opens the AQL Post panel options menu and selects
  * the "Exclude current post" item so the toggle becomes visible in the panel.
  *
  * @param {import('@playwright/test').Page} page Playwright page object.
  */
 const addExcludeCurrentPostControl = async ( page ) => {
-	await page
-		.getByRole( 'button', { name: 'AQL: Post Parameters options' } )
-		.click();
+	await page.getByRole( 'button', { name: 'AQL: Post options' } ).click();
 	await page
 		.getByRole( 'menuitemcheckbox', { name: 'Exclude current post' } )
 		.click();
