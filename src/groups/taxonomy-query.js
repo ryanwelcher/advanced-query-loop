@@ -13,7 +13,6 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import { TaxonomyQueryControl } from '../components/taxonomy-query-control';
-import { ExcludeTaxonomies } from '../components/exclude-taxonomies';
 import { useToolsPanelDropdownMenuProps } from './use-dropdown-menu-props';
 
 export const TaxonomyQueryGroupControls = ( props ) => {
@@ -38,7 +37,6 @@ export const TaxonomyQueryGroupControls = ( props ) => {
 			resetAll={ () => {
 				const newQuery = { ...attributes.query };
 				delete newQuery.tax_query;
-				delete newQuery.exclude_taxonomies;
 				setAttributes( { query: newQuery } );
 			} }
 		>
@@ -49,13 +47,6 @@ export const TaxonomyQueryGroupControls = ( props ) => {
 				onDeselect={ () => removeKey( 'tax_query' ) }
 			>
 				<TaxonomyQueryControl { ...props } />
-			</ToolsPanelItem>
-			<ToolsPanelItem
-				label={ __( 'Exclude taxonomy terms', 'advanced-query-loop' ) }
-				hasValue={ () => !! query.exclude_taxonomies?.length }
-				onDeselect={ () => removeKey( 'exclude_taxonomies' ) }
-			>
-				<ExcludeTaxonomies { ...props } />
 			</ToolsPanelItem>
 		</ToolsPanel>
 	);

@@ -13,7 +13,7 @@ const AQLControls = ( { children } ) => <Fill>{ children }</Fill>;
 AQLControls.Slot = ( { fillProps, children } ) => (
 	<Slot fillProps={ fillProps }>
 		{ ( fills ) => {
-			if ( children ) {
+			if ( typeof children === 'function' ) {
 				return children( fills );
 			}
 			return fills.length ? fills : null;
