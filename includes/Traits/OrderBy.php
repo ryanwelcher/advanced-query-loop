@@ -32,9 +32,14 @@ trait OrderBy {
 	/**
 	 * Process the orderBy parameter from the block query.
 	 *
-	 * This method retrieves the orderBy value from the block's custom parameters
-	 * and normalizes it for WP_Query. Specifically, it handles the case where
-	 * lowercase 'id' needs to be converted to uppercase 'ID'.
+	 * This method retrieves the orderBy and optional secondary_orderby values
+	 * from the block's custom parameters and normalizes them for WP_Query.
+	 * Specifically, it handles the case where lowercase 'id' needs to be converted
+	 * to uppercase 'ID'.
+	 *
+	 * When a secondary_orderby is provided with a valid order_by property,
+	 * the method produces an orderby array for WP_Query with the primary property
+	 * first, followed by the secondary property. Otherwise, returns a simple string.
 	 *
 	 * WordPress WP_Query expects 'ID' (uppercase) for ordering by post ID, but
 	 * the REST API accepts 'id' (lowercase). This normalization ensures consistent
@@ -61,11 +66,44 @@ trait OrderBy {
 	 */
 	// phpcs:ignore WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid
 	public function process_orderBy(): void {
-		// Retrieve the orderBy parameter from the block's custom parameters.
-		$order_by = $this->custom_params['orderBy'] ?? null;
+		$primary       = $this->custom_params['orderBy'] ?? null;
+		$secondary     = $this->custom_params['secondary_orderby'] ?? array();
+		$has_secondary = is_array( $secondary ) && ! empty( $secondary['order_by'] );
 
-		// Normalize lowercase 'id' to uppercase 'ID' for WP_Query compatibility.
-		// WP_Query is case-sensitive and only recognizes 'ID' (uppercase).
-		$this->custom_args['orderby'] = ( 'id' === $order_by ) ? 'ID' : $order_by;
+		if ( ! $has_secondary ) {
+			// Single-rule path — unchanged behavior.
+			$this->custom_args['orderby'] = $this->normalize_orderby_property( $primary );
+			return;
+		}
+
+		$orderby = array();
+
+		$orderby[ $this->normalize_orderby_property( $primary ) ] =
+			$this->normalize_order_direction( $this->custom_params['order'] ?? null );
+
+		$orderby[ $this->normalize_orderby_property( $secondary['order_by'] ) ] =
+			$this->normalize_order_direction( $secondary['order'] ?? null );
+
+		$this->custom_args['orderby'] = $orderby;
+	}
+
+	/**
+	 * Normalize a single orderby property for WP_Query.
+	 *
+	 * @param mixed $property Raw property value.
+	 * @return mixed Normalized property ('id' → 'ID').
+	 */
+	private function normalize_orderby_property( $property ) {
+		return ( 'id' === $property ) ? 'ID' : $property;
+	}
+
+	/**
+	 * Normalize an order direction to WP_Query's uppercase form.
+	 *
+	 * @param mixed $direction Raw direction value.
+	 * @return string 'ASC' or 'DESC' (default).
+	 */
+	private function normalize_order_direction( $direction ): string {
+		return ( is_string( $direction ) && 'asc' === strtolower( $direction ) ) ? 'ASC' : 'DESC';
 	}
 }
