@@ -31,6 +31,7 @@ import { PostIncludeControls } from '../components/post-include-controls';
 import { ChildItemsToggle } from '../components/child-items-toggle';
 import { PerformanceControls } from '../components/performance-controls';
 import { QueryIdControl } from '../components/query-id-control';
+import { OrderControls } from '../groups/order';
 
 /**
  * Determines if the active variation is this one
@@ -138,7 +139,6 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 									/>
 								</VStack>
 							</BaseControl>
-							<PostOrderControls { ...propsWithControls } />
 							<PostExcludeControls { ...propsWithControls } />
 							<PostIncludeControls { ...propsWithControls } />
 							<ChildItemsToggle { ...propsWithControls } />
@@ -147,6 +147,7 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 								fillProps={ { ...propsWithControls } }
 							/>
 						</PanelBody>
+						<OrderControls { ...propsWithControls } />
 						<PerformanceControls { ...propsWithControls } />
 					</InspectorControls>
 				</>
