@@ -28,7 +28,6 @@ import { PostOrderControls } from '../components/post-order-controls';
 import { PostExcludeControls } from '../components/post-exclude-controls';
 import { TaxonomyQueryControl } from '../components/taxonomy-query-control';
 import { PostIncludeControls } from '../components/post-include-controls';
-import { PaginationToggle } from '../components/pagination-toggle';
 import { ChildItemsToggle } from '../components/child-items-toggle';
 import { PerformanceControls } from '../components/performance-controls';
 
@@ -141,7 +140,6 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 							<PostIncludeControls { ...propsWithControls } />
 							<ChildItemsToggle { ...propsWithControls } />
 							<PostDateQueryControls { ...propsWithControls } />
-							<PaginationToggle { ...propsWithControls } />
 							<AQLControls.Slot
 								fillProps={ { ...propsWithControls } }
 							/>

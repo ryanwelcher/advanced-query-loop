@@ -16,8 +16,13 @@ export const PerformanceControls = ( {
 	setAttributes,
 	allowedControls,
 } ) => {
-	const { query: { enable_caching: enableCaching, orderBy } = {} } =
-		attributes;
+	const {
+		query: {
+			enable_caching: enableCaching,
+			orderBy,
+			disable_pagination: disablePagination,
+		} = {},
+	} = attributes;
 
 	if ( ! allowedControls.includes( 'enable_caching' ) ) {
 		return null;
@@ -31,6 +36,7 @@ export const PerformanceControls = ( {
 					query: {
 						...attributes.query,
 						enable_caching: false,
+						disable_pagination: false,
 					},
 				} )
 			}
@@ -63,6 +69,36 @@ export const PerformanceControls = ( {
 							query: {
 								...attributes.query,
 								enable_caching: ! enableCaching,
+							},
+						} );
+					} }
+					__nextHasNoMarginBottom
+				/>
+			</ToolsPanelItem>
+			<ToolsPanelItem
+				hasValue={ () => !! disablePagination }
+				label={ __( 'Pagination', 'advanced-query-loop' ) }
+				onDeselect={ () =>
+					setAttributes( {
+						query: {
+							...attributes.query,
+							disable_pagination: false,
+						},
+					} )
+				}
+			>
+				<ToggleControl
+					label={ __( 'Disable pagination', 'advanced-query-loop' ) }
+					help={ __(
+						'Disabling pagination will not show any pagination controls on the front end. It can also provide a performance improvement for complicated queries.',
+						'advanced-query-loop'
+					) }
+					checked={ !! disablePagination }
+					onChange={ () => {
+						setAttributes( {
+							query: {
+								...attributes.query,
+								disable_pagination: ! disablePagination,
 							},
 						} );
 					} }
