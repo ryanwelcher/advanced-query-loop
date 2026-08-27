@@ -25,10 +25,10 @@ import { PostMetaQueryControls } from '../components/post-meta-query-controls';
 import { PostOrderControls } from '../components/post-order-controls';
 import { TaxonomyQueryControl } from '../components/taxonomy-query-control';
 import { PerformanceControls } from '../components/performance-controls';
-import { QueryIdControl } from '../components/query-id-control';
 import { OrderControls } from '../groups/order';
 import { PostParametersControls } from '../groups/post-parameters';
 import { DateQueryControls } from '../groups/date-query';
+import { AdvancedControls } from '../groups/advanced';
 
 /**
  * Determines if the active variation is this one
@@ -118,7 +118,6 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 								fillProps={ { ...propsWithControls } }
 							/>
 
-							<QueryIdControl { ...propsWithControls } />
 							<BaseControl
 								label={ __(
 									'Query Builders',
@@ -143,6 +142,7 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 						<OrderControls { ...propsWithControls } />
 						<DateQueryControls { ...propsWithControls } />
 						<PerformanceControls { ...propsWithControls } />
+						<AdvancedControls { ...propsWithControls } />
 					</InspectorControls>
 				</>
 			);
@@ -158,7 +158,6 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 							'advanced-query-loop'
 						) }
 					>
-						<QueryIdControl { ...propsWithControls } />
 						<PostOrderControls { ...propsWithControls } />
 						<AQLControlsInheritedQuery.Slot
 							fillProps={ { ...propsWithControls } }
