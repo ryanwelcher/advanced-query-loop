@@ -23,15 +23,12 @@ import AQLControlsInheritedQuery from '../slots/aql-controls-inherited-query';
 import AQLLegacyControls from '../slots/aql-legacy-controls';
 import { PostMetaQueryControls } from '../components/post-meta-query-controls';
 import { PostDateQueryControls } from '../components/post-date-query-controls';
-import { MultiplePostSelect } from '../components/multiple-post-select';
 import { PostOrderControls } from '../components/post-order-controls';
-import { PostExcludeControls } from '../components/post-exclude-controls';
 import { TaxonomyQueryControl } from '../components/taxonomy-query-control';
-import { PostIncludeControls } from '../components/post-include-controls';
-import { ChildItemsToggle } from '../components/child-items-toggle';
 import { PerformanceControls } from '../components/performance-controls';
 import { QueryIdControl } from '../components/query-id-control';
 import { OrderControls } from '../groups/order';
+import { PostParametersControls } from '../groups/post-parameters';
 
 /**
  * Determines if the active variation is this one
@@ -122,7 +119,6 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 							/>
 
 							<QueryIdControl { ...propsWithControls } />
-							<MultiplePostSelect { ...propsWithControls } />
 							<BaseControl
 								label={ __(
 									'Query Builders',
@@ -139,14 +135,12 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 									/>
 								</VStack>
 							</BaseControl>
-							<PostExcludeControls { ...propsWithControls } />
-							<PostIncludeControls { ...propsWithControls } />
-							<ChildItemsToggle { ...propsWithControls } />
 							<PostDateQueryControls { ...propsWithControls } />
 							<AQLControls.Slot
 								fillProps={ { ...propsWithControls } }
 							/>
 						</PanelBody>
+						<PostParametersControls { ...propsWithControls } />
 						<OrderControls { ...propsWithControls } />
 						<PerformanceControls { ...propsWithControls } />
 					</InspectorControls>

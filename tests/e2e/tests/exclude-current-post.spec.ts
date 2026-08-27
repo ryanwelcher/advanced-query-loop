@@ -8,6 +8,22 @@ import { test, expect } from '../aql-fixtures';
  */
 import { insertAQL } from '../utils';
 
+/**
+ * Opens the AQL Post Parameters panel options menu and selects
+ * the "Exclude current post" item so the toggle becomes visible in the panel.
+ *
+ * @param {import('@playwright/test').Page} page Playwright page object.
+ */
+const addExcludeCurrentPostControl = async ( page ) => {
+	await page
+		.getByRole( 'button', { name: 'AQL: Post Parameters options' } )
+		.click();
+	await page
+		.getByRole( 'menuitemcheckbox', { name: 'Exclude current post' } )
+		.click();
+	await page.keyboard.press( 'Escape' );
+};
+
 test.describe( 'Exclude Current Post', () => {
 	test.beforeEach( async ( { page, editor, playground, admin } ) => {
 		await playground.init( { page, editor } );
@@ -18,6 +34,7 @@ test.describe( 'Exclude Current Post', () => {
 			fullscreenMode: false,
 		} );
 		await insertAQL( { editor, page } );
+		await addExcludeCurrentPostControl( page );
 	} );
 
 	test.afterEach( async ( { playground } ) => {
@@ -122,6 +139,7 @@ test.describe( 'Exclude Current Post - Frontend Rendering', () => {
 
 		// Insert AQL block
 		await insertAQL( { editor, page } );
+		await addExcludeCurrentPostControl( page );
 
 		// Enable "Exclude Current Post"
 		await page
@@ -187,6 +205,7 @@ test.describe( 'Exclude Current Post - Frontend Rendering', () => {
 
 		// Insert AQL block
 		await insertAQL( { editor, page } );
+		await addExcludeCurrentPostControl( page );
 
 		// Do NOT enable "Exclude Current Post" - leave it unchecked
 
@@ -247,6 +266,7 @@ test.describe( 'Exclude Current Post - Frontend Rendering', () => {
 
 		// Insert AQL block
 		await insertAQL( { editor, page } );
+		await addExcludeCurrentPostControl( page );
 
 		// Toggle ON
 		await page

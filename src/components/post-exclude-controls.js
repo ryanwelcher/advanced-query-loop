@@ -34,7 +34,7 @@ export const PostExcludeControls = ( {
 		<>
 			<h2> { __( 'Exclude Posts', 'advanced-query-loop' ) }</h2>
 			{ allowedControls.includes( 'exclude_current_post' ) && (
-				<ExcludeCurrentPostControl
+				<ExcludeCurrentPostToggle
 					attributes={ attributes }
 					setAttributes={ setAttributes }
 					allowedControls={ allowedControls }
@@ -53,7 +53,7 @@ export const PostExcludeControls = ( {
 };
 
 /**
- * ExcludeCurrentPostControl is a React functional component used within the context
+ * ExcludeCurrentPostToggle is a React functional component used within the context
  * of advanced query loop settings. It toggles the exclusion of the current post
  * or content associated with the current template from query results.
  *
@@ -63,7 +63,7 @@ export const PostExcludeControls = ( {
  *
  * @return {Element|null} A `ToggleControl` component.
  */
-const ExcludeCurrentPostControl = ( { attributes, setAttributes } ) => {
+export const ExcludeCurrentPostToggle = ( { attributes, setAttributes } ) => {
 	const { query: { exclude_current: excludeCurrent } = {} } = attributes;
 
 	const { record: siteOptions } = useEntityRecord( 'root', 'site' );
