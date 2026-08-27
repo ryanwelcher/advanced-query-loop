@@ -61,6 +61,8 @@ Sort in ascending or descending order by:
 -   Random
 -   Title
 
+Order by multiple properties (primary + secondary sort), including meta values.
+
 #### Disable Pagination
 
 Improve the performance of the query by disabling pagination.

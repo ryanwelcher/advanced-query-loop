@@ -55,6 +55,10 @@
 		{
 			"step": "runPHP",
 			"code": "<?php\nrequire_once '/wordpress/wp-load.php';\n\n// Update post titles to include their actual IDs\n$posts = get_posts(array(\n\t'post_type' => 'post',\n\t'posts_per_page' => -1,\n\t'post_status' => 'publish',\n\t'orderby' => 'ID',\n\t'order' => 'ASC'\n));\n\nforeach ($posts as $post) {\n\tif (strpos($post->post_title, 'will be updated') !== false) {\n\t\twp_update_post(array(\n\t\t\t'ID' => $post->ID,\n\t\t\t'post_title' => 'Test Post - ID: ' . $post->ID\n\t\t));\n\t}\n}\n\necho 'Cleaned and created ' . count($posts) . ' test posts';\n?>"
+		},
+		{
+			"step": "runPHP",
+			"code": "<?php\nrequire_once '/wordpress/wp-load.php';\n$posts = get_posts(array('post_type' => 'post', 'posts_per_page' => -1, 'orderby' => 'date', 'order' => 'ASC'));\n$flagged = 0;\nforeach ($posts as $post) {\n\tif ($flagged >= 2) { break; }\n\tupdate_post_meta($post->ID, '_test_featured', 'yes');\n\t$flagged++;\n}\necho 'Flagged ' . $flagged . ' posts as featured';\n?>"
 		}
 	]
 }
