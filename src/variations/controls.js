@@ -5,11 +5,7 @@
 import { addFilter } from '@wordpress/hooks';
 import { InspectorControls } from '@wordpress/block-editor';
 import { useSelect } from '@wordpress/data';
-import {
-	PanelBody,
-	__experimentalVStack as VStack,
-	BaseControl,
-} from '@wordpress/components';
+import { PanelBody } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { createBlock } from '@wordpress/blocks';
 import { store as editorStore } from '@wordpress/editor';
@@ -21,12 +17,12 @@ import { AQL } from '.';
 import AQLControls from '../slots/aql-controls';
 import AQLControlsInheritedQuery from '../slots/aql-controls-inherited-query';
 import AQLLegacyControls from '../slots/aql-legacy-controls';
-import { PostMetaQueryControls } from '../components/post-meta-query-controls';
 import { PostOrderControls } from '../components/post-order-controls';
 import { PerformanceControls } from '../components/performance-controls';
 import { OrderControls } from '../groups/order';
 import { PostParametersControls } from '../groups/post-parameters';
 import { TaxonomyQueryGroupControls } from '../groups/taxonomy-query';
+import { MetaQueryGroupControls } from '../groups/meta-query';
 import { DateQueryControls } from '../groups/date-query';
 import { AdvancedControls } from '../groups/advanced';
 
@@ -117,26 +113,13 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 							<AQLLegacyControls.Slot
 								fillProps={ { ...propsWithControls } }
 							/>
-
-							<BaseControl
-								label={ __(
-									'Query Builders',
-									'advanced-query-loop'
-								) }
-								id="query-builders"
-							>
-								<VStack alignment="center">
-									<PostMetaQueryControls
-										{ ...propsWithControls }
-									/>
-								</VStack>
-							</BaseControl>
 							<AQLControls.Slot
 								fillProps={ { ...propsWithControls } }
 							/>
 						</PanelBody>
 						<PostParametersControls { ...propsWithControls } />
 						<TaxonomyQueryGroupControls { ...propsWithControls } />
+						<MetaQueryGroupControls { ...propsWithControls } />
 						<OrderControls { ...propsWithControls } />
 						<DateQueryControls { ...propsWithControls } />
 						<PerformanceControls { ...propsWithControls } />
