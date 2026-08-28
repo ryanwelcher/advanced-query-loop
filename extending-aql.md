@@ -175,10 +175,11 @@ add_filter(
 );
 ```
 
-Resolution rules: return a string to resolve the token; return an empty string for
-"known but currently valueless" (the whole param is dropped so the clause matches
-nothing); leave `$resolved` untouched for names you don't handle — unrecognized
-tokens pass through verbatim.
+Resolution rules: return a string to resolve the token; return null, or leave
+`$resolved` untouched, for names you don't handle. A token that resolves to
+nothing — unknown, or known but currently valueless (e.g. `{aql:user_id}` for
+a logged-out visitor) — is left in the value verbatim, so equality-style
+comparisons against it match nothing.
 
 The `$context` array includes `post_id`, `post_type`, `author_id`, `user_id`,
 `is_editor_preview`, `block_query`, and `inherited`.

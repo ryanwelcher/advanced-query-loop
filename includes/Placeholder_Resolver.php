@@ -27,14 +27,17 @@ class Placeholder_Resolver {
 	/**
 	 * Recursively resolve tokens in every string value of a params array.
 	 *
-	 * A param whose value contained a token and resolved to an empty
-	 * string is dropped, so e.g. a logged-out {aql:user_id} clause
-	 * matches nothing rather than everything. Token-free values pass
-	 * through untouched.
+	 * A token that does not resolve to a non-empty string is left in the
+	 * value verbatim — nothing is ever dropped. This means e.g. a
+	 * logged-out {aql:user_id} clause is compared against the literal
+	 * string "{aql:user_id}", which matches no real meta value, so the
+	 * clause still matches nothing without ever widening to match
+	 * everything. Token-free values pass through untouched.
 	 *
 	 * @param array $params  Raw params (block query, query vars, or REST params).
 	 * @param array $context Resolution context. Keys: post_id, post_type,
-	 *                       is_editor_preview, block_query, inherited.
+	 *                       author_id, user_id, is_editor_preview,
+	 *                       block_query, inherited.
 	 *
 	 * @return array The params with tokens resolved.
 	 */
@@ -46,11 +49,7 @@ class Placeholder_Resolver {
 				continue;
 			}
 			if ( is_string( $value ) && preg_match( self::TOKEN_PATTERN, $value ) ) {
-				$resolved_value = self::resolve_string( $value, $context );
-				if ( '' === $resolved_value ) {
-					continue;
-				}
-				$resolved_params[ $key ] = $resolved_value;
+				$resolved_params[ $key ] = self::resolve_string( $value, $context );
 				continue;
 			}
 			$resolved_params[ $key ] = $value;
@@ -71,11 +70,11 @@ class Placeholder_Resolver {
 			self::TOKEN_PATTERN,
 			function ( $matches ) use ( $context ) {
 				$resolved = self::resolve_token( $matches[1], $context );
-				// Unknown token: leave it verbatim — it may be a literal value.
-				return null === $resolved ? $matches[0] : $resolved;
+				// Unresolved (unknown, or known but currently valueless): leave it verbatim.
+				return '' === (string) $resolved ? $matches[0] : $resolved;
 			},
 			$value
-		);
+		) ?? $value; // A PCRE failure returns null; fall back to the original string.
 	}
 
 	/**
@@ -95,11 +94,12 @@ class Placeholder_Resolver {
 		/**
 		 * Filter a placeholder resolution.
 		 *
-		 * Return a string to resolve the token (overriding built-ins),
-		 * an empty string for "known but no value" (the param is
-		 * dropped), or null to leave an unknown token verbatim.
+		 * Return a non-empty string to resolve the token (overriding
+		 * built-ins). Return null, or leave $resolved untouched, for a
+		 * name you don't handle or one with currently no value — the
+		 * token is then left in the value verbatim rather than dropped.
 		 *
-		 * @since x.x
+		 * @since 4.5.0
 		 *
 		 * @param string|null $resolved The built-in resolution, or null for unknown names.
 		 * @param string      $name     The token name.
@@ -107,7 +107,10 @@ class Placeholder_Resolver {
 		 */
 		$resolved = \apply_filters( 'aql_resolve_placeholder', $resolved, $name, $context );
 
-		if ( null !== $resolved && ! is_string( $resolved ) ) {
+		if ( null !== $resolved && ! is_scalar( $resolved ) ) {
+			// A non-scalar (array/object) return is not a valid resolution; treat as unknown.
+			$resolved = null;
+		} elseif ( null !== $resolved ) {
 			$resolved = (string) $resolved;
 		}
 
@@ -146,6 +149,8 @@ class Placeholder_Resolver {
 	private static function format_date( string $modifier ): string {
 		if ( function_exists( 'current_time' ) ) {
 			// Use 'Y-m-d H:i:s' to avoid the discouraged 'timestamp' format.
+			// current_time() returns WP-timezone-local values, so the
+			// strtotime() round-trip below is intentional, not a bug.
 			$now = strtotime( \current_time( 'Y-m-d H:i:s' ) );
 		} else {
 			$now = time();
@@ -209,7 +214,7 @@ class Placeholder_Resolver {
 		/**
 		 * Filter the user-facing placeholder list shown in editor pickers.
 		 *
-		 * @since x.x
+		 * @since 4.5.0
 		 *
 		 * @param array $list List of arrays with name, label, and description keys.
 		 */

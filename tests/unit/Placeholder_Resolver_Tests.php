@@ -6,6 +6,7 @@
 namespace AdvancedQueryLoop\UnitTests;
 
 use AdvancedQueryLoop\Placeholder_Resolver;
+use AdvancedQueryLoop\Query_Params_Generator;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -87,9 +88,9 @@ class Placeholder_Resolver_Tests extends TestCase {
 	}
 
 	/**
-	 * A known token with no value in context resolves empty and the param is dropped.
+	 * A known token with no value in context stays in the value verbatim.
 	 */
-	public function test_known_token_without_context_value_drops_param() {
+	public function test_known_token_without_context_value_stays_verbatim() {
 		$params = array(
 			'meta_key'   => 'related_post',
 			'meta_value' => '{aql:current_post_id}',
@@ -97,7 +98,7 @@ class Placeholder_Resolver_Tests extends TestCase {
 
 		$resolved = Placeholder_Resolver::resolve_params( $params, array( 'post_id' => 0 ) );
 
-		$this->assertArrayNotHasKey( 'meta_value', $resolved );
+		$this->assertSame( '{aql:current_post_id}', $resolved['meta_value'] );
 		$this->assertSame( 'related_post', $resolved['meta_key'] );
 	}
 
@@ -164,20 +165,20 @@ class Placeholder_Resolver_Tests extends TestCase {
 	 */
 	public function data_context_tokens() {
 		return array(
-			'author_id resolves'                        => array(
+			'author_id resolves'                           => array(
 				array( 'meta_value' => '{aql:author_id}' ),
 				array( 'author_id' => 12 ),
 				array( 'meta_value' => '12' ),
 			),
-			'user_id resolves'                          => array(
+			'user_id resolves'                             => array(
 				array( 'meta_value' => '{aql:user_id}' ),
 				array( 'user_id' => 3 ),
 				array( 'meta_value' => '3' ),
 			),
-			'user_id empty when logged out drops param' => array(
+			'user_id empty when logged out stays verbatim' => array(
 				array( 'meta_value' => '{aql:user_id}' ),
 				array( 'user_id' => 0 ),
-				array(),
+				array( 'meta_value' => '{aql:user_id}' ),
 			),
 		);
 	}
@@ -272,5 +273,57 @@ class Placeholder_Resolver_Tests extends TestCase {
 		$names = array_column( Placeholder_Resolver::get_placeholder_list(), 'name' );
 
 		$this->assertContains( 'my_custom', $names );
+	}
+
+	/**
+	 * Integration: resolved params feed into Query_Params_Generator and produce
+	 * a meta_query clause with the resolved value.
+	 */
+	public function test_resolved_meta_query_reaches_query_params_generator() {
+		$block_query = array(
+			'meta_query' => array(
+				'relation' => 'AND',
+				'queries'  => array(
+					array(
+						'meta_key'   => 'related_post',
+						'meta_value' => '{aql:current_post_id}',
+					),
+				),
+			),
+		);
+
+		$resolved = Placeholder_Resolver::resolve_params( $block_query, array( 'post_id' => 42 ) );
+
+		$qpg = new Query_Params_Generator( array(), $resolved );
+		$qpg->process_all();
+		$query_args = $qpg->get_query_args();
+
+		$this->assertSame( '42', $query_args['meta_query'][0]['value'] );
+	}
+
+	/**
+	 * Regression test for Finding 1: with no context post_id, the meta_query
+	 * clause carries the literal unresolved token rather than being dropped.
+	 */
+	public function test_unresolved_meta_query_stays_verbatim_in_query_params_generator() {
+		$block_query = array(
+			'meta_query' => array(
+				'relation' => 'AND',
+				'queries'  => array(
+					array(
+						'meta_key'   => 'related_post',
+						'meta_value' => '{aql:current_post_id}',
+					),
+				),
+			),
+		);
+
+		$resolved = Placeholder_Resolver::resolve_params( $block_query, array( 'post_id' => 0 ) );
+
+		$qpg = new Query_Params_Generator( array(), $resolved );
+		$qpg->process_all();
+		$query_args = $qpg->get_query_args();
+
+		$this->assertSame( '{aql:current_post_id}', $query_args['meta_query'][0]['value'] );
 	}
 }

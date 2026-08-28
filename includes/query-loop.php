@@ -65,12 +65,6 @@ function build_placeholder_context( array $block_query, bool $inherited, bool $i
 					)
 				);
 
-				// Resolve dynamic placeholders before any processing.
-				$query_args = Placeholder_Resolver::resolve_params(
-					$query_args,
-					build_placeholder_context( $parsed_block['attrs']['query'], true )
-				);
-
 				/**
 				 * Filter the query vars.
 				 *
@@ -189,13 +183,15 @@ function add_more_sort_by( $query_params ) {
 function add_custom_query_params( $args, $request ) {
 
 	// Resolve dynamic placeholders before any processing.
-	$params  = $request->get_params();
-	$context = build_placeholder_context(
-		$params,
-		false,
-		true,
-		\absint( $request->get_param( 'aql_preview_post_id' ) ?? 0 )
-	);
+	$params = $request->get_params();
+
+	// Only honor the caller-supplied preview post ID when they're allowed to edit it.
+	$preview_post_id = \absint( $request->get_param( 'aql_preview_post_id' ) ?? 0 );
+	if ( $preview_post_id && ! \current_user_can( 'edit_post', $preview_post_id ) ) {
+		$preview_post_id = 0;
+	}
+
+	$context = build_placeholder_context( $params, false, true, $preview_post_id );
 	$params  = Placeholder_Resolver::resolve_params( $params, $context );
 
 	// Process all of the params
