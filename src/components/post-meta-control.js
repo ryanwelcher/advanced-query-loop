@@ -7,11 +7,15 @@ import {
 	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
 	__experimentalHStack as HStack,
 	SelectControl,
-	TextControl,
 	ToggleControl,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState, useEffect } from '@wordpress/element';
+
+/**
+ * Internal dependencies
+ */
+import { PlaceholderTextControl } from './placeholder-text-control';
 
 const compareMetaOptions = [
 	'=',
@@ -127,7 +131,7 @@ export const PostMetaControl = ( {
 			/>
 			{ activeQuery?.meta_key?.length > 0 && (
 				<>
-					<TextControl
+					<PlaceholderTextControl
 						label={ __( 'Meta Value', 'advanced-query-loop' ) }
 						value={ activeQuery.meta_value }
 						onChange={ ( newValue ) => {
