@@ -70,3 +70,16 @@ if ( ! function_exists( 'sanitize_title' ) ) {
 		return strtolower( str_replace( ' ', '-', $title ) );
 	}
 }
+
+if ( ! function_exists( '__' ) ) {
+	/**
+	 * Mock translation function for testing.
+	 *
+	 * @param string $text   Text to translate.
+	 * @param string $domain Text domain.
+	 * @return string The untranslated text.
+	 */
+	function __( $text, $domain = 'default' ) { // phpcs:ignore
+		return $text;
+	}
+}

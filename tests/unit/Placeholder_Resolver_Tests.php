@@ -228,4 +228,49 @@ class Placeholder_Resolver_Tests extends TestCase {
 
 		$this->assertSame( $expected, $resolved['meta_value'] );
 	}
+
+	/**
+	 * Every built-in placeholder has a list entry with label and description,
+	 * and every list entry resolves (no orphans in either direction).
+	 */
+	public function test_placeholder_list_matches_built_ins() {
+		$list  = Placeholder_Resolver::get_placeholder_list();
+		$names = array_column( $list, 'name' );
+
+		$expected_names = array(
+			'current_post_id',
+			'author_id',
+			'user_id',
+			'current_date',
+			'date_minus_1_month',
+			'date_minus_3_months',
+			'date_minus_6_months',
+			'date_minus_12_months',
+		);
+
+		$this->assertSame( $expected_names, $names );
+
+		foreach ( $list as $row ) {
+			$this->assertNotEmpty( $row['label'] );
+			$this->assertNotEmpty( $row['description'] );
+		}
+	}
+
+	/**
+	 * The aql_placeholder_list filter can append rows.
+	 */
+	public function test_placeholder_list_is_filterable() {
+		$GLOBALS['aql_test_filters']['aql_placeholder_list'][] = function ( $items ) {
+			$items[] = array(
+				'name'        => 'my_custom',
+				'label'       => 'My Custom',
+				'description' => 'A custom placeholder.',
+			);
+			return $items;
+		};
+
+		$names = array_column( Placeholder_Resolver::get_placeholder_list(), 'name' );
+
+		$this->assertContains( 'my_custom', $names );
+	}
 }

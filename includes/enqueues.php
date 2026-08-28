@@ -42,7 +42,9 @@ if ( ! function_exists( 'add_action' ) ) {
 			// Add inline script.
 			wp_add_inline_script(
 				'advanced-query-loop',
-				'window.aql = window.aql || {}; window.aql.allowedControls = "' . implode( ',', Query_Params_Generator::get_allowed_controls() ) . '";'
+				'window.aql = window.aql || {};'
+				. ' window.aql.allowedControls = "' . implode( ',', Query_Params_Generator::get_allowed_controls() ) . '";'
+				. ' window.aql.placeholders = ' . wp_json_encode( Placeholder_Resolver::get_placeholder_list() ) . ';'
 			);
 		}
 

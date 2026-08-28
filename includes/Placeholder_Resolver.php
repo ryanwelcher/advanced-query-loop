@@ -152,4 +152,67 @@ class Placeholder_Resolver {
 		}
 		return gmdate( 'Y-m-d', strtotime( $modifier, $now ) );
 	}
+
+	/**
+	 * The user-facing placeholder list that powers editor pickers.
+	 *
+	 * Users always see labels; the {aql:name} token is only the stored
+	 * wire format. Extenders adding a resolver via aql_resolve_placeholder
+	 * should add a matching row here via aql_placeholder_list.
+	 *
+	 * @return array List of arrays with name, label, and description keys.
+	 */
+	public static function get_placeholder_list(): array {
+		$list = array(
+			array(
+				'name'        => 'current_post_id',
+				'label'       => \__( 'Current Post ID', 'advanced-query-loop' ),
+				'description' => \__( 'The ID of the post being viewed.', 'advanced-query-loop' ),
+			),
+			array(
+				'name'        => 'author_id',
+				'label'       => \__( 'Author ID', 'advanced-query-loop' ),
+				'description' => \__( 'The author ID of the post being viewed.', 'advanced-query-loop' ),
+			),
+			array(
+				'name'        => 'user_id',
+				'label'       => \__( 'Logged-in User ID', 'advanced-query-loop' ),
+				'description' => \__( 'The ID of the logged-in user. Matches nothing for logged-out visitors.', 'advanced-query-loop' ),
+			),
+			array(
+				'name'        => 'current_date',
+				'label'       => \__( 'Current Date', 'advanced-query-loop' ),
+				'description' => \__( 'Today\'s date (YYYY-MM-DD).', 'advanced-query-loop' ),
+			),
+			array(
+				'name'        => 'date_minus_1_month',
+				'label'       => \__( '1 Month Ago', 'advanced-query-loop' ),
+				'description' => \__( 'The date one month before today (YYYY-MM-DD).', 'advanced-query-loop' ),
+			),
+			array(
+				'name'        => 'date_minus_3_months',
+				'label'       => \__( '3 Months Ago', 'advanced-query-loop' ),
+				'description' => \__( 'The date three months before today (YYYY-MM-DD).', 'advanced-query-loop' ),
+			),
+			array(
+				'name'        => 'date_minus_6_months',
+				'label'       => \__( '6 Months Ago', 'advanced-query-loop' ),
+				'description' => \__( 'The date six months before today (YYYY-MM-DD).', 'advanced-query-loop' ),
+			),
+			array(
+				'name'        => 'date_minus_12_months',
+				'label'       => \__( '12 Months Ago', 'advanced-query-loop' ),
+				'description' => \__( 'The date twelve months before today (YYYY-MM-DD).', 'advanced-query-loop' ),
+			),
+		);
+
+		/**
+		 * Filter the user-facing placeholder list shown in editor pickers.
+		 *
+		 * @since x.x
+		 *
+		 * @param array $list List of arrays with name, label, and description keys.
+		 */
+		return \apply_filters( 'aql_placeholder_list', $list );
+	}
 }
