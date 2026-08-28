@@ -133,7 +133,7 @@ export const PostMetaControl = ( {
 				/>
 				<p className="components-form-token-field__help">
 					{ __(
-						'Select a key from the list, or type a custom key and press Enter to apply it.',
+						'Pick from the list, or type a key and press Enter.',
 						'advanced-query-loop'
 					) }
 				</p>

@@ -70,7 +70,7 @@ export const PlaceholderTextControl = ( { label, value, onChange } ) => {
 			/>
 			<p className="components-form-token-field__help">
 				{ __(
-					'Select a dynamic value from the list, or type a custom value and press Enter to apply it.',
+					'Pick from the list, or type a value and press Enter.',
 					'advanced-query-loop'
 				) }
 			</p>
