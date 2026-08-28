@@ -133,6 +133,81 @@ function aql_extension_target_homepage_featured( $query_args, $block_query, $inh
 \add_filter( 'aql_query_vars', 'aql_extension_target_homepage_featured', 10, 3 );
 ```
 
+#### Dynamic placeholders
+
+AQL supports dynamic placeholder tokens in query values, e.g. `{aql:current_post_id}`
+in a meta query's value. Tokens are resolved centrally before the query runs, in the
+editor preview and on the frontend, so they work in any query param — including params
+added by third-party controls.
+
+Built-in placeholders: `current_post_id`, `author_id`, `user_id`, `current_date`,
+`date_minus_1_month`, `date_minus_3_months`, `date_minus_6_months`, `date_minus_12_months`.
+
+##### Registering a custom placeholder
+
+Two small filters — one resolves the value, one lists it in the editor picker:
+
+```php
+// Resolve {aql:todays_special} at query time.
+add_filter(
+	'aql_resolve_placeholder',
+	function ( $resolved, $name, $context ) {
+		if ( 'todays_special' === $name ) {
+			return get_option( 'todays_special_post_id', '' );
+		}
+		return $resolved;
+	},
+	10,
+	3
+);
+
+// Show it in the editor's "Insert dynamic value" picker.
+add_filter(
+	'aql_placeholder_list',
+	function ( $list ) {
+		$list[] = array(
+			'name'        => 'todays_special',
+			'label'       => __( "Today's Special", 'my-plugin' ),
+			'description' => __( 'The post ID of the daily featured item.', 'my-plugin' ),
+		);
+		return $list;
+	}
+);
+```
+
+Resolution rules: return a string to resolve the token; return an empty string for
+"known but currently valueless" (the whole param is dropped so the clause matches
+nothing); leave `$resolved` untouched for names you don't handle — unrecognized
+tokens pass through verbatim.
+
+The `$context` array includes `post_id`, `post_type`, `author_id`, `user_id`,
+`is_editor_preview`, `block_query`, and `inherited`.
+
+##### Placeholder-aware custom controls
+
+Custom SlotFill controls can reuse AQL's picker UI so their inputs accept
+placeholders too:
+
+```js
+const { PlaceholderTextControl } = window.aql;
+
+<PlaceholderTextControl
+	label={ 'My Value' }
+	value={ myValue }
+	onChange={ ( next ) => setMyValue( next ) }
+/>;
+```
+
+Because resolution happens on the raw query attributes, any value your control
+stores in the block's `query` attribute supports placeholders automatically.
+
+##### A note on caching
+
+The **Enable caching** option keys its transients on the resolved query vars, so
+user-dependent placeholders like `{aql:user_id}` produce separate (correct) cache
+entries per user, and `{aql:current_date}` re-resolves within the one-hour cache
+lifetime at most one day behind.
+
 ### Tutorial
 
 Using he example code above, you can make a custom extension plugin for AQL that will filter the displayed posts by author.

@@ -67,6 +67,10 @@ Improve the performance of the query by disabling pagination.
 
 Store query results in a transient for one hour to reduce database load on subsequent page loads. The caching toggle is unavailable when the order is set to Random, and switching to Random order will clear any existing caching setting. Found in the **AQL: Performance Controls** panel.
 
+#### Dynamic Placeholders
+
+Use values like Current Post ID, Author ID, Logged-in User ID, or Current Date in meta queries via the "Insert dynamic value" picker.
+
 ## Filtering the available controls
 
 It is possible to remove controls from AQL using the `aql_allowed_controls` filter. The filter receives a single parameter containing an array of allowed controls. This can be modified to remove the control from the UI and stop processing the associated query param.

@@ -90,6 +90,13 @@ Sort your content exactly how you want:
 * **Enable caching**: Store query results in a transient for one hour to reduce database load on subsequent page loads. The caching toggle is unavailable when the order is set to Random, and switching to Random order will clear any existing caching setting
 * **Efficient queries**: Optimized database queries for better performance
 
+==== 🎭 Dynamic Placeholders ====
+
+Use values like Current Post ID, Author ID, Logged-in User ID, or Current Date in meta queries via the "Insert dynamic value" picker:
+* **Built-in placeholders**: Access commonly needed values like current_post_id, author_id, user_id, and relative dates
+* **Editor preview**: See resolved values in the block editor before publishing
+* **Extensible**: Register custom placeholders with simple PHP filters
+
 === Customization & Extensibility ===
 
 ==== Filter Available Controls ====
@@ -157,6 +164,9 @@ Advanced Query Loop is built with developers in mind:
 3. Query posts before a date, after a date or between two dates.
 
 == Changelog ==
+= 4.5.0 =
+* New: Dynamic placeholders for query values ({aql:current_post_id}, {aql:author_id}, {aql:user_id}, {aql:current_date}, and relative dates) with an editor picker, plus aql_resolve_placeholder / aql_placeholder_list filters for extenders.
+
 = 4.4.1 =
 * Add optional chaining to fix crash on templates
 * Fix ExcludePostsControl fetching all posts (props @PatelUtkars)
