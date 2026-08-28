@@ -158,4 +158,74 @@ class Placeholder_Resolver_Tests extends TestCase {
 
 		$this->assertSame( $params, $resolved );
 	}
+
+	/**
+	 * Data provider: context-backed tokens.
+	 */
+	public function data_context_tokens() {
+		return array(
+			'author_id resolves'                        => array(
+				array( 'meta_value' => '{aql:author_id}' ),
+				array( 'author_id' => 12 ),
+				array( 'meta_value' => '12' ),
+			),
+			'user_id resolves'                          => array(
+				array( 'meta_value' => '{aql:user_id}' ),
+				array( 'user_id' => 3 ),
+				array( 'meta_value' => '3' ),
+			),
+			'user_id empty when logged out drops param' => array(
+				array( 'meta_value' => '{aql:user_id}' ),
+				array( 'user_id' => 0 ),
+				array(),
+			),
+		);
+	}
+
+	/**
+	 * Test context-backed tokens.
+	 *
+	 * @dataProvider data_context_tokens
+	 *
+	 * @param array $params   The params array.
+	 * @param array $context  The context array.
+	 * @param array $expected The expected resolved params.
+	 */
+	public function test_context_tokens( $params, $context, $expected ) {
+		$this->assertSame(
+			$expected,
+			Placeholder_Resolver::resolve_params( $params, $context )
+		);
+	}
+
+	/**
+	 * Data provider: date tokens and their strtotime modifiers.
+	 */
+	public function data_date_tokens() {
+		return array(
+			'current_date'         => array( 'current_date', 'now' ),
+			'date_minus_1_month'   => array( 'date_minus_1_month', '-1 month' ),
+			'date_minus_3_months'  => array( 'date_minus_3_months', '-3 months' ),
+			'date_minus_6_months'  => array( 'date_minus_6_months', '-6 months' ),
+			'date_minus_12_months' => array( 'date_minus_12_months', '-12 months' ),
+		);
+	}
+
+	/**
+	 * Test date tokens format as Y-m-d.
+	 *
+	 * @dataProvider data_date_tokens
+	 *
+	 * @param string $token_name The token name.
+	 * @param string $modifier   The strtotime modifier.
+	 */
+	public function test_date_tokens( $token_name, $modifier ) {
+		$params   = array( 'meta_value' => '{aql:' . $token_name . '}' );
+		$resolved = Placeholder_Resolver::resolve_params( $params, array() );
+
+		// Computed the same way as the implementation to avoid midnight flakes.
+		$expected = gmdate( 'Y-m-d', strtotime( $modifier, time() ) );
+
+		$this->assertSame( $expected, $resolved['meta_value'] );
+	}
 }

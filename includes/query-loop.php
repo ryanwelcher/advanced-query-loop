@@ -37,6 +37,8 @@ function build_placeholder_context( array $block_query, bool $inherited, bool $i
 	return array(
 		'post_id'           => $post_id,
 		'post_type'         => $post_id ? (string) \get_post_type( $post_id ) : '',
+		'author_id'         => $post_id ? (int) \get_post_field( 'post_author', $post_id ) : 0,
+		'user_id'           => (int) \get_current_user_id(),
 		'is_editor_preview' => $is_editor_preview,
 		'block_query'       => $block_query,
 		'inherited'         => $inherited,
