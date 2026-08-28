@@ -2,6 +2,7 @@
  * WordPress dependencies
  */
 import { FormTokenField } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -51,20 +52,28 @@ export const PlaceholderTextControl = ( { label, value, onChange } ) => {
 	};
 
 	return (
-		<FormTokenField
-			label={ label }
-			value={ value ? [ labelForToken( value ) ] : [] }
-			suggestions={ placeholders.map(
-				( placeholder ) => placeholder.label
-			) }
-			maxLength={ 1 }
-			__experimentalExpandOnFocus
-			__experimentalShowHowTo={ false }
-			onChange={ ( newValue ) =>
-				onChange(
-					newValue.length ? tokenForLabel( newValue[ 0 ] ) : ''
-				)
-			}
-		/>
+		<>
+			<FormTokenField
+				label={ label }
+				value={ value ? [ labelForToken( value ) ] : [] }
+				suggestions={ placeholders.map(
+					( placeholder ) => placeholder.label
+				) }
+				maxLength={ 1 }
+				__experimentalExpandOnFocus
+				__experimentalShowHowTo={ false }
+				onChange={ ( newValue ) =>
+					onChange(
+						newValue.length ? tokenForLabel( newValue[ 0 ] ) : ''
+					)
+				}
+			/>
+			<p className="components-form-token-field__help">
+				{ __(
+					'Select a dynamic value, or type a custom value and press Enter.',
+					'advanced-query-loop'
+				) }
+			</p>
+		</>
 	);
 };
