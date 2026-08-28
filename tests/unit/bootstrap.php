@@ -3,8 +3,17 @@
  * Bootstrap for tests.
  */
 
+/*
+ * Registry for test filters.
+ * Tests append callables to $GLOBALS['aql_test_filters']['filter_name'][] = callback
+ */
+$GLOBALS['aql_test_filters'] = array();
+
 if ( ! function_exists( 'apply_filters' ) ) {
-	function apply_filters( $tag, $value ) {
+	function apply_filters( $tag, $value, ...$args ) {
+		foreach ( $GLOBALS['aql_test_filters'][ $tag ] ?? array() as $callback ) {
+			$value = call_user_func( $callback, $value, ...$args );
+		}
 		return $value;
 	}
 }

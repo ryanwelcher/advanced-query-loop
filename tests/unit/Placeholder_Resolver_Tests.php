@@ -1,0 +1,161 @@
+<?php
+/**
+ * Tests for the Placeholder_Resolver class.
+ */
+
+namespace AdvancedQueryLoop\UnitTests;
+
+use AdvancedQueryLoop\Placeholder_Resolver;
+use PHPUnit\Framework\TestCase;
+
+/**
+ * Test the Placeholder_Resolver class.
+ */
+class Placeholder_Resolver_Tests extends TestCase {
+
+	protected function tearDown(): void {
+		$GLOBALS['aql_test_filters'] = array();
+		parent::tearDown();
+	}
+
+	/**
+	 * Params with no tokens must come back byte-identical (backwards compat).
+	 */
+	public function test_token_free_params_pass_through_unchanged() {
+		$params = array(
+			'postType'   => 'post',
+			'perPage'    => 10,
+			'exclude'    => array( 1, 2 ),
+			'meta_query' => array(
+				'relation' => 'AND',
+				'queries'  => array(
+					array(
+						'meta_key'   => 'color',
+						'meta_value' => 'blue',
+					),
+				),
+			),
+		);
+
+		$this->assertSame(
+			$params,
+			Placeholder_Resolver::resolve_params( $params, array( 'post_id' => 42 ) )
+		);
+	}
+
+	/**
+	 * A token nested inside meta_query resolves from context.
+	 */
+	public function test_current_post_id_resolves_in_nested_meta_query() {
+		$params = array(
+			'meta_query' => array(
+				'queries' => array(
+					array(
+						'meta_key'   => 'related_post',
+						'meta_value' => '{aql:current_post_id}',
+					),
+				),
+			),
+		);
+
+		$resolved = Placeholder_Resolver::resolve_params( $params, array( 'post_id' => 42 ) );
+
+		$this->assertSame(
+			'42',
+			$resolved['meta_query']['queries'][0]['meta_value']
+		);
+	}
+
+	/**
+	 * Tokens substitute inline inside longer strings.
+	 */
+	public function test_inline_substitution_within_string() {
+		$params   = array( 'meta_value' => 'prefix-{aql:current_post_id}-suffix' );
+		$resolved = Placeholder_Resolver::resolve_params( $params, array( 'post_id' => 7 ) );
+
+		$this->assertSame( 'prefix-7-suffix', $resolved['meta_value'] );
+	}
+
+	/**
+	 * Unknown token names pass through verbatim (backwards compat).
+	 */
+	public function test_unknown_token_passes_through_verbatim() {
+		$params   = array( 'meta_value' => '{aql:not_a_thing}' );
+		$resolved = Placeholder_Resolver::resolve_params( $params, array( 'post_id' => 7 ) );
+
+		$this->assertSame( '{aql:not_a_thing}', $resolved['meta_value'] );
+	}
+
+	/**
+	 * A known token with no value in context resolves empty and the param is dropped.
+	 */
+	public function test_known_token_without_context_value_drops_param() {
+		$params = array(
+			'meta_key'   => 'related_post',
+			'meta_value' => '{aql:current_post_id}',
+		);
+
+		$resolved = Placeholder_Resolver::resolve_params( $params, array( 'post_id' => 0 ) );
+
+		$this->assertArrayNotHasKey( 'meta_value', $resolved );
+		$this->assertSame( 'related_post', $resolved['meta_key'] );
+	}
+
+	/**
+	 * A param that was already an empty string is NOT dropped.
+	 */
+	public function test_pre_existing_empty_string_is_not_dropped() {
+		$params   = array( 'meta_value' => '' );
+		$resolved = Placeholder_Resolver::resolve_params( $params, array( 'post_id' => 0 ) );
+
+		$this->assertSame( array( 'meta_value' => '' ), $resolved );
+	}
+
+	/**
+	 * The aql_resolve_placeholder filter can resolve custom token names.
+	 */
+	public function test_filter_resolves_custom_token() {
+		$GLOBALS['aql_test_filters']['aql_resolve_placeholder'][] = function ( $resolved, $name ) {
+			if ( 'my_custom' === $name ) {
+				return '123';
+			}
+			return $resolved;
+		};
+
+		$params   = array( 'meta_value' => '{aql:my_custom}' );
+		$resolved = Placeholder_Resolver::resolve_params( $params, array( 'post_id' => 0 ) );
+
+		$this->assertSame( '123', $resolved['meta_value'] );
+	}
+
+	/**
+	 * The filter can override a built-in resolution.
+	 */
+	public function test_filter_overrides_built_in() {
+		$GLOBALS['aql_test_filters']['aql_resolve_placeholder'][] = function ( $resolved, $name ) {
+			if ( 'current_post_id' === $name ) {
+				return '999';
+			}
+			return $resolved;
+		};
+
+		$params   = array( 'meta_value' => '{aql:current_post_id}' );
+		$resolved = Placeholder_Resolver::resolve_params( $params, array( 'post_id' => 42 ) );
+
+		$this->assertSame( '999', $resolved['meta_value'] );
+	}
+
+	/**
+	 * Non-string scalars (bools, ints) pass through untouched.
+	 */
+	public function test_non_string_values_untouched() {
+		$params   = array(
+			'is_aql'   => true,
+			'per_page' => 5,
+			'offset'   => null,
+		);
+		$resolved = Placeholder_Resolver::resolve_params( $params, array( 'post_id' => 42 ) );
+
+		$this->assertSame( $params, $resolved );
+	}
+}
