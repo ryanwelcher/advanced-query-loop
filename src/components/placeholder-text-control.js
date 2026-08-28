@@ -1,14 +1,7 @@
 /**
  * WordPress dependencies
  */
-import {
-	DropdownMenu,
-	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
-	__experimentalHStack as HStack,
-	TextControl,
-} from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
-import { shortcode } from '@wordpress/icons';
+import { FormTokenField } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -16,11 +9,10 @@ import { shortcode } from '@wordpress/icons';
 import usePlaceholders from '../hooks/usePlaceholders';
 
 /**
- * A TextControl with a picker that inserts dynamic placeholder tokens.
- *
- * Users choose by label (e.g. "Current Post ID"); the stored value is
- * the {aql:name} token, which may be mixed with literal text. Any
- * control — including third-party SlotFill controls — can use this to
+ * A single-value FormTokenField that suggests dynamic placeholder values by
+ * label (e.g. "Current Post ID"). Picking a suggestion stores the
+ * corresponding {aql:name} token; typing anything else stores it verbatim.
+ * Any control — including third-party SlotFill controls — can use this to
  * become placeholder-aware.
  *
  * @param {Object}   props
@@ -31,36 +23,48 @@ import usePlaceholders from '../hooks/usePlaceholders';
 export const PlaceholderTextControl = ( { label, value, onChange } ) => {
 	const placeholders = usePlaceholders();
 
-	if ( ! placeholders.length ) {
-		return (
-			<TextControl
-				label={ label }
-				value={ value }
-				onChange={ onChange }
-			/>
+	/**
+	 * Map a stored value to its display chip: a token maps to its
+	 * placeholder label, everything else displays as itself.
+	 *
+	 * @param {string} val The stored value.
+	 * @return {string} The display value.
+	 */
+	const labelForToken = ( val ) =>
+		placeholders.find(
+			( placeholder ) => `{aql:${ placeholder.name }}` === val
+		)?.label ?? val;
+
+	/**
+	 * Map user input to the value that should be stored: an input that
+	 * exactly matches a placeholder label is stored as its token,
+	 * everything else is stored as a literal.
+	 *
+	 * @param {string} input The token field's input.
+	 * @return {string} The value to store.
+	 */
+	const tokenForLabel = ( input ) => {
+		const match = placeholders.find(
+			( placeholder ) => placeholder.label === input
 		);
-	}
+		return match ? `{aql:${ match.name }}` : input;
+	};
 
 	return (
-		<HStack alignment="flex-end" spacing={ 1 }>
-			<div style={ { flexGrow: 1 } }>
-				<TextControl
-					label={ label }
-					value={ value }
-					onChange={ onChange }
-				/>
-			</div>
-			<DropdownMenu
-				icon={ shortcode }
-				label={ __( 'Insert dynamic value', 'advanced-query-loop' ) }
-				controls={ placeholders.map(
-					( { name, label: placeholderLabel } ) => ( {
-						title: placeholderLabel,
-						onClick: () =>
-							onChange( `${ value ?? '' }{aql:${ name }}` ),
-					} )
-				) }
-			/>
-		</HStack>
+		<FormTokenField
+			label={ label }
+			value={ value ? [ labelForToken( value ) ] : [] }
+			suggestions={ placeholders.map(
+				( placeholder ) => placeholder.label
+			) }
+			maxLength={ 1 }
+			__experimentalExpandOnFocus
+			__experimentalShowHowTo={ false }
+			onChange={ ( newValue ) =>
+				onChange(
+					newValue.length ? tokenForLabel( newValue[ 0 ] ) : ''
+				)
+			}
+		/>
 	);
 };

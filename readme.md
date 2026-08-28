@@ -69,7 +69,7 @@ Store query results in a transient for one hour to reduce database load on subse
 
 #### Dynamic Placeholders
 
-Use values like Current Post ID, Author ID, Logged-in User ID, or Current Date in meta queries via the "Insert dynamic value" picker.
+Use values like Current Post ID, Author ID, Logged-in User ID, or Current Date in meta queries: the Meta Value field suggests dynamic values by name, and picking one stores the placeholder while typing anything else stores it verbatim.
 
 ## Filtering the available controls
 

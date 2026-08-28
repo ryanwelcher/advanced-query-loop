@@ -40,16 +40,12 @@ test.describe( 'Dynamic placeholders', () => {
 			.fill( 'related_post' );
 		await page.keyboard.press( 'Enter' );
 
-		// Pick "Current Post ID" from the placeholder menu.
-		await page
-			.getByRole( 'button', { name: 'Insert dynamic value' } )
-			.click();
-		await page.getByRole( 'menuitem', { name: 'Current Post ID' } ).click();
-
-		// The field shows the token and the attribute stores it.
-		await expect(
-			page.getByRole( 'textbox', { name: 'Meta Value' } )
-		).toHaveValue( '{aql:current_post_id}' );
+		// Pick "Current Post ID" from the Meta Value suggestions.
+		const metaValueField = page.getByRole( 'combobox', {
+			name: 'Meta Value',
+		} );
+		await metaValueField.fill( 'Current Post ID' );
+		await page.keyboard.press( 'Enter' );
 
 		const blocks = await editor.getBlocks();
 		expect(
@@ -69,9 +65,7 @@ test.describe( 'Dynamic placeholders', () => {
 			.fill( 'any_key' );
 		await page.keyboard.press( 'Enter' );
 
-		await page
-			.getByRole( 'button', { name: 'Insert dynamic value' } )
-			.click();
+		await page.getByRole( 'combobox', { name: 'Meta Value' } ).click();
 
 		for ( const label of [
 			'Current Post ID',
@@ -84,8 +78,33 @@ test.describe( 'Dynamic placeholders', () => {
 			'12 Months Ago',
 		] ) {
 			await expect(
-				page.getByRole( 'menuitem', { name: label } )
+				page.getByRole( 'option', { name: label, exact: true } )
 			).toBeVisible();
 		}
+	} );
+
+	test( 'stores a hand-typed literal verbatim', async ( {
+		page,
+		editor,
+	} ) => {
+		await page
+			.getByRole( 'button', { name: 'Open Post Meta query builder' } )
+			.click();
+		await page.getByRole( 'button', { name: 'Add new query' } ).click();
+		await page
+			.getByRole( 'combobox', { name: 'Meta Key' } )
+			.fill( 'color' );
+		await page.keyboard.press( 'Enter' );
+
+		const metaValueField = page.getByRole( 'combobox', {
+			name: 'Meta Value',
+		} );
+		await metaValueField.fill( 'blue' );
+		await page.keyboard.press( 'Enter' );
+
+		const blocks = await editor.getBlocks();
+		expect(
+			blocks[ 0 ].attributes.query.meta_query.queries[ 0 ].meta_value
+		).toEqual( 'blue' );
 	} );
 } );

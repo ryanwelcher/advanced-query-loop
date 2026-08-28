@@ -161,7 +161,7 @@ add_filter(
 	3
 );
 
-// Show it in the editor's "Insert dynamic value" picker.
+// Show it as a suggestion in the editor's Meta Value field.
 add_filter(
 	'aql_placeholder_list',
 	function ( $list ) {
