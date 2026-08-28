@@ -53,7 +53,7 @@ test.describe( 'Dynamic placeholders', () => {
 		).toEqual( '{aql:current_post_id}' );
 	} );
 
-	test( 'placeholder menu lists all built-in placeholders', async ( {
+	test( 'typing filters the suggestions to matching placeholders', async ( {
 		page,
 	} ) => {
 		await page
@@ -65,22 +65,37 @@ test.describe( 'Dynamic placeholders', () => {
 			.fill( 'any_key' );
 		await page.keyboard.press( 'Enter' );
 
-		await page.getByRole( 'combobox', { name: 'Meta Value' } ).click();
+		const metaValueField = page.getByRole( 'combobox', {
+			name: 'Meta Value',
+		} );
 
-		for ( const label of [
-			'Current Post ID',
-			'Author ID',
-			'Logged-in User ID',
-			'Current Date',
-			'1 Month Ago',
-			'3 Months Ago',
-			'6 Months Ago',
-			'12 Months Ago',
-		] ) {
-			await expect(
-				page.getByRole( 'option', { name: label, exact: true } )
-			).toBeVisible();
+		// The three queries together cover all 8 built-in placeholders.
+		const queries: Record< string, string[] > = {
+			ID: [ 'Current Post ID', 'Author ID', 'Logged-in User ID' ],
+			Month: [
+				'1 Month Ago',
+				'3 Months Ago',
+				'6 Months Ago',
+				'12 Months Ago',
+			],
+			Current: [ 'Current Post ID', 'Current Date' ],
+		};
+
+		for ( const [ query, labels ] of Object.entries( queries ) ) {
+			await metaValueField.fill( query );
+			for ( const label of labels ) {
+				await expect(
+					page.getByRole( 'option', { name: label, exact: true } )
+				).toBeVisible();
+			}
 		}
+
+		// An input matching nothing closes the list — no empty-state prompt.
+		await metaValueField.fill( 'zzz' );
+		await expect(
+			page.locator( '.components-form-token-field__suggestions-list' )
+		).toBeHidden();
+		await expect( page.getByText( 'No items found' ) ).toBeHidden();
 	} );
 
 	test( 'stores a hand-typed literal verbatim', async ( {

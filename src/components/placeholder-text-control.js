@@ -60,7 +60,6 @@ export const PlaceholderTextControl = ( { label, value, onChange } ) => {
 					( placeholder ) => placeholder.label
 				) }
 				maxLength={ 1 }
-				__experimentalExpandOnFocus
 				__experimentalShowHowTo={ false }
 				onChange={ ( newValue ) =>
 					onChange(
@@ -70,7 +69,7 @@ export const PlaceholderTextControl = ( { label, value, onChange } ) => {
 			/>
 			<p className="components-form-token-field__help">
 				{ __(
-					'Select a dynamic value, or type a custom value and press Enter.',
+					'Type to search dynamic values, or enter a custom value and press Enter.',
 					'advanced-query-loop'
 				) }
 			</p>
