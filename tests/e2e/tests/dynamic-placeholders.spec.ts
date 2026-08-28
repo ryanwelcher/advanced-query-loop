@@ -53,7 +53,7 @@ test.describe( 'Dynamic placeholders', () => {
 		).toEqual( '{aql:current_post_id}' );
 	} );
 
-	test( 'typing filters the suggestions to matching placeholders', async ( {
+	test( 'suggests all placeholders on focus and filters while typing', async ( {
 		page,
 	} ) => {
 		await page
@@ -69,32 +69,34 @@ test.describe( 'Dynamic placeholders', () => {
 			name: 'Meta Value',
 		} );
 
-		// The three queries together cover all 8 built-in placeholders.
-		const queries: Record< string, string[] > = {
-			ID: [ 'Current Post ID', 'Author ID', 'Logged-in User ID' ],
-			Month: [
-				'1 Month Ago',
-				'3 Months Ago',
-				'6 Months Ago',
-				'12 Months Ago',
-			],
-			Current: [ 'Current Post ID', 'Current Date' ],
-		};
-
-		for ( const [ query, labels ] of Object.entries( queries ) ) {
-			await metaValueField.fill( query );
-			for ( const label of labels ) {
-				await expect(
-					page.getByRole( 'option', { name: label, exact: true } )
-				).toBeVisible();
-			}
+		// Focusing the empty field lists every built-in placeholder.
+		await metaValueField.click();
+		for ( const label of [
+			'Current Post ID',
+			'Author ID',
+			'Logged-in User ID',
+			'Current Date',
+			'1 Month Ago',
+			'3 Months Ago',
+			'6 Months Ago',
+			'12 Months Ago',
+		] ) {
+			await expect(
+				page.getByRole( 'option', { name: label, exact: true } )
+			).toBeVisible();
 		}
 
-		// An input matching nothing closes the list — no empty-state prompt.
-		await metaValueField.fill( 'zzz' );
+		// Typing filters the list.
+		await metaValueField.fill( 'Month' );
 		await expect(
-			page.locator( '.components-form-token-field__suggestions-list' )
+			page.getByRole( 'option', { name: '3 Months Ago', exact: true } )
+		).toBeVisible();
+		await expect(
+			page.getByRole( 'option', { name: 'Author ID', exact: true } )
 		).toBeHidden();
+
+		// An input matching nothing shows no empty-state prompt.
+		await metaValueField.fill( 'zzz' );
 		await expect( page.getByText( 'No items found' ) ).toBeHidden();
 	} );
 
