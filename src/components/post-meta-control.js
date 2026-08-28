@@ -131,6 +131,12 @@ export const PostMetaControl = ( {
 						} );
 					} }
 				/>
+				<p className="components-form-token-field__help">
+					{ __(
+						'Select a key from the list, or type a custom key and press Enter to apply it.',
+						'advanced-query-loop'
+					) }
+				</p>
 			</div>
 			{ activeQuery?.meta_key?.length > 0 && (
 				<>
