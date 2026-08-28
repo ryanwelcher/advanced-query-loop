@@ -7,6 +7,7 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import './controls';
+import '../utils/placeholder-preview-middleware';
 import AQLIcon from '../components/icons';
 import AQLControls from '../slots/aql-controls';
 import AQLControlsInheritedQuery from '../slots/aql-controls-inherited-query';
