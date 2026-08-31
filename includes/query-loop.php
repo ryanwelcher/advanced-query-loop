@@ -31,6 +31,14 @@ if ( ! function_exists( 'add_filter' ) ) {
 
 				$block_query = $parsed_block['attrs']['query'];
 
+				// These params override the inherited archive context (pinned post
+				// lists, post types, "current post" semantics that don't exist on an
+				// archive). Their controls are hidden in the editor's inherit mode
+				// (see INHERIT_EXCLUDED_CONTROLS in src/variations/controls.js), so
+				// strip any stale values saved before the block was switched to
+				// inherit.
+				unset( $block_query['include_posts'], $block_query['multiple_posts'], $block_query['exclude_current'] );
+
 				// Layer all AQL params on top of the inherited query vars.
 				$qpg = new Query_Params_Generator( $wp_query->query_vars, $block_query );
 				$qpg->process_all();
@@ -48,8 +56,6 @@ if ( ! function_exists( 'add_filter' ) ) {
 				 * @param array   $query_args  Arguments to be passed to WP_Query.
 				 * @param array   $block_query The query attribute retrieved from the block.
 				 * @param boolean $inherited   Whether the query is being inherited.
-				 *
-				 * @param array $filtered_query_args Final arguments list.
 				 */
 				$filtered_query_args = \apply_filters(
 					'aql_query_vars',

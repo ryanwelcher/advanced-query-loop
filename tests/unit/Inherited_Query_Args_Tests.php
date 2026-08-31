@@ -123,4 +123,67 @@ class Inherited_Query_Args_Tests extends TestCase {
 		$this->assertSame( 'DESC', $args['order'] );
 		$this->assertEquals( array( 10 ), $args['post__not_in'] );
 	}
+
+	/**
+	 * A block query carrying only params that don't override archive
+	 * context (e.g. meta_query) must not pin the result set or change the
+	 * post type inherited from the archive.
+	 */
+	public function test_block_query_without_context_overrides_leaves_post_type_and_post_in_untouched() {
+		$block_query = array(
+			'meta_query' => array(
+				'queries' => array(
+					array(
+						'id'           => 'abc-123',
+						'meta_key'     => 'screening_date',
+						'meta_value'   => '',
+						'meta_compare' => 'EXISTS',
+					),
+				),
+			),
+		);
+
+		$qpg = new Query_Params_Generator( $this->inherited_vars(), $block_query );
+		$qpg->process_all();
+		$args = $qpg->get_inherited_query_args();
+
+		$this->assertArrayNotHasKey( 'post__in', $args );
+		$this->assertSame( 'post', $args['post_type'] );
+	}
+
+	/**
+	 * Mirrors the contract of the `unset()` call in the inherit branch of
+	 * includes/query-loop.php: with `include_posts`, `multiple_posts`, and
+	 * `exclude_current` removed from the block query (as the unset does
+	 * before the generator ever sees them), the inherited query args carry
+	 * no post__in, no post__not_in, and the inherited post_type is
+	 * unchanged.
+	 */
+	public function test_block_query_with_context_overriding_params_removed_does_not_pin_archive() {
+		$block_query = array(
+			'orderBy'    => 'title',
+			'order'      => 'asc',
+			'meta_query' => array(
+				'queries' => array(
+					array(
+						'id'           => 'abc-123',
+						'meta_key'     => 'screening_date',
+						'meta_value'   => '',
+						'meta_compare' => 'EXISTS',
+					),
+				),
+			),
+			// include_posts, multiple_posts, and exclude_current are
+			// intentionally absent here, simulating the unset() in
+			// includes/query-loop.php.
+		);
+
+		$qpg = new Query_Params_Generator( $this->inherited_vars(), $block_query );
+		$qpg->process_all();
+		$args = $qpg->get_inherited_query_args();
+
+		$this->assertArrayNotHasKey( 'post__in', $args );
+		$this->assertArrayNotHasKey( 'post__not_in', $args );
+		$this->assertSame( 'post', $args['post_type'] );
+	}
 }

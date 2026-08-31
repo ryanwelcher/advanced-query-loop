@@ -61,9 +61,15 @@ const ALL_CONTROLS = [
 /**
  * Controls hidden when the query is inherited: these override the archive
  * context (post type, pinned post lists) and would recreate the very bug
- * inherit mode exists to avoid.
+ * inherit mode exists to avoid. "Exclude current post" is also hidden
+ * because an archive has no "current post" — it falls back to the queried
+ * object ID, which on a taxonomy archive is a term ID, not a post ID.
  */
-const INHERIT_EXCLUDED_CONTROLS = [ 'additional_post_types', 'include_posts' ];
+const INHERIT_EXCLUDED_CONTROLS = [
+	'additional_post_types',
+	'include_posts',
+	'exclude_current_post',
+];
 
 /**
  * Custom controls
