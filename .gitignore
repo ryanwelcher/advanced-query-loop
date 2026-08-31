@@ -11,3 +11,4 @@ artifacts
 .vscode
 test-results
 .mcp.json
+/docs/
