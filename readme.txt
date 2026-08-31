@@ -155,9 +155,10 @@ Advanced Query Loop is built with developers in mind:
 
 == Screenshots ==
 
-1. Select how many posts you want to display and the number to start at.
-2. Create complicated queries for post types with registered post meta.x
-3. Query posts before a date, after a date or between two dates.
+1. Combine post types into a single query.
+2. Build complicated meta queries using the Meta query builder.
+3. Build advanced taxonomy quertoes using the Taxonomy query builder.
+4. Streamline the performance for each query.
 
 == Changelog ==
 = Unreleased =
