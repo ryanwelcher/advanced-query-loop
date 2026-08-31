@@ -7,7 +7,34 @@ on:
         branches: ['trunk']
 
 jobs:
+    changes:
+        runs-on: ubuntu-latest
+        outputs:
+            code: ${{ steps.filter.outputs.code }}
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Check for changes that affect e2e tests
+              uses: dorny/paths-filter@v3
+              id: filter
+              with:
+                  filters: |
+                      code:
+                          - 'src/**'
+                          - 'includes/**'
+                          - 'tests/e2e/**'
+                          - 'index.php'
+                          - 'package.json'
+                          - 'package-lock.json'
+                          - 'composer.json'
+                          - 'composer.lock'
+                          - 'webpack.config.js'
+                          - 'tsconfig.json'
+                          - '.github/workflows/e2e.yml'
+
     e2e:
+        needs: changes
+        if: needs.changes.outputs.code == 'true'
         runs-on: ubuntu-latest
 
         steps:
