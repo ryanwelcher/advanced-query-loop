@@ -29,6 +29,7 @@ Need help? We've got you covered!
 
 * **WordPress.org Support Forum**: [Get help here](https://wordpress.org/support/plugin/advanced-query-loop/)
 * **GitHub Repository**: [Report issues & contribute](https://github.com/ryanwelcher/advanced-query-loop)
+* **Interactive Demo**: [Try Advanced Query Loop in WordPress Playground](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/ryanwelcher/advanced-query-loop/trunk/_blueprints/blueprint.json) - a self-contained demo site with seeded content and a step-by-step guide for every feature panel
 
 === Powerful Features at Your Fingertips ===
 
@@ -92,6 +93,10 @@ Sort your content exactly how you want:
 * **Disable pagination**: Reduce query overhead by turning off pagination when it is not needed
 * **Enable caching**: Store query results in a transient for one hour to reduce database load on subsequent page loads. The caching toggle is unavailable when the order is set to Random, and switching to Random order will clear any existing caching setting
 * **Efficient queries**: Optimized database queries for better performance
+
+==== 🆔 Query Identifier ====
+
+Give any AQL block a unique Query ID from the AQL: Advanced panel. Developers can then target that specific block with the `aql_query_vars` filter to modify its query arguments in code without affecting other Query Loop blocks on the page.
 
 === Customization & Extensibility ===
 
