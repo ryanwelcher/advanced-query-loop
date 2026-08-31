@@ -61,9 +61,8 @@ export const OrderControls = ( props ) => {
 		setAttributes( { query: newQuery } );
 	};
 
-	// A secondary sort is meaningless with a random primary sort, and
-	// inherited queries never run the AQL generator on the frontend.
-	const showSecondaryItem = query.orderBy !== 'rand' && ! query.inherit;
+	// A secondary sort is meaningless with a random primary sort.
+	const showSecondaryItem = query.orderBy !== 'rand';
 
 	return (
 		<ToolsPanel
