@@ -7,7 +7,6 @@ module.exports = {
 	entry: {
 		...defaultConfig.entry(),
 		variations: './src/variations/index.js',
-		'legacy-pre-gb-19': './src/legacy-controls/pre-gb-19.js',
 	},
 	output: {
 		...defaultConfig.output,

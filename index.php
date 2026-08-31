@@ -4,7 +4,7 @@
  * Description:       Query loop block variations to create custom queries.
  * Plugin URI:        https://github.com/ryanwelcher/advanced-query-loop/
  * Version:           4.4.1
- * Requires at least: 6.2
+ * Requires at least: 6.7
  * Requires PHP:      7.4
  * Author:            Ryan Welcher
  * Author URI:        https://www.ryanwelcher.com/
