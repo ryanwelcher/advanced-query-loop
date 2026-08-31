@@ -115,14 +115,13 @@ Each component corresponds to a query feature:
 Extensibility mechanism exposed via `window.aql`:
 - `AQLControls` - Slot for controls shown when NOT inheriting query
 - `AQLControlsInheritedQuery` - Slot for controls shown when inheriting query
-- `AQLLegacyControls` - Slot for legacy Gutenberg < 19 controls
+- `AQLLegacyControls` - Slot reserved for legacy shims (e.g. the planned pre-WP-7.1 exclude-current shim)
 
 ### Build System
 
 **Webpack Configuration** (`webpack.config.js`):
 - Extends `@wordpress/scripts` default configuration
 - Entry point: `src/variations/index.ts`
-- Additional entry for legacy pre-GB-19 controls: `src/legacy-controls/pre-gb-19.js`
 - Exports library to global `window.aql`
 - Dev server allows all hosts for cross-environment testing
 
