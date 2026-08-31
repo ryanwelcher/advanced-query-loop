@@ -4,7 +4,7 @@ Since version 1.5, AQL is now completely extendable. Using the SlotFills and fil
 
 #### SlotFills
 
-There are two SlotFills available to extend the UI of AQL that are exposed based the value of the `Inherit query from template` setting of the block.
+There are two SlotFills available to extend the UI of AQL that are exposed based on the value of the `Inherit query from template` setting of the block.
 
 The purpose of having two options is to be able to customize when a UI element is added. There may be cases that a particular control doesn't make sense to be shown when the query is being inherited.
 For example, a control that makes changes to the content types being displayed may not make sense when used in an archive template and so that control would only be added using the `<AQLControls` SlotFill so that it doesn't appear when `Inherit query from template` is enabled.
@@ -88,7 +88,7 @@ The filter provides three parameters:
 -   `$block_query` The query attribute retrieved from the block.
 -   `$inherited` Whether the query is being inherited.
 
-As of version 4.5.0, when `$inherited` is `true` the `$query_args` array contains the fully processed AQL parameters (meta queries, tax queries, date queries, ordering, and so on) layered onto the inherited main-query vars — previously only the block's `posts_per_page`, `order`, and `orderby` were applied on top of those inherited vars, so other AQL params (meta/tax/date queries, etc.) were silently ignored on inherited queries. Filters that assumed the smaller set of applied params should check for the keys they care about rather than assuming the array shape. When inheriting, setting the block's Items per page lower than the site's Settings → Reading "posts per page" value can cause deeper archive pages to 404, because WordPress evaluates the main query's pagination before the block runs.
+As of version 5.0.0, when `$inherited` is `true` the `$query_args` array contains the fully processed AQL parameters (meta queries, tax queries, date queries, ordering, and so on) layered onto the inherited main-query vars — previously only the block's `posts_per_page`, `order`, and `orderby` were applied on top of those inherited vars, so other AQL params (meta/tax/date queries, etc.) were silently ignored on inherited queries. Filters that assumed the smaller set of applied params should check for the keys they care about rather than assuming the array shape. When inheriting, setting the block's Items per page lower than the site's Settings → Reading "posts per page" value can cause deeper archive pages to 404, because WordPress evaluates the main query's pagination before the block runs.
 
 Note also that enabling AQL caching (`enable_caching`) on an inherited query used for a search template creates a separate one-hour transient per unique search string and page combination, since the cache key is derived from the full query vars hash — this can grow the transients table quickly and is best avoided on search templates.
 
@@ -139,13 +139,13 @@ function aql_extension_target_homepage_featured( $query_args, $block_query, $inh
 
 ### Tutorial
 
-Using he example code above, you can make a custom extension plugin for AQL that will filter the displayed posts by author.
+Using the example code above, you can make a custom extension plugin for AQL that will filter the displayed posts by author.
 
 #### Step 1
 
 Start by using the `@wordpress/create-block` package to scaffold all of the files we need. We will be removing all of the block-related ones but this tool can quickly get us set up and ready to go.
 
-The the following in the command line tool of your choice inside the wp-content folder of a local WordPress installation.
+Run the following in the command line tool of your choice inside the wp-content folder of a local WordPress installation.
 
 ```bash
 npx @wordpress/create-block custom-aql-extension
@@ -154,21 +154,21 @@ npx @wordpress/create-block custom-aql-extension
 
 #### Step 2
 
-Once the scaffold has been completed, delete all of the files in `custom-aql-extension/src` we don't need them.
+Once the scaffold has been completed, delete all of the files in `custom-aql-extension/src` — we don't need them.
 
 #### Step 3
 
-Create a new files called`webpack.config.js` in the root of the directory with with the following contents:
+Create a new file called `webpack.config.js` in the root of the directory with the following contents:
 
 ```js
 // Import the original config from the @wordpress/scripts package.
-const defaultConfig = require("@wordpress/scripts/config/webpack.config");
+const defaultConfig = require( '@wordpress/scripts/config/webpack.config' );
 
-// Add any a new entry point by extending the webpack config.
+// Add a new entry point by extending the webpack config.
 module.exports = {
 	...defaultConfig,
 	entry: {
-		`aql-extension`: './src/index.js
+		'aql-extension': './src/index.js',
 	},
 };
 ```
@@ -269,12 +269,12 @@ function aql_extension_show_current_author_only( $query_args, $block_query, $inh
 
 #### Step 6
 
-Now that all the code is in place, back in your terminal run the one of the following commands:
+Now that all the code is in place, back in your terminal run one of the following commands:
 
 -   `npm run start` - starts development mode for the plugin that will rebuild when things change
 -   `npm run build` - creates a production build of the plugin
 
-Before you can use the plugin you need to run of the two
+Before you can use the plugin you need to run one of the two.
 
 #### Step 7
 

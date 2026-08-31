@@ -2,8 +2,8 @@
 Contributors: welcher
 Tags: Query Loop, Custom Queries, Advanced Queries, Post Meta, Taxonomy
 Requires at least: 6.7
-Tested up to: 6.9
-Stable tag: 4.4.1
+Tested up to: 7.1
+Stable tag: 5.0.0
 Requires PHP: 7.4
 License: GPL v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -155,18 +155,19 @@ Advanced Query Loop is built with developers in mind:
 
 == Screenshots ==
 
-1. Select how many posts you want to display and the number to start at.
-2. Create complicated queries for post types with registered post meta.x
-3. Query posts before a date, after a date or between two dates.
+1. Combine post types into a single query.
+2. Build complicated meta queries using the Meta query builder.
+3. Build advanced taxonomy queries using the Taxonomy query builder.
+4. Streamline the performance for each query.
 
 == Changelog ==
-= 4.5.0 =
+= 5.0.0 =
+* Bump Tested up to for WordPress 7.1.
 * Raise the minimum supported WordPress version to 6.7.
 * Remove the pre-Gutenberg-19 legacy per page/offset/max count controls (core's Query block has provided them since WordPress 6.7).
 * Order by multiple properties (primary + secondary sort), including meta values, for non-inherited queries.
 * Reorganize inspector controls into grouped panels (AQL: Post, Taxonomy, Meta, Date, Order by, Performance, Advanced).
 * Add an "AQL: Extensions" panel for third-party controls (formerly inside "Advanced Query Settings"), shown only when extensions are registered.
-* Add a control for excluding taxonomy terms.
 * Split date filters into separate Dynamic range and Date relationship options.
 * Inherited queries now support the full set of advanced controls — build meta, taxonomy, and date filters and custom ordering on top of an archive template's query without losing the archive context. When inheriting, setting the block's Items per page lower than the site's Settings → Reading "posts per page" value can cause deeper archive pages to 404, because WordPress evaluates the main query's pagination before the block runs.
 

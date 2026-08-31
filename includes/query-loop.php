@@ -50,7 +50,7 @@ if ( ! function_exists( 'add_filter' ) ) {
 				 * Allows filtering query params when the query is being inherited.
 				 *
 				 * @since 1.5
-				 * @since 4.5.0 Receives fully processed args for all AQL params,
+				 * @since 5.0.0 Receives fully processed args for all AQL params,
 				 *             not just perPage/order/orderBy.
 				 *
 				 * @param array   $query_args  Arguments to be passed to WP_Query.
