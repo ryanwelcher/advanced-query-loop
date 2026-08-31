@@ -160,7 +160,7 @@ Advanced Query Loop is built with developers in mind:
 3. Query posts before a date, after a date or between two dates.
 
 == Changelog ==
-= Unreleased =
+= 4.5.0 =
 * Raise the minimum supported WordPress version to 6.7.
 * Remove the pre-Gutenberg-19 legacy per page/offset/max count controls (core's Query block has provided them since WordPress 6.7).
 * Order by multiple properties (primary + secondary sort), including meta values, for non-inherited queries.
@@ -168,6 +168,7 @@ Advanced Query Loop is built with developers in mind:
 * Add an "AQL: Extensions" panel for third-party controls (formerly inside "Advanced Query Settings"), shown only when extensions are registered.
 * Add a control for excluding taxonomy terms.
 * Split date filters into separate Dynamic range and Date relationship options.
+* Inherited queries now support the full set of advanced controls — build meta, taxonomy, and date filters and custom ordering on top of an archive template's query without losing the archive context. When inheriting, setting the block's Items per page lower than the site's Settings → Reading "posts per page" value can cause deeper archive pages to 404, because WordPress evaluates the main query's pagination before the block runs.
 
 = 4.4.1 =
 * Add optional chaining to fix crash on templates
