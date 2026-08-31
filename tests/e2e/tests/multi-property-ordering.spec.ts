@@ -73,8 +73,10 @@ test.describe( 'Multi-property ordering', () => {
 		await expect( page.getByLabel( 'Secondary Order By' ) ).toBeVisible();
 
 		const blocks = await editor.getBlocks();
+		// The default secondary avoids duplicating the primary (still the
+		// core 'date' default here), so it initializes to 'title'.
 		expect( blocks[ 0 ].attributes.query.secondary_orderby ).toEqual( {
-			order_by: 'date',
+			order_by: 'title',
 			order: 'desc',
 		} );
 	} );

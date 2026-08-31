@@ -161,6 +161,12 @@ trait OrderBy {
 				$key = $this->normalize_orderby_property( $rule['property'] );
 			}
 
+			// A secondary rule that normalizes to the primary's key would
+			// overwrite the primary's direction — drop the duplicate instead.
+			if ( isset( $orderby[ $key ] ) ) {
+				continue;
+			}
+
 			$orderby[ $key ] = $this->normalize_order_direction( $rule['direction'] );
 		}
 

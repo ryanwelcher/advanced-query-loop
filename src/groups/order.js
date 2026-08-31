@@ -37,6 +37,11 @@ export const OrderControls = ( props ) => {
 			...CORE_DEFAULTS,
 		};
 		delete newQuery.orderby_meta_key;
+		// Resetting the primary back to the core default can leave a
+		// secondary duplicating it, which is a no-op downstream — clear it.
+		if ( newQuery.secondary_orderby?.order_by === CORE_DEFAULTS.orderBy ) {
+			delete newQuery.secondary_orderby;
+		}
 		setAttributes( { query: newQuery } );
 	};
 
@@ -87,8 +92,13 @@ export const OrderControls = ( props ) => {
 							setAttributes( {
 								query: {
 									...attributes.query,
+									// Must not duplicate the primary — the
+									// select filters that option out anyway.
 									secondary_orderby: {
-										order_by: 'date',
+										order_by:
+											query.orderBy === 'date'
+												? 'title'
+												: 'date',
 										order: 'desc',
 									},
 								},

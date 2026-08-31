@@ -283,6 +283,40 @@ class OrderBy_Multi_Tests extends TestCase {
 		$this->assertArrayNotHasKey( 'meta_query', $args );
 	}
 
+	/**
+	 * A secondary rule that normalizes to the same orderby key as the primary
+	 * (possible via saved attributes or UI resets) must not overwrite the
+	 * primary's direction — the duplicate secondary is dropped instead.
+	 */
+	public function test_duplicate_secondary_property_is_dropped() {
+		$args = $this->generate(
+			array(
+				'orderBy'           => 'date',
+				'order'             => 'desc',
+				'secondary_orderby' => array(
+					'order_by' => 'date',
+					'order'    => 'asc',
+				),
+			)
+		);
+		// Collapses back to the single plain primary rule (string path).
+		$this->assertSame( 'date', $args['orderby'] );
+	}
+
+	public function test_duplicate_after_id_normalization_is_dropped() {
+		$args = $this->generate(
+			array(
+				'orderBy'           => 'id',
+				'order'             => 'desc',
+				'secondary_orderby' => array(
+					'order_by' => 'id',
+					'order'    => 'asc',
+				),
+			)
+		);
+		$this->assertSame( 'ID', $args['orderby'] );
+	}
+
 	public function test_meta_orderby_without_key_falls_back_to_plain() {
 		// No orderby_meta_key: keep today's behavior (plain meta_value string,
 		// key supplied by the user's meta query as before).
