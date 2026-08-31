@@ -5,7 +5,7 @@
 import { addFilter } from '@wordpress/hooks';
 import { InspectorControls } from '@wordpress/block-editor';
 import { useSelect } from '@wordpress/data';
-import { PanelBody } from '@wordpress/components';
+import { PanelBody, Notice } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { createBlock } from '@wordpress/blocks';
 import { store as editorStore } from '@wordpress/editor';
@@ -56,6 +56,19 @@ const ALL_CONTROLS = [
 	'exclude_posts',
 	'enable_caching',
 	'query_id',
+];
+
+/**
+ * Controls hidden when the query is inherited: these override the archive
+ * context (post type, pinned post lists) and would recreate the very bug
+ * inherit mode exists to avoid. "Exclude current post" is also hidden
+ * because an archive has no "current post" — it falls back to the queried
+ * object ID, which on a taxonomy archive is a term ID, not a post ID.
+ */
+const INHERIT_EXCLUDED_CONTROLS = [
+	'additional_post_types',
+	'include_posts',
+	'exclude_current_post',
 ];
 
 /**
@@ -137,7 +150,14 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 				</>
 			);
 		}
-		// Add some controls if the inherit prop is true.
+		// When inheriting, expose the controls that layer onto the
+		// inherited query; hide the ones that would override its context.
+		const inheritProps = {
+			...propsWithControls,
+			allowedControls: allowedControlsArray.filter(
+				( control ) => ! INHERIT_EXCLUDED_CONTROLS.includes( control )
+			),
+		};
 		return (
 			<>
 				<BlockEdit { ...props } />
@@ -148,12 +168,23 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 							'advanced-query-loop'
 						) }
 					>
+						<Notice status="info" isDismissible={ false }>
+							{ __(
+								'Editor previews cannot reflect the specific archive being viewed. Verify results on the front end.',
+								'advanced-query-loop'
+							) }
+						</Notice>
 						<AQLControlsInheritedQuery.Slot
-							fillProps={ { ...propsWithControls } }
+							fillProps={ { ...inheritProps } }
 						/>
 					</PanelBody>
-					<OrderControls { ...propsWithControls } />
-					<AdvancedControls { ...propsWithControls } />
+					<PostParametersControls { ...inheritProps } />
+					<TaxonomyQueryGroupControls { ...inheritProps } />
+					<MetaQueryGroupControls { ...inheritProps } />
+					<DateQueryControls { ...inheritProps } />
+					<OrderControls { ...inheritProps } />
+					<PerformanceControls { ...inheritProps } />
+					<AdvancedControls { ...inheritProps } />
 				</InspectorControls>
 			</>
 		);

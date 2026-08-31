@@ -88,6 +88,10 @@ The filter provides three parameters:
 -   `$block_query` The query attribute retrieved from the block.
 -   `$inherited` Whether the query is being inherited.
 
+As of version 5.0.0, when `$inherited` is `true` the `$query_args` array contains the fully processed AQL parameters (meta queries, tax queries, date queries, ordering, and so on) layered onto the inherited main-query vars — previously only the block's `posts_per_page`, `order`, and `orderby` were applied on top of those inherited vars, so other AQL params (meta/tax/date queries, etc.) were silently ignored on inherited queries. Filters that assumed the smaller set of applied params should check for the keys they care about rather than assuming the array shape. When inheriting, setting the block's Items per page lower than the site's Settings → Reading "posts per page" value can cause deeper archive pages to 404, because WordPress evaluates the main query's pagination before the block runs.
+
+Note also that enabling AQL caching (`enable_caching`) on an inherited query used for a search template creates a separate one-hour transient per unique search string and page combination, since the cache key is derived from the full query vars hash — this can grow the transients table quickly and is best avoided on search templates.
+
 The example code below modifies the query based on the status of the control added above.
 
 ```php

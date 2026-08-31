@@ -110,7 +110,6 @@ export const PostOrderControls = ( {
 		query: {
 			order,
 			orderBy,
-			inherit,
 			orderby_meta_key: orderbyMetaKey,
 			secondary_orderby: secondaryOrderby,
 		} = {},
@@ -121,9 +120,7 @@ export const PostOrderControls = ( {
 		return null;
 	}
 
-	// Inherited queries never run the AQL query generator on the frontend, so
-	// the meta-key sort has no effect there — don't offer it.
-	const showMetaKeyField = ! inherit && isMetaSort( orderBy );
+	const showMetaKeyField = isMetaSort( orderBy );
 
 	return (
 		<VStack spacing={ 4 }>

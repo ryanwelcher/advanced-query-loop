@@ -176,4 +176,34 @@ class Query_Params_Generator {
 	public function get_query_args(): array {
 		return $this->custom_args;
 	}
+
+	/**
+	 * Retrieve the full args for an inherited query.
+	 *
+	 * Merges, in order of precedence: the inherited main-query vars, the
+	 * block's core params the traits do not handle (perPage, order), and
+	 * the trait-generated custom args. Call after process_all().
+	 *
+	 * `offset` is intentionally not mapped: the legacy inherit path never
+	 * honored it and a raw offset breaks the inherited `paged` handling.
+	 *
+	 * @return array Args ready for WP_Query.
+	 */
+	public function get_inherited_query_args(): array {
+		$core_params = array();
+
+		if ( $this->has_custom_param( 'perPage' ) ) {
+			$core_params['posts_per_page'] = $this->custom_params['perPage'];
+		}
+
+		if ( $this->has_custom_param( 'order' ) ) {
+			$core_params['order'] = $this->custom_params['order'];
+		}
+
+		return array_merge(
+			$this->default_params,
+			$core_params,
+			$this->custom_args
+		);
+	}
 }

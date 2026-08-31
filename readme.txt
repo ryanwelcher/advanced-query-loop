@@ -169,6 +169,7 @@ Advanced Query Loop is built with developers in mind:
 * Reorganize inspector controls into grouped panels (AQL: Post, Taxonomy, Meta, Date, Order by, Performance, Advanced).
 * Add an "AQL: Extensions" panel for third-party controls (formerly inside "Advanced Query Settings"), shown only when extensions are registered.
 * Split date filters into separate Dynamic range and Date relationship options.
+* Inherited queries now support the full set of advanced controls — build meta, taxonomy, and date filters and custom ordering on top of an archive template's query without losing the archive context. When inheriting, setting the block's Items per page lower than the site's Settings → Reading "posts per page" value can cause deeper archive pages to 404, because WordPress evaluates the main query's pagination before the block runs.
 
 = 4.4.1 =
 * Add optional chaining to fix crash on templates
