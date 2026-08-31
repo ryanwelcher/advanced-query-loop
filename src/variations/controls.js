@@ -17,7 +17,6 @@ import { AQL } from '.';
 import AQLControls from '../slots/aql-controls';
 import AQLControlsInheritedQuery from '../slots/aql-controls-inherited-query';
 import AQLLegacyControls from '../slots/aql-legacy-controls';
-import { PostOrderControls } from '../components/post-order-controls';
 import { PerformanceControls } from '../components/performance-controls';
 import { OrderControls } from '../groups/order';
 import { PostParametersControls } from '../groups/post-parameters';
@@ -149,11 +148,11 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 							'advanced-query-loop'
 						) }
 					>
-						<PostOrderControls { ...propsWithControls } />
 						<AQLControlsInheritedQuery.Slot
 							fillProps={ { ...propsWithControls } }
 						/>
 					</PanelBody>
+					<OrderControls { ...propsWithControls } />
 					<AdvancedControls { ...propsWithControls } />
 				</InspectorControls>
 			</>
