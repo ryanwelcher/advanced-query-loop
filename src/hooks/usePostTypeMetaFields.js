@@ -4,25 +4,29 @@ import { store as coreDataStore } from '@wordpress/core-data';
 const usePostTypeMetaFields = ( postTypes ) => {
 	return useSelect(
 		( select ) => {
-			let meta = {};
+			const keys = new Set();
 			if ( ! Array.isArray( postTypes ) || postTypes.length === 0 ) {
-				return meta;
+				return [];
 			}
 			postTypes.filter( Boolean ).forEach( ( type ) => {
-				const postInstance = select( coreDataStore ).getEntityRecords(
+				// Sample several posts — any single post may have no saved
+				// meta even when the post type uses it.
+				const postInstances = select( coreDataStore ).getEntityRecords(
 					'postType',
 					type,
-					{ per_page: 1 }
+					{ per_page: 10 }
 				);
-				if ( postInstance && postInstance?.[ 0 ]?.meta !== undefined ) {
-					meta = {
-						...meta,
-						...postInstance?.[ 0 ]?.meta,
-						...postInstance?.[ 0 ]?.acf, // Include ACF fields if ACF is active
-					};
-				}
+				( postInstances ?? [] ).forEach( ( postInstance ) => {
+					Object.keys( postInstance?.meta ?? {} ).forEach( ( key ) =>
+						keys.add( key )
+					);
+					// Include ACF fields if ACF is active.
+					Object.keys( postInstance?.acf ?? {} ).forEach( ( key ) =>
+						keys.add( key )
+					);
+				} );
 			} );
-			return meta;
+			return [ ...keys ];
 		},
 		[ postTypes ]
 	);
