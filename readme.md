@@ -18,7 +18,7 @@ Controls are organized into grouped panels in the block inspector: AQL: Post, AQ
 
 #### Taxonomy queries
 
-Built complicated taxonomy queries!
+Build complicated taxonomy queries!
 
 #### Multiple post types
 
@@ -42,7 +42,7 @@ Generate complicated post meta queries using an interface that allows you to cre
 
 #### Date Query
 
-Query items before/after the current or selected or choose to show the post from the last 1, 3, 6 and 12 months.
+Query items before/after the current or a selected date, or choose to show posts from the last 1, 3, 6 or 12 months.
 
 #### Post Order controls
 

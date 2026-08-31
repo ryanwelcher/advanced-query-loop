@@ -2,8 +2,8 @@
 Contributors: welcher
 Tags: Query Loop, Custom Queries, Advanced Queries, Post Meta, Taxonomy
 Requires at least: 6.7
-Tested up to: 6.9
-Stable tag: 4.4.1
+Tested up to: 7.1
+Stable tag: 5.0.0
 Requires PHP: 7.4
 License: GPL v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -157,17 +157,17 @@ Advanced Query Loop is built with developers in mind:
 
 1. Combine post types into a single query.
 2. Build complicated meta queries using the Meta query builder.
-3. Build advanced taxonomy quertoes using the Taxonomy query builder.
+3. Build advanced taxonomy queries using the Taxonomy query builder.
 4. Streamline the performance for each query.
 
 == Changelog ==
-= Unreleased =
+= 5.0.0 =
+* Bump Tested up to for WordPress 7.1.
 * Raise the minimum supported WordPress version to 6.7.
 * Remove the pre-Gutenberg-19 legacy per page/offset/max count controls (core's Query block has provided them since WordPress 6.7).
 * Order by multiple properties (primary + secondary sort), including meta values, for non-inherited queries.
 * Reorganize inspector controls into grouped panels (AQL: Post, Taxonomy, Meta, Date, Order by, Performance, Advanced).
 * Add an "AQL: Extensions" panel for third-party controls (formerly inside "Advanced Query Settings"), shown only when extensions are registered.
-* Add a control for excluding taxonomy terms.
 * Split date filters into separate Dynamic range and Date relationship options.
 
 = 4.4.1 =
