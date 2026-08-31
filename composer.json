@@ -23,7 +23,8 @@
 		},
 		"files": [
 			"includes/enqueues.php",
-			"includes/query-loop.php"
+			"includes/query-loop.php",
+			"includes/utilities.php"
 		]
 	},
 	"require-dev": {
