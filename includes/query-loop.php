@@ -28,14 +28,13 @@ if ( ! function_exists( 'add_filter' ) ) {
 			// Hijack the global query. It's a hack, but it works.
 			if ( isset( $parsed_block['attrs']['query']['inherit'] ) && true === $parsed_block['attrs']['query']['inherit'] ) {
 				global $wp_query;
-				$query_args = array_merge(
-					$wp_query->query_vars,
-					array(
-						'posts_per_page' => $parsed_block['attrs']['query']['perPage'],
-						'order'          => $parsed_block['attrs']['query']['order'],
-						'orderby'        => $parsed_block['attrs']['query']['orderBy'],
-					)
-				);
+
+				$block_query = $parsed_block['attrs']['query'];
+
+				// Layer all AQL params on top of the inherited query vars.
+				$qpg = new Query_Params_Generator( $wp_query->query_vars, $block_query );
+				$qpg->process_all();
+				$query_args = $qpg->get_inherited_query_args();
 
 				/**
 				 * Filter the query vars.
@@ -43,6 +42,8 @@ if ( ! function_exists( 'add_filter' ) ) {
 				 * Allows filtering query params when the query is being inherited.
 				 *
 				 * @since 1.5
+				 * @since 4.5.0 Receives fully processed args for all AQL params,
+				 *             not just perPage/order/orderBy.
 				 *
 				 * @param array   $query_args  Arguments to be passed to WP_Query.
 				 * @param array   $block_query The query attribute retrieved from the block.
@@ -53,11 +54,11 @@ if ( ! function_exists( 'add_filter' ) ) {
 				$filtered_query_args = \apply_filters(
 					'aql_query_vars',
 					$query_args,
-					$parsed_block['attrs']['query'],
+					$block_query,
 					true,
 				);
 
-				$wp_query = new \WP_Query( array_filter( $filtered_query_args ) );
+				$wp_query = new \WP_Query( $filtered_query_args );
 			} else {
 				\add_filter(
 					'query_loop_block_query_vars',
