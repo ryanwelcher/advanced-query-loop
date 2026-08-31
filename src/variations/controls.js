@@ -5,11 +5,7 @@
 import { addFilter } from '@wordpress/hooks';
 import { InspectorControls } from '@wordpress/block-editor';
 import { useSelect } from '@wordpress/data';
-import {
-	PanelBody,
-	__experimentalVStack as VStack,
-	BaseControl,
-} from '@wordpress/components';
+import { PanelBody } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { createBlock } from '@wordpress/blocks';
 import { store as editorStore } from '@wordpress/editor';
@@ -21,16 +17,14 @@ import { AQL } from '.';
 import AQLControls from '../slots/aql-controls';
 import AQLControlsInheritedQuery from '../slots/aql-controls-inherited-query';
 import AQLLegacyControls from '../slots/aql-legacy-controls';
-import { PostMetaQueryControls } from '../components/post-meta-query-controls';
-import { PostDateQueryControls } from '../components/post-date-query-controls';
-import { MultiplePostSelect } from '../components/multiple-post-select';
 import { PostOrderControls } from '../components/post-order-controls';
-import { PostExcludeControls } from '../components/post-exclude-controls';
-import { TaxonomyQueryControl } from '../components/taxonomy-query-control';
-import { PostIncludeControls } from '../components/post-include-controls';
-import { ChildItemsToggle } from '../components/child-items-toggle';
 import { PerformanceControls } from '../components/performance-controls';
-import { QueryIdControl } from '../components/query-id-control';
+import { OrderControls } from '../groups/order';
+import { PostParametersControls } from '../groups/post-parameters';
+import { TaxonomyQueryGroupControls } from '../groups/taxonomy-query';
+import { MetaQueryGroupControls } from '../groups/meta-query';
+import { DateQueryControls } from '../groups/date-query';
+import { AdvancedControls } from '../groups/advanced';
 
 /**
  * Determines if the active variation is this one
@@ -110,44 +104,36 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 				<>
 					<BlockEdit { ...props } />
 					<InspectorControls>
-						<PanelBody
-							title={ __(
-								'Advanced Query Settings',
-								'advanced-query-loop'
-							) }
-						>
-							<AQLLegacyControls.Slot
-								fillProps={ { ...propsWithControls } }
-							/>
-
-							<QueryIdControl { ...propsWithControls } />
-							<MultiplePostSelect { ...propsWithControls } />
-							<BaseControl
-								label={ __(
-									'Query Builders',
-									'advanced-query-loop'
-								) }
-								id="query-builders"
-							>
-								<VStack alignment="center">
-									<TaxonomyQueryControl
-										{ ...propsWithControls }
-									/>
-									<PostMetaQueryControls
-										{ ...propsWithControls }
-									/>
-								</VStack>
-							</BaseControl>
-							<PostOrderControls { ...propsWithControls } />
-							<PostExcludeControls { ...propsWithControls } />
-							<PostIncludeControls { ...propsWithControls } />
-							<ChildItemsToggle { ...propsWithControls } />
-							<PostDateQueryControls { ...propsWithControls } />
-							<AQLControls.Slot
-								fillProps={ { ...propsWithControls } }
-							/>
-						</PanelBody>
+						<PostParametersControls { ...propsWithControls } />
+						<TaxonomyQueryGroupControls { ...propsWithControls } />
+						<MetaQueryGroupControls { ...propsWithControls } />
+						<DateQueryControls { ...propsWithControls } />
+						<OrderControls { ...propsWithControls } />
 						<PerformanceControls { ...propsWithControls } />
+						<AdvancedControls { ...propsWithControls } />
+						<AQLLegacyControls.Slot
+							fillProps={ { ...propsWithControls } }
+						>
+							{ ( legacyFills ) => (
+								<AQLControls.Slot
+									fillProps={ { ...propsWithControls } }
+								>
+									{ ( fills ) =>
+										legacyFills.length || fills.length ? (
+											<PanelBody
+												title={ __(
+													'AQL: Extensions',
+													'advanced-query-loop'
+												) }
+											>
+												{ legacyFills }
+												{ fills }
+											</PanelBody>
+										) : null
+									}
+								</AQLControls.Slot>
+							) }
+						</AQLLegacyControls.Slot>
 					</InspectorControls>
 				</>
 			);
@@ -163,12 +149,12 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 							'advanced-query-loop'
 						) }
 					>
-						<QueryIdControl { ...propsWithControls } />
 						<PostOrderControls { ...propsWithControls } />
 						<AQLControlsInheritedQuery.Slot
 							fillProps={ { ...propsWithControls } }
 						/>
 					</PanelBody>
+					<AdvancedControls { ...propsWithControls } />
 				</InspectorControls>
 			</>
 		);

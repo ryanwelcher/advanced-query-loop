@@ -14,6 +14,8 @@ Please use the either the [support](https://wordpress.org/support/plugin/advance
 
 ### Available Controls
 
+Controls are organized into grouped panels in the block inspector: AQL: Post, AQL: Taxonomy, AQL: Meta, AQL: Date, AQL: Order by, AQL: Performance, and AQL: Advanced. A trailing **AQL: Extensions** panel appears only when a third-party extension has registered controls via the AQL SlotFills.
+
 #### Taxonomy queries
 
 Built complicated taxonomy queries!
@@ -65,7 +67,7 @@ Improve the performance of the query by disabling pagination.
 
 #### Enable Caching
 
-Store query results in a transient for one hour to reduce database load on subsequent page loads. The caching toggle is unavailable when the order is set to Random, and switching to Random order will clear any existing caching setting. Found in the **AQL: Performance Controls** panel.
+Store query results in a transient for one hour to reduce database load on subsequent page loads. The caching toggle is unavailable when the order is set to Random, and switching to Random order will clear any existing caching setting. Found in the **AQL: Performance** panel.
 
 ## Filtering the available controls
 

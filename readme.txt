@@ -32,6 +32,8 @@ Need help? We've got you covered!
 
 === Powerful Features at Your Fingertips ===
 
+Controls are organized into grouped panels in the block inspector: AQL: Post, AQL: Taxonomy, AQL: Meta, AQL: Date, AQL: Order by, AQL: Performance, and AQL: Advanced. A trailing AQL: Extensions panel appears only when a third-party extension has registered controls via the AQL SlotFills.
+
 ==== 🏷️ Advanced Taxonomy Queries ====
 
 Build sophisticated taxonomy queries that let you filter content by multiple categories, tags, or custom taxonomies. Create complex relationships between different taxonomy terms to display exactly the content you want.
@@ -157,6 +159,12 @@ Advanced Query Loop is built with developers in mind:
 3. Query posts before a date, after a date or between two dates.
 
 == Changelog ==
+= Unreleased =
+* Reorganize inspector controls into grouped panels (AQL: Post, Taxonomy, Meta, Date, Order by, Performance, Advanced).
+* Add an "AQL: Extensions" panel for third-party controls (formerly inside "Advanced Query Settings"), shown only when extensions are registered.
+* Add a control for excluding taxonomy terms.
+* Split date filters into separate Dynamic range and Date relationship options.
+
 = 4.4.1 =
 * Add optional chaining to fix crash on templates
 * Fix ExcludePostsControl fetching all posts (props @PatelUtkars)

@@ -1,7 +1,12 @@
 /**
  * WordPress dependencies
  */
-import { SelectControl, ToggleControl } from '@wordpress/components';
+import {
+	SelectControl,
+	ToggleControl,
+	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 export const sortOptions = [
@@ -74,7 +79,7 @@ export const PostOrderControls = ( {
 	}
 
 	return (
-		<>
+		<VStack spacing={ 4 }>
 			<SelectControl
 				label={ __( 'Post Order By', 'advanced-query-loop' ) }
 				value={ orderBy }
@@ -115,6 +120,6 @@ export const PostOrderControls = ( {
 				} }
 				__nextHasNoMarginBottom
 			/>
-		</>
+		</VStack>
 	);
 };
