@@ -64,7 +64,7 @@ export const sortOptions = [
  * PostOrderControls component
  *
  * @param {*} param0
- * @return {Element} PostCountControls
+ * @return {Element} PostOrderControls
  */
 export const PostOrderControls = ( {
 	attributes,
