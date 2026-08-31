@@ -93,6 +93,33 @@ class Meta_Query_Tests extends TestCase {
 					),
 				),
 			),
+			'single query with dynamic date function'              => array(
+				// Custom data.
+				array(
+					'meta_query' => array(
+						'queries' => array(
+							array(
+								'meta_key'     => 'date',
+								'meta_value'   => 'YEAR()-MONTH()-DAY()',
+								'meta_compare' => '>=',
+								'meta_type'    => 'DATE',
+							),
+						),
+					),
+				),
+				// Expected results.
+				array(
+					'is_aql'     => true,
+					'meta_query' => array(
+						array(
+							'key'     => 'date',
+							'value'   => date( 'Y-m-d' ),
+							'compare' => '>=',
+							'type'    => 'DATE',
+						),
+					),
+				),
+			),
 			'single query without compare and type'     => array(
 				// Custom data.
 				array(

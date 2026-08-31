@@ -23,7 +23,7 @@ trait Meta_Query {
 					$meta_queries[] = array_filter(
 						array(
 							'key'     => $query['meta_key'] ?? '',
-							'value'   => $query['meta_value'] ?? '',
+							'value'   => $this->map_date_functions( $query['meta_value'] ?? '' ),
 							'compare' => $query['meta_compare'] ?? '',
 							'type'    => $query['meta_type'] ?? '',
 						)
@@ -33,5 +33,34 @@ trait Meta_Query {
 		}
 
 		return array_filter( $meta_queries );
+	}
+
+	/**
+	 * Enable a selection of dynamic date functions for meta queries.
+	 *
+	 * @param string $value Argument to be passed to WP_Meta_Query.
+	 */
+	protected function map_date_functions( $value ) {
+		return str_ireplace(
+			[
+				'NOW()',
+				'HOUR()',
+				'DAY()',
+				'MONTH()',
+				'YEAR()',
+				'WEEK()',
+				'UNIX_TIMESTAMP()',
+			],
+			[
+				current_time( 'Y-m-d H:i:s' ),
+				intval( date( 'H' ) ),
+				intval( date( 'd' ) ),
+				intval( date( 'm' ) ),
+				intval( date( 'Y' ) ),
+				intval( date( 'W' ) ),
+				time(),
+			],
+			$value
+		);
 	}
 }
