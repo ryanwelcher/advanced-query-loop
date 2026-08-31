@@ -12,7 +12,10 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import { PostOrderControls } from '../components/post-order-controls';
+import {
+	PostOrderControls,
+	SecondaryOrderControls,
+} from '../components/post-order-controls';
 import { useToolsPanelDropdownMenuProps } from './use-dropdown-menu-props';
 
 // Core Query block defaults — order/orderBy always exist on the query attribute.
@@ -28,18 +31,44 @@ export const OrderControls = ( props ) => {
 		return null;
 	}
 
-	const resetOrder = () =>
-		setAttributes( {
-			query: {
-				...attributes.query,
-				...CORE_DEFAULTS,
-			},
-		} );
+	const resetOrder = () => {
+		const newQuery = {
+			...attributes.query,
+			...CORE_DEFAULTS,
+		};
+		delete newQuery.orderby_meta_key;
+		// Resetting the primary back to the core default can leave a
+		// secondary duplicating it, which is a no-op downstream — clear it.
+		if ( newQuery.secondary_orderby?.order_by === CORE_DEFAULTS.orderBy ) {
+			delete newQuery.secondary_orderby;
+		}
+		setAttributes( { query: newQuery } );
+	};
+
+	const removeSecondary = () => {
+		const newQuery = { ...attributes.query };
+		delete newQuery.secondary_orderby;
+		setAttributes( { query: newQuery } );
+	};
+
+	const resetAll = () => {
+		const newQuery = {
+			...attributes.query,
+			...CORE_DEFAULTS,
+		};
+		delete newQuery.orderby_meta_key;
+		delete newQuery.secondary_orderby;
+		setAttributes( { query: newQuery } );
+	};
+
+	// A secondary sort is meaningless with a random primary sort, and
+	// inherited queries never run the AQL generator on the frontend.
+	const showSecondaryItem = query.orderBy !== 'rand' && ! query.inherit;
 
 	return (
 		<ToolsPanel
 			label={ __( 'AQL: Order by', 'advanced-query-loop' ) }
-			resetAll={ resetOrder }
+			resetAll={ resetAll }
 			dropdownMenuProps={ dropdownMenuProps }
 		>
 			<ToolsPanelItem
@@ -47,12 +76,40 @@ export const OrderControls = ( props ) => {
 				isShownByDefault
 				hasValue={ () =>
 					query.orderBy !== CORE_DEFAULTS.orderBy ||
-					query.order !== CORE_DEFAULTS.order
+					query.order !== CORE_DEFAULTS.order ||
+					!! query.orderby_meta_key
 				}
 				onDeselect={ resetOrder }
 			>
 				<PostOrderControls { ...props } />
 			</ToolsPanelItem>
+			{ showSecondaryItem && (
+				<ToolsPanelItem
+					label={ __( 'Secondary sort', 'advanced-query-loop' ) }
+					hasValue={ () => !! query.secondary_orderby }
+					onSelect={ () => {
+						if ( ! query.secondary_orderby ) {
+							setAttributes( {
+								query: {
+									...attributes.query,
+									// Must not duplicate the primary — the
+									// select filters that option out anyway.
+									secondary_orderby: {
+										order_by:
+											query.orderBy === 'date'
+												? 'title'
+												: 'date',
+										order: 'desc',
+									},
+								},
+							} );
+						}
+					} }
+					onDeselect={ removeSecondary }
+				>
+					<SecondaryOrderControls { ...props } />
+				</ToolsPanelItem>
+			) }
 		</ToolsPanel>
 	);
 };

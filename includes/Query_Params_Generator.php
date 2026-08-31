@@ -44,6 +44,18 @@ class Query_Params_Generator {
 		'query_id'                 => 'aql_query_id',
 	);
 
+	/**
+	 * Additional param names that must also trigger process_orderBy().
+	 *
+	 * ALLOWED_CONTROLS maps 'post_order' to the block attribute name 'orderBy',
+	 * but ordering can arrive under other keys: the REST path (block editor
+	 * preview) sends the primary sort as lowercase 'orderby', and the AQL-owned
+	 * ordering params can be present with no primary sort at all. Without this
+	 * list those requests would never run the trait and the editor preview
+	 * would be inert.
+	 */
+	const ORDERBY_PARAM_ALIASES = array( 'orderby', 'secondary_orderby', 'orderby_meta_key' );
+
 
 	/**
 	 * Default values from the default block.
@@ -136,10 +148,24 @@ class Query_Params_Generator {
 	 */
 	public function process_all(): void {
 		// Get the params from the allowed controls and remove any duplicates.
-		$params = array_unique( $this->get_params_to_process() );
+		$params    = array_unique( $this->get_params_to_process() );
+		$processed = array();
 		foreach ( $params as $param_name ) {
 			if ( $this->has_custom_param( $param_name ) ) {
 				call_user_func( array( $this, 'process_' . $param_name ) );
+				$processed[] = $param_name;
+			}
+		}
+
+		// Ordering can arrive under names other than 'orderBy' (see
+		// ORDERBY_PARAM_ALIASES). Run the trait once if any of them is present
+		// and the 'orderBy' pass above did not already fire.
+		if ( in_array( 'orderBy', $params, true ) && ! in_array( 'orderBy', $processed, true ) ) {
+			foreach ( self::ORDERBY_PARAM_ALIASES as $alias ) {
+				if ( $this->has_custom_param( $alias ) ) {
+					$this->process_orderBy();
+					break;
+				}
 			}
 		}
 	}
