@@ -95,7 +95,7 @@ Each trait in the Traits directory handles a specific query modification:
 - Uses `addFilter` on `editor.BlockEdit` to inject custom controls
 - Conditionally renders different control sets based on `query.inherit` attribute
 - When `inherit: false` - Shows the grouped panels (AQL: Post, Taxonomy, Meta, Date, Order by, Performance, Advanced) plus a trailing "AQL: Extensions" panel that renders only when at least one `AQLControls`/`AQLLegacyControls` fill is registered
-- When `inherit: true` - Shows the "Advanced Query Settings" panel (holding the `AQLControlsInheritedQuery` slot), the "AQL: Order by" panel (primary order/direction only), and the "AQL: Advanced" panel
+- When `inherit: true` - Shows the "AQL: Order by" panel (primary order/direction only), the "AQL: Advanced" panel, and the same trailing "AQL: Extensions" panel, rendered only when at least one `AQLControlsInheritedQuery` fill is registered
 - Builds `propsWithControls` passed to every component; extends the original block props with:
   - `allowedControls` — array of permitted control keys
   - `context.currentPostId` — numeric ID of the currently edited post/page (`0` in template context)
@@ -131,7 +131,7 @@ Individual controls composed by the groups:
 **SlotFill System** (`src/slots/`):
 Extensibility mechanism; `AQLControls` and `AQLControlsInheritedQuery` are exposed via `window.aql`:
 - `AQLControls` - Slot for controls shown when NOT inheriting query (renders in the "AQL: Extensions" panel)
-- `AQLControlsInheritedQuery` - Slot for controls shown when inheriting query (renders in "Advanced Query Settings")
+- `AQLControlsInheritedQuery` - Slot for controls shown when inheriting query (renders in the "AQL: Extensions" panel)
 - `AQLLegacyControls` - Internal slot reserved for legacy shims (e.g. the planned pre-WP-7.1 exclude-current shim); not exported on `window.aql`
 
 ### Build System
