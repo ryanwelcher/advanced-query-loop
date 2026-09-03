@@ -21,6 +21,7 @@ import { useEffect, useState } from '@wordpress/element';
  */
 import { PostMetaControl } from './post-meta-control';
 import { QueryBuilderModal } from './query-builder-modal';
+import { PlaceholderReference } from './placeholder-reference';
 import usePostTypeMetaFields from '../hooks/usePostTypeMetaFields';
 
 // A component to render a select control for the post meta query.
@@ -43,6 +44,8 @@ export const PostMetaQueryControls = ( {
 	] );
 
 	const [ selectedPostType ] = useState( postType );
+	const [ activeConditionId, setActiveConditionId ] = useState( null );
+	const [ insertNotice, setInsertNotice ] = useState( null );
 
 	useEffect( () => {
 		// If the post type changes, reset the meta query.
@@ -96,6 +99,40 @@ export const PostMetaQueryControls = ( {
 		} );
 	};
 
+	/**
+	 * Write a placeholder token into the most recently focused value field.
+	 *
+	 * @param {string} name The placeholder name.
+	 */
+	const insertPlaceholder = ( name ) => {
+		const target = queries.find(
+			( query ) => query.id === activeConditionId && query.meta_key
+		);
+		if ( ! target ) {
+			setInsertNotice(
+				__(
+					'Select a Meta Value field first, then click a placeholder to insert it there.',
+					'advanced-query-loop'
+				)
+			);
+			return;
+		}
+		setInsertNotice( null );
+		setAttributes( {
+			query: {
+				...attributes.query,
+				meta_query: {
+					...attributes.query.meta_query,
+					queries: queries.map( ( query ) =>
+						query.id === target.id
+							? { ...query, meta_value: `{aql:${ name }}` }
+							: query
+					),
+				},
+			},
+		} );
+	};
+
 	const resetConditions = () => {
 		setAttributes( {
 			query: { ...attributes.query, meta_query: {} },
@@ -141,39 +178,54 @@ export const PostMetaQueryControls = ( {
 				</HStack>
 			}
 		>
-			{ queries.length > 1 && (
-				<ToggleGroupControl
-					label={ __( 'Match', 'advanced-query-loop' ) }
-					help={ __(
-						'Whether a post must satisfy every condition or any one of them.',
-						'advanced-query-loop'
+			<div className="aql-meta-builder">
+				<div className="aql-meta-builder__conditions">
+					{ queries.length > 1 && (
+						<ToggleGroupControl
+							label={ __( 'Match', 'advanced-query-loop' ) }
+							help={ __(
+								'Whether a post must satisfy every condition or any one of them.',
+								'advanced-query-loop'
+							) }
+							value={ relation }
+							onChange={ setRelation }
+							isBlock
+							__nextHasNoMarginBottom
+							__next40pxDefaultSize
+						>
+							<ToggleGroupControlOption
+								value="AND"
+								label={ __(
+									'All conditions',
+									'advanced-query-loop'
+								) }
+							/>
+							<ToggleGroupControlOption
+								value="OR"
+								label={ __(
+									'Any condition',
+									'advanced-query-loop'
+								) }
+							/>
+						</ToggleGroupControl>
 					) }
-					value={ relation }
-					onChange={ setRelation }
-					isBlock
-					__nextHasNoMarginBottom
-					__next40pxDefaultSize
-				>
-					<ToggleGroupControlOption
-						value="AND"
-						label={ __( 'All conditions', 'advanced-query-loop' ) }
-					/>
-					<ToggleGroupControlOption
-						value="OR"
-						label={ __( 'Any condition', 'advanced-query-loop' ) }
-					/>
-				</ToggleGroupControl>
-			) }
-			{ queries.map( ( { id } ) => (
-				<PostMetaControl
-					key={ id }
-					id={ id }
-					registeredMetaKeys={ registeredMetaKeys }
-					queries={ queries }
-					attributes={ attributes }
-					setAttributes={ setAttributes }
+					{ queries.map( ( { id } ) => (
+						<PostMetaControl
+							key={ id }
+							id={ id }
+							registeredMetaKeys={ registeredMetaKeys }
+							queries={ queries }
+							attributes={ attributes }
+							setAttributes={ setAttributes }
+							onValueFocus={ () => setActiveConditionId( id ) }
+						/>
+					) ) }
+				</div>
+				<PlaceholderReference
+					onInsert={ insertPlaceholder }
+					notice={ insertNotice }
 				/>
-			) ) }
+			</div>
 		</QueryBuilderModal>
 	);
 };

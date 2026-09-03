@@ -59,6 +59,7 @@ const metaTypeOptions = [
  * @param {Array}    props.queries            All conditions.
  * @param {Object}   props.attributes         Block attributes.
  * @param {Function} props.setAttributes      Block attribute setter.
+ * @param {Function} props.onValueFocus       Called when the value field gains focus.
  * @return {Element} The condition card.
  */
 export const PostMetaControl = ( {
@@ -67,6 +68,7 @@ export const PostMetaControl = ( {
 	queries,
 	attributes,
 	setAttributes,
+	onValueFocus,
 } ) => {
 	const activeQuery = queries.find( ( query ) => query.id === id );
 	const hasKey = activeQuery?.meta_key?.length > 0;
@@ -189,6 +191,7 @@ export const PostMetaControl = ( {
 					onChange={ ( newValue ) =>
 						updateQueryParam( 'meta_value', newValue )
 					}
+					onFocus={ onValueFocus }
 				/>
 			) }
 		</div>

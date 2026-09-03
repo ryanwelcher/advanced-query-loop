@@ -212,3 +212,87 @@ test.describe( 'Meta query builder layout', () => {
 		).toBeInViewport();
 	} );
 } );
+
+test.describe( 'Placeholder reference', () => {
+	test.beforeEach( async ( { page, editor, playground, admin } ) => {
+		await playground.init( { page, editor } );
+		await admin.visitAdminPage( 'post-new.php' );
+
+		await editor.setPreferences( 'core/edit-post', {
+			welcomeGuide: false,
+			fullscreenMode: false,
+		} );
+		await insertAQL( { editor, page } );
+		await page
+			.getByRole( 'button', { name: 'Open Post Meta query builder' } )
+			.click();
+		await page.getByRole( 'button', { name: 'Add new query' } ).click();
+		await page
+			.getByRole( 'combobox', { name: 'Meta Key' } )
+			.fill( 'related_post' );
+		await page.keyboard.press( 'Enter' );
+	} );
+
+	test.afterEach( async ( { playground } ) => {
+		await playground.cleanUp();
+	} );
+
+	test( 'lists placeholders with descriptions and filters them', async ( {
+		page,
+	} ) => {
+		const reference = page.getByRole( 'complementary', {
+			name: 'Dynamic placeholders',
+		} );
+		await expect( reference ).toBeVisible();
+		await expect(
+			reference.getByRole( 'button', { name: /Current Post ID/ } )
+		).toBeVisible();
+		await expect(
+			reference.getByText( 'The ID of the post being viewed.' )
+		).toBeVisible();
+
+		await reference
+			.getByRole( 'searchbox', { name: 'Filter placeholders' } )
+			.fill( 'month' );
+		await expect(
+			reference.getByRole( 'button', { name: /3 Months Ago/ } )
+		).toBeVisible();
+		await expect(
+			reference.getByRole( 'button', { name: /Current Post ID/ } )
+		).toBeHidden();
+	} );
+
+	test( 'inserts a token into the focused value field', async ( {
+		page,
+		editor,
+	} ) => {
+		await page.getByRole( 'combobox', { name: 'Meta Value' } ).click();
+		await page
+			.getByRole( 'complementary', { name: 'Dynamic placeholders' } )
+			.getByRole( 'button', { name: /Current Post ID/ } )
+			.click();
+
+		const blocks = await editor.getBlocks();
+		expect(
+			blocks[ 0 ].attributes.query.meta_query.queries[ 0 ].meta_value
+		).toEqual( '{aql:current_post_id}' );
+	} );
+
+	test( 'explains itself when no value field has been focused', async ( {
+		page,
+		editor,
+	} ) => {
+		await page
+			.getByRole( 'complementary', { name: 'Dynamic placeholders' } )
+			.getByRole( 'button', { name: /Current Post ID/ } )
+			.click();
+
+		await expect(
+			page.getByText( 'Select a Meta Value field first' )
+		).toBeVisible();
+		const blocks = await editor.getBlocks();
+		expect(
+			blocks[ 0 ].attributes.query.meta_query.queries[ 0 ].meta_value
+		).toEqual( '' );
+	} );
+} );

@@ -20,8 +20,14 @@ import usePlaceholders from '../hooks/usePlaceholders';
  * @param {string}   props.label    Field label.
  * @param {string}   props.value    Current value.
  * @param {Function} props.onChange Change handler receiving the new value.
+ * @param {Function} props.onFocus  Optional focus handler.
  */
-export const PlaceholderTextControl = ( { label, value, onChange } ) => {
+export const PlaceholderTextControl = ( {
+	label,
+	value,
+	onChange,
+	onFocus,
+} ) => {
 	const placeholders = usePlaceholders();
 
 	/**
@@ -60,6 +66,7 @@ export const PlaceholderTextControl = ( { label, value, onChange } ) => {
 					( placeholder ) => placeholder.label
 				) }
 				maxLength={ 1 }
+				onFocus={ onFocus }
 				__experimentalExpandOnFocus
 				__experimentalShowHowTo={ false }
 				onChange={ ( newValue ) =>
