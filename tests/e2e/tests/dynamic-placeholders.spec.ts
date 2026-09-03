@@ -73,13 +73,28 @@ test.describe( 'Dynamic placeholders', () => {
 		await metaValueField.click();
 		for ( const label of [
 			'Current Post ID',
+			'Current Post Parent ID',
 			'Author ID',
 			'Logged-in User ID',
+			'Current Term ID',
 			'Current Date',
+			'Current Date (Compact)',
+			'Current Date and Time',
+			'Current Time',
+			'Current Timestamp',
+			'Current Year',
+			'Current Month',
+			'Current Day',
+			'Current Hour',
+			'Current Week',
 			'1 Month Ago',
 			'3 Months Ago',
 			'6 Months Ago',
 			'12 Months Ago',
+			'1 Month From Now',
+			'3 Months From Now',
+			'6 Months From Now',
+			'12 Months From Now',
 		] ) {
 			await expect(
 				page.getByRole( 'option', { name: label, exact: true } )

@@ -92,8 +92,8 @@ Sort your content exactly how you want:
 
 ==== 🎭 Dynamic Placeholders ====
 
-Use values like Current Post ID, Author ID, Logged-in User ID, or Current Date in meta queries: the Meta Value field suggests dynamic values by name, and picking one stores the placeholder while typing anything else stores it verbatim.
-* **Built-in placeholders**: Access commonly needed values like current_post_id, author_id, user_id, and relative dates
+Use values like Current Post ID, Author ID, Logged-in User ID, Current Term ID, or Current Date in meta queries: the Meta Value field suggests dynamic values by name, and picking one stores the placeholder while typing anything else stores it verbatim.
+* **Built-in placeholders**: Current post, parent, author, user, and archive term IDs; the current date (YYYY-MM-DD or YYYYMMDD), date and time, time, and timestamp; current year, month, day, hour, and week; and dates 1, 3, 6, or 12 months in the past or future, all in the site timezone
 * **Editor preview**: See resolved values in the block editor before publishing
 * **Extensible**: Register custom placeholders with simple PHP filters
 
@@ -165,7 +165,7 @@ Advanced Query Loop is built with developers in mind:
 
 == Changelog ==
 = 4.5.0 =
-* New: Dynamic placeholders for query values ({aql:current_post_id}, {aql:author_id}, {aql:user_id}, {aql:current_date}, and relative dates) with an editor picker, plus aql_resolve_placeholder / aql_placeholder_list filters for extenders.
+* New: Dynamic placeholders for query values ({aql:current_post_id}, {aql:current_post_parent_id}, {aql:author_id}, {aql:user_id}, {aql:current_term_id}, {aql:current_date}, {aql:current_date_compact}, {aql:current_datetime}, {aql:current_time}, {aql:current_timestamp}, current year/month/day/hour/week, and dates 1 to 12 months in the past or future) with an editor picker, plus aql_resolve_placeholder / aql_placeholder_list filters for extenders. Props @roborourke for the date function idea in #158.
 
 = 4.4.1 =
 * Add optional chaining to fix crash on templates

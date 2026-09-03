@@ -140,8 +140,34 @@ in a meta query's value. Tokens are resolved centrally before the query runs, in
 editor preview and on the frontend, so they work in any query param — including params
 added by third-party controls.
 
-Built-in placeholders: `current_post_id`, `author_id`, `user_id`, `current_date`,
-`date_minus_1_month`, `date_minus_3_months`, `date_minus_6_months`, `date_minus_12_months`.
+Built-in placeholders:
+
+| Token | Value |
+| --- | --- |
+| `current_post_id` | ID of the post being viewed |
+| `current_post_parent_id` | Parent ID of the post being viewed |
+| `author_id` | Author ID of the post being viewed |
+| `user_id` | Logged-in user ID (matches nothing when logged out) |
+| `current_term_id` | Term ID on category, tag, and taxonomy archives |
+| `current_date` | `YYYY-MM-DD` |
+| `current_date_compact` | `YYYYMMDD` (the default ACF date format) |
+| `current_datetime` | `YYYY-MM-DD HH:MM:SS` |
+| `current_time` | `HH:MM:SS` |
+| `current_timestamp` | Unix timestamp |
+| `current_year`, `current_month`, `current_day`, `current_hour`, `current_week` | Zero-padded date parts |
+| `date_minus_1_month`, `date_minus_3_months`, `date_minus_6_months`, `date_minus_12_months` | `YYYY-MM-DD` in the past |
+| `date_plus_1_month`, `date_plus_3_months`, `date_plus_6_months`, `date_plus_12_months` | `YYYY-MM-DD` in the future |
+
+All dates and times use the site timezone. Pair date and time tokens with the
+matching meta type (`DATE`, `DATETIME`, `TIME`, or `NUMERIC` for compact dates) in
+the meta query builder's advanced mode so comparisons are cast correctly.
+
+Common recipes, each a meta query clause with the token as the value:
+
+- Upcoming events (ACF date, `Ymd`): `event_date` `>=` `{aql:current_date_compact}`, type `NUMERIC`.
+- Currently running events (ACF time): `start_time` `<=` `{aql:current_time}` AND `end_time` `>=` `{aql:current_time}`, type `TIME`.
+- Posts related to the viewed post via an ACF relationship field: `related_posts` `LIKE` `"{aql:current_post_id}"`, type `CHAR`.
+- Posts from the current year: `year_meta` `=` `{aql:current_year}`.
 
 ##### Registering a custom placeholder
 
@@ -181,8 +207,8 @@ nothing — unknown, or known but currently valueless (e.g. `{aql:user_id}` for
 a logged-out visitor) — is left in the value verbatim, so equality-style
 comparisons against it match nothing.
 
-The `$context` array includes `post_id`, `post_type`, `author_id`, `user_id`,
-`is_editor_preview`, `block_query`, and `inherited`.
+The `$context` array includes `post_id`, `post_type`, `post_parent_id`, `author_id`,
+`user_id`, `term_id`, `is_editor_preview`, `block_query`, and `inherited`.
 
 ##### Placeholder-aware custom controls
 

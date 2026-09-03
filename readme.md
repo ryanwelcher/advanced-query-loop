@@ -69,7 +69,7 @@ Store query results in a transient for one hour to reduce database load on subse
 
 #### Dynamic Placeholders
 
-Use values like Current Post ID, Author ID, Logged-in User ID, or Current Date in meta queries: the Meta Value field suggests dynamic values by name, and picking one stores the placeholder while typing anything else stores it verbatim.
+Use values like Current Post ID, Current Post Parent ID, Author ID, Logged-in User ID, Current Term ID, Current Date, Current Date and Time, Current Time, Current Timestamp, the current year/month/day/hour/week, and dates 1, 3, 6, or 12 months in the past or future in meta queries: the Meta Value field suggests dynamic values by name, and picking one stores the placeholder while typing anything else stores it verbatim. All dates use the site timezone, and a compact `YYYYMMDD` date is available for ACF date fields.
 
 ## Filtering the available controls
 

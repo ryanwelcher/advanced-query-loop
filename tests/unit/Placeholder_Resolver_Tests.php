@@ -180,6 +180,26 @@ class Placeholder_Resolver_Tests extends TestCase {
 				array( 'user_id' => 0 ),
 				array( 'meta_value' => '{aql:user_id}' ),
 			),
+			'current_post_parent_id resolves'              => array(
+				array( 'post_parent' => '{aql:current_post_parent_id}' ),
+				array( 'post_parent_id' => 42 ),
+				array( 'post_parent' => '42' ),
+			),
+			'current_post_parent_id on top-level post stays verbatim' => array(
+				array( 'meta_value' => '{aql:current_post_parent_id}' ),
+				array( 'post_parent_id' => 0 ),
+				array( 'meta_value' => '{aql:current_post_parent_id}' ),
+			),
+			'current_term_id resolves'                     => array(
+				array( 'meta_value' => '{aql:current_term_id}' ),
+				array( 'term_id' => 7 ),
+				array( 'meta_value' => '7' ),
+			),
+			'current_term_id outside archive stays verbatim' => array(
+				array( 'meta_value' => '{aql:current_term_id}' ),
+				array( 'term_id' => 0 ),
+				array( 'meta_value' => '{aql:current_term_id}' ),
+			),
 		);
 	}
 
@@ -204,30 +224,71 @@ class Placeholder_Resolver_Tests extends TestCase {
 	 */
 	public function data_date_tokens() {
 		return array(
-			'current_date'         => array( 'current_date', 'now' ),
-			'date_minus_1_month'   => array( 'date_minus_1_month', '-1 month' ),
-			'date_minus_3_months'  => array( 'date_minus_3_months', '-3 months' ),
-			'date_minus_6_months'  => array( 'date_minus_6_months', '-6 months' ),
-			'date_minus_12_months' => array( 'date_minus_12_months', '-12 months' ),
+			'current_date'         => array( 'current_date', 'now', 'Y-m-d' ),
+			'current_date_compact' => array( 'current_date_compact', 'now', 'Ymd' ),
+			'current_datetime'     => array( 'current_datetime', 'now', 'Y-m-d H:i:s' ),
+			'current_time'         => array( 'current_time', 'now', 'H:i:s' ),
+			'current_year'         => array( 'current_year', 'now', 'Y' ),
+			'current_month'        => array( 'current_month', 'now', 'm' ),
+			'current_day'          => array( 'current_day', 'now', 'd' ),
+			'current_hour'         => array( 'current_hour', 'now', 'H' ),
+			'current_week'         => array( 'current_week', 'now', 'W' ),
+			'date_minus_1_month'   => array( 'date_minus_1_month', '-1 month', 'Y-m-d' ),
+			'date_minus_3_months'  => array( 'date_minus_3_months', '-3 months', 'Y-m-d' ),
+			'date_minus_6_months'  => array( 'date_minus_6_months', '-6 months', 'Y-m-d' ),
+			'date_minus_12_months' => array( 'date_minus_12_months', '-12 months', 'Y-m-d' ),
+			'date_plus_1_month'    => array( 'date_plus_1_month', '+1 month', 'Y-m-d' ),
+			'date_plus_3_months'   => array( 'date_plus_3_months', '+3 months', 'Y-m-d' ),
+			'date_plus_6_months'   => array( 'date_plus_6_months', '+6 months', 'Y-m-d' ),
+			'date_plus_12_months'  => array( 'date_plus_12_months', '+12 months', 'Y-m-d' ),
 		);
 	}
 
 	/**
-	 * Test date tokens format as Y-m-d.
+	 * Test date tokens resolve to the expected format.
 	 *
 	 * @dataProvider data_date_tokens
 	 *
 	 * @param string $token_name The token name.
 	 * @param string $modifier   The strtotime modifier.
+	 * @param string $format     The expected date() format.
 	 */
-	public function test_date_tokens( $token_name, $modifier ) {
+	public function test_date_tokens( $token_name, $modifier, $format ) {
 		$params   = array( 'meta_value' => '{aql:' . $token_name . '}' );
 		$resolved = Placeholder_Resolver::resolve_params( $params, array() );
 
 		// Computed the same way as the implementation to avoid midnight flakes.
-		$expected = gmdate( 'Y-m-d', strtotime( $modifier, time() ) );
+		$expected = gmdate( $format, strtotime( $modifier, time() ) );
 
 		$this->assertSame( $expected, $resolved['meta_value'] );
+	}
+
+	/**
+	 * Date parts are zero-padded so they compose into valid dates.
+	 */
+	public function test_date_parts_are_zero_padded() {
+		$resolved = Placeholder_Resolver::resolve_params(
+			array( 'meta_value' => '{aql:current_year}-{aql:current_month}-{aql:current_day}' ),
+			array()
+		);
+
+		$this->assertRegExp( '/^\d{4}-\d{2}-\d{2}$/', $resolved['meta_value'] );
+		$this->assertSame( gmdate( 'Y-m-d' ), $resolved['meta_value'] );
+	}
+
+	/**
+	 * The timestamp token is a Unix timestamp close to now.
+	 */
+	public function test_current_timestamp_token() {
+		$before   = time();
+		$resolved = Placeholder_Resolver::resolve_params(
+			array( 'meta_value' => '{aql:current_timestamp}' ),
+			array()
+		);
+
+		$this->assertRegExp( '/^\d+$/', $resolved['meta_value'] );
+		$this->assertGreaterThanOrEqual( $before, (int) $resolved['meta_value'] );
+		$this->assertLessThanOrEqual( time(), (int) $resolved['meta_value'] );
 	}
 
 	/**
@@ -240,13 +301,28 @@ class Placeholder_Resolver_Tests extends TestCase {
 
 		$expected_names = array(
 			'current_post_id',
+			'current_post_parent_id',
 			'author_id',
 			'user_id',
+			'current_term_id',
 			'current_date',
+			'current_date_compact',
+			'current_datetime',
+			'current_time',
+			'current_timestamp',
+			'current_year',
+			'current_month',
+			'current_day',
+			'current_hour',
+			'current_week',
 			'date_minus_1_month',
 			'date_minus_3_months',
 			'date_minus_6_months',
 			'date_minus_12_months',
+			'date_plus_1_month',
+			'date_plus_3_months',
+			'date_plus_6_months',
+			'date_plus_12_months',
 		);
 
 		$this->assertSame( $expected_names, $names );

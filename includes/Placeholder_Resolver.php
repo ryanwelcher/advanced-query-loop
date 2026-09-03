@@ -36,8 +36,8 @@ class Placeholder_Resolver {
 	 *
 	 * @param array $params  Raw params (block query, query vars, or REST params).
 	 * @param array $context Resolution context. Keys: post_id, post_type,
-	 *                       author_id, user_id, is_editor_preview,
-	 *                       block_query, inherited.
+	 *                       post_parent_id, author_id, user_id, term_id,
+	 *                       is_editor_preview, block_query, inherited.
 	 *
 	 * @return array The params with tokens resolved.
 	 */
@@ -126,27 +126,47 @@ class Placeholder_Resolver {
 	 */
 	private static function get_built_in_resolvers(): array {
 		return array(
-			'current_post_id'      => fn ( $context ) => ! empty( $context['post_id'] ) ? (string) $context['post_id'] : '',
-			'author_id'            => fn ( $context ) => ! empty( $context['author_id'] ) ? (string) $context['author_id'] : '',
-			'user_id'              => fn ( $context ) => ! empty( $context['user_id'] ) ? (string) $context['user_id'] : '',
-			'current_date'         => fn () => self::format_date( 'now' ),
-			'date_minus_1_month'   => fn () => self::format_date( '-1 month' ),
-			'date_minus_3_months'  => fn () => self::format_date( '-3 months' ),
-			'date_minus_6_months'  => fn () => self::format_date( '-6 months' ),
-			'date_minus_12_months' => fn () => self::format_date( '-12 months' ),
+			// Context-backed.
+			'current_post_id'        => fn ( $context ) => ! empty( $context['post_id'] ) ? (string) $context['post_id'] : '',
+			'current_post_parent_id' => fn ( $context ) => ! empty( $context['post_parent_id'] ) ? (string) $context['post_parent_id'] : '',
+			'author_id'              => fn ( $context ) => ! empty( $context['author_id'] ) ? (string) $context['author_id'] : '',
+			'user_id'                => fn ( $context ) => ! empty( $context['user_id'] ) ? (string) $context['user_id'] : '',
+			'current_term_id'        => fn ( $context ) => ! empty( $context['term_id'] ) ? (string) $context['term_id'] : '',
+			// Current date and time in common meta storage formats.
+			'current_date'           => fn () => self::format_date( 'now' ),
+			'current_date_compact'   => fn () => self::format_date( 'now', 'Ymd' ),
+			'current_datetime'       => fn () => self::format_date( 'now', 'Y-m-d H:i:s' ),
+			'current_time'           => fn () => self::format_date( 'now', 'H:i:s' ),
+			'current_timestamp'      => fn () => (string) time(),
+			// Zero-padded date parts.
+			'current_year'           => fn () => self::format_date( 'now', 'Y' ),
+			'current_month'          => fn () => self::format_date( 'now', 'm' ),
+			'current_day'            => fn () => self::format_date( 'now', 'd' ),
+			'current_hour'           => fn () => self::format_date( 'now', 'H' ),
+			'current_week'           => fn () => self::format_date( 'now', 'W' ),
+			// Relative dates.
+			'date_minus_1_month'     => fn () => self::format_date( '-1 month' ),
+			'date_minus_3_months'    => fn () => self::format_date( '-3 months' ),
+			'date_minus_6_months'    => fn () => self::format_date( '-6 months' ),
+			'date_minus_12_months'   => fn () => self::format_date( '-12 months' ),
+			'date_plus_1_month'      => fn () => self::format_date( '+1 month' ),
+			'date_plus_3_months'     => fn () => self::format_date( '+3 months' ),
+			'date_plus_6_months'     => fn () => self::format_date( '+6 months' ),
+			'date_plus_12_months'    => fn () => self::format_date( '+12 months' ),
 		);
 	}
 
 	/**
-	 * Format a relative date as Y-m-d in the site's timezone.
+	 * Format a relative date in the site's timezone.
 	 *
 	 * Falls back to UTC when WordPress is not loaded (unit tests).
 	 *
 	 * @param string $modifier A strtotime()-compatible modifier.
+	 * @param string $format   A date() format. Defaults to Y-m-d.
 	 *
 	 * @return string
 	 */
-	private static function format_date( string $modifier ): string {
+	private static function format_date( string $modifier, string $format = 'Y-m-d' ): string {
 		if ( function_exists( 'current_time' ) ) {
 			// Use 'Y-m-d H:i:s' to avoid the discouraged 'timestamp' format.
 			// current_time() returns WP-timezone-local values, so the
@@ -155,7 +175,7 @@ class Placeholder_Resolver {
 		} else {
 			$now = time();
 		}
-		return gmdate( 'Y-m-d', strtotime( $modifier, $now ) );
+		return gmdate( $format, strtotime( $modifier, $now ) );
 	}
 
 	/**
@@ -175,6 +195,11 @@ class Placeholder_Resolver {
 				'description' => \__( 'The ID of the post being viewed.', 'advanced-query-loop' ),
 			),
 			array(
+				'name'        => 'current_post_parent_id',
+				'label'       => \__( 'Current Post Parent ID', 'advanced-query-loop' ),
+				'description' => \__( 'The parent ID of the post being viewed. Matches nothing on top-level posts.', 'advanced-query-loop' ),
+			),
+			array(
 				'name'        => 'author_id',
 				'label'       => \__( 'Author ID', 'advanced-query-loop' ),
 				'description' => \__( 'The author ID of the post being viewed.', 'advanced-query-loop' ),
@@ -185,9 +210,59 @@ class Placeholder_Resolver {
 				'description' => \__( 'The ID of the logged-in user. Matches nothing for logged-out visitors.', 'advanced-query-loop' ),
 			),
 			array(
+				'name'        => 'current_term_id',
+				'label'       => \__( 'Current Term ID', 'advanced-query-loop' ),
+				'description' => \__( 'The term ID of the taxonomy archive being viewed. Matches nothing elsewhere.', 'advanced-query-loop' ),
+			),
+			array(
 				'name'        => 'current_date',
 				'label'       => \__( 'Current Date', 'advanced-query-loop' ),
 				'description' => \__( 'Today\'s date (YYYY-MM-DD).', 'advanced-query-loop' ),
+			),
+			array(
+				'name'        => 'current_date_compact',
+				'label'       => \__( 'Current Date (Compact)', 'advanced-query-loop' ),
+				'description' => \__( 'Today\'s date without separators (YYYYMMDD), the default ACF date format.', 'advanced-query-loop' ),
+			),
+			array(
+				'name'        => 'current_datetime',
+				'label'       => \__( 'Current Date and Time', 'advanced-query-loop' ),
+				'description' => \__( 'The current date and time (YYYY-MM-DD HH:MM:SS).', 'advanced-query-loop' ),
+			),
+			array(
+				'name'        => 'current_time',
+				'label'       => \__( 'Current Time', 'advanced-query-loop' ),
+				'description' => \__( 'The current time (HH:MM:SS).', 'advanced-query-loop' ),
+			),
+			array(
+				'name'        => 'current_timestamp',
+				'label'       => \__( 'Current Timestamp', 'advanced-query-loop' ),
+				'description' => \__( 'The current Unix timestamp.', 'advanced-query-loop' ),
+			),
+			array(
+				'name'        => 'current_year',
+				'label'       => \__( 'Current Year', 'advanced-query-loop' ),
+				'description' => \__( 'The current four-digit year.', 'advanced-query-loop' ),
+			),
+			array(
+				'name'        => 'current_month',
+				'label'       => \__( 'Current Month', 'advanced-query-loop' ),
+				'description' => \__( 'The current month (01-12).', 'advanced-query-loop' ),
+			),
+			array(
+				'name'        => 'current_day',
+				'label'       => \__( 'Current Day', 'advanced-query-loop' ),
+				'description' => \__( 'The current day of the month (01-31).', 'advanced-query-loop' ),
+			),
+			array(
+				'name'        => 'current_hour',
+				'label'       => \__( 'Current Hour', 'advanced-query-loop' ),
+				'description' => \__( 'The current hour (00-23).', 'advanced-query-loop' ),
+			),
+			array(
+				'name'        => 'current_week',
+				'label'       => \__( 'Current Week', 'advanced-query-loop' ),
+				'description' => \__( 'The current ISO week number (01-53).', 'advanced-query-loop' ),
 			),
 			array(
 				'name'        => 'date_minus_1_month',
@@ -208,6 +283,26 @@ class Placeholder_Resolver {
 				'name'        => 'date_minus_12_months',
 				'label'       => \__( '12 Months Ago', 'advanced-query-loop' ),
 				'description' => \__( 'The date twelve months before today (YYYY-MM-DD).', 'advanced-query-loop' ),
+			),
+			array(
+				'name'        => 'date_plus_1_month',
+				'label'       => \__( '1 Month From Now', 'advanced-query-loop' ),
+				'description' => \__( 'The date one month after today (YYYY-MM-DD).', 'advanced-query-loop' ),
+			),
+			array(
+				'name'        => 'date_plus_3_months',
+				'label'       => \__( '3 Months From Now', 'advanced-query-loop' ),
+				'description' => \__( 'The date three months after today (YYYY-MM-DD).', 'advanced-query-loop' ),
+			),
+			array(
+				'name'        => 'date_plus_6_months',
+				'label'       => \__( '6 Months From Now', 'advanced-query-loop' ),
+				'description' => \__( 'The date six months after today (YYYY-MM-DD).', 'advanced-query-loop' ),
+			),
+			array(
+				'name'        => 'date_plus_12_months',
+				'label'       => \__( '12 Months From Now', 'advanced-query-loop' ),
+				'description' => \__( 'The date twelve months after today (YYYY-MM-DD).', 'advanced-query-loop' ),
 			),
 		);
 
