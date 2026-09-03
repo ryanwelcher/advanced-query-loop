@@ -5,12 +5,12 @@ import {
 	Button,
 	FormTokenField,
 	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
+	__experimentalGrid as Grid,
+	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
 	__experimentalHStack as HStack,
 	SelectControl,
-	ToggleControl,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useState, useEffect } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -49,11 +49,18 @@ const metaTypeOptions = [
 	'UNSIGNED',
 ];
 
-const toggleMargin = {
-	marginTop: '0.75em',
-	marginBottom: '0.75em',
-};
-
+/**
+ * A single meta query condition rendered as a card: key, compare, and type
+ * on one row, the value below, and a remove action in the corner.
+ *
+ * @param {Object}   props
+ * @param {string[]} props.registeredMetaKeys Meta keys to suggest.
+ * @param {string}   props.id                 Condition ID.
+ * @param {Array}    props.queries            All conditions.
+ * @param {Object}   props.attributes         Block attributes.
+ * @param {Function} props.setAttributes      Block attribute setter.
+ * @return {Element} The condition card.
+ */
 export const PostMetaControl = ( {
 	registeredMetaKeys,
 	id,
@@ -62,212 +69,128 @@ export const PostMetaControl = ( {
 	setAttributes,
 } ) => {
 	const activeQuery = queries.find( ( query ) => query.id === id );
-	const [ advancedMode, setAdvancedMode ] = useState( false );
-	const [ disableAdvancedToggle, setDisableAdvancedToggle ] =
-		useState( false );
-
-	useEffect( () => {
-		// This causes advanced mode to be enabled if the meta_type or meta_compare is set and breaks updating.
-		if (
-			( activeQuery?.meta_type && activeQuery?.meta_type !== 'CHAR' ) ||
-			( activeQuery?.meta_compare && activeQuery?.meta_compare !== '=' )
-		) {
-			setAdvancedMode( true );
-			setDisableAdvancedToggle( true );
-		} else {
-			setDisableAdvancedToggle( false );
-		}
-	}, [ activeQuery?.meta_type, activeQuery?.meta_compare ] );
+	const hasKey = activeQuery?.meta_key?.length > 0;
 
 	/**
-	 * Update a query param.
+	 * Write one field of this condition back to the block.
 	 *
-	 * @param {Array}  currentQueries The current queries array
-	 * @param {string} queryId        The query ID to update
-	 * @param {string} item           The key to update
-	 * @param {string} value          The value to update
-	 * @return {Array}                The updated queries array
+	 * @param {string} item  The condition key to update.
+	 * @param {string} value The new value.
 	 */
-	const updateQueryParam = ( currentQueries, queryId, item, value ) => {
-		return currentQueries.map( ( query ) => {
-			if ( query.id === queryId ) {
-				return {
-					...query,
-					[ item ]: value,
-				};
-			}
-			return query;
+	const updateQueryParam = ( item, value ) => {
+		setAttributes( {
+			query: {
+				...attributes.query,
+				meta_query: {
+					...attributes.query.meta_query,
+					queries: queries.map( ( query ) =>
+						query.id === id ? { ...query, [ item ]: value } : query
+					),
+				},
+			},
+		} );
+	};
+
+	const removeCondition = () => {
+		setAttributes( {
+			query: {
+				...attributes.query,
+				meta_query: {
+					...attributes.query.meta_query,
+					queries: queries.filter( ( query ) => query.id !== id ),
+				},
+			},
 		} );
 	};
 
 	return (
-		<>
-			<div className="aql-token-field">
-				<FormTokenField
-					label={ __( 'Meta Key', 'advanced-query-loop' ) }
-					value={
-						activeQuery?.meta_key?.length
-							? [ activeQuery.meta_key ]
-							: []
-					}
-					__experimentalExpandOnFocus
-					__experimentalShowHowTo={ false }
-					suggestions={ registeredMetaKeys }
-					maxLength={ 1 }
-					onChange={ ( newMeta ) => {
-						setAttributes( {
-							query: {
-								...attributes.query,
-								meta_query: {
-									...attributes.query.meta_query,
-									queries: updateQueryParam(
-										queries,
-										id,
-										'meta_key',
-										newMeta[ 0 ]
-									),
-								},
-							},
-						} );
-					} }
-				/>
-				<p className="components-form-token-field__help">
-					{ __(
-						'Pick from the list, or type a key and press Enter.',
-						'advanced-query-loop'
-					) }
-				</p>
-			</div>
-			{ activeQuery?.meta_key?.length > 0 && (
-				<>
-					<PlaceholderTextControl
-						label={ __( 'Meta Value', 'advanced-query-loop' ) }
-						value={ activeQuery.meta_value }
-						onChange={ ( newValue ) => {
-							setAttributes( {
-								query: {
-									...attributes.query,
-									meta_query: {
-										...attributes.query.meta_query,
-										queries: updateQueryParam(
-											queries,
-											id,
-											'meta_value',
-											newValue
-										),
-									},
-								},
-							} );
-						} }
-					/>
-					{ advancedMode && (
+		<div className="aql-condition">
+			<HStack alignment="top" spacing={ 3 }>
+				<Grid
+					columns={ hasKey ? 3 : 1 }
+					templateColumns={ hasKey ? '2fr 1fr 1fr' : '1fr' }
+					gap={ 3 }
+					align="start"
+					className="aql-condition__row"
+				>
+					<div className="aql-token-field">
+						<FormTokenField
+							label={ __( 'Meta Key', 'advanced-query-loop' ) }
+							value={ hasKey ? [ activeQuery.meta_key ] : [] }
+							__experimentalExpandOnFocus
+							__experimentalShowHowTo={ false }
+							suggestions={ registeredMetaKeys }
+							maxLength={ 1 }
+							onChange={ ( newMeta ) =>
+								updateQueryParam( 'meta_key', newMeta[ 0 ] )
+							}
+						/>
+						<p className="components-form-token-field__help">
+							{ __(
+								'Pick from the list, or type a key and press Enter.',
+								'advanced-query-loop'
+							) }
+						</p>
+					</div>
+					{ hasKey && (
 						<>
 							<SelectControl
 								label={ __(
 									'Meta Compare',
 									'advanced-query-loop'
 								) }
-								value={ activeQuery.meta_compare }
-								options={ [
-									...compareMetaOptions.map( ( operator ) => {
-										return {
-											label: operator,
-											value: operator,
-										};
-									} ),
-								] }
-								onChange={ ( newCompare ) => {
-									setAttributes( {
-										query: {
-											...attributes.query,
-											meta_query: {
-												...attributes.query.meta_query,
-												queries: updateQueryParam(
-													queries,
-													id,
-													'meta_compare',
-													newCompare
-												),
-											},
-										},
-									} );
-								} }
+								value={ activeQuery.meta_compare || '=' }
+								options={ compareMetaOptions.map(
+									( operator ) => ( {
+										label: operator,
+										value: operator,
+									} )
+								) }
+								onChange={ ( newCompare ) =>
+									updateQueryParam(
+										'meta_compare',
+										newCompare
+									)
+								}
+								__nextHasNoMarginBottom
 							/>
 							<SelectControl
 								label={ __(
 									'Meta Type',
 									'advanced-query-loop'
 								) }
-								value={ activeQuery.meta_type }
-								options={ [
-									...metaTypeOptions.map( ( type ) => {
-										return {
-											label: type,
-											value: type,
-										};
-									} ),
-								] }
-								onChange={ ( newType ) => {
-									setAttributes( {
-										query: {
-											...attributes.query,
-											meta_query: {
-												...attributes.query.meta_query,
-												queries: updateQueryParam(
-													queries,
-													id,
-													'meta_type',
-													newType
-												),
-											},
-										},
-									} );
-								} }
+								value={ activeQuery.meta_type || 'CHAR' }
+								options={ metaTypeOptions.map( ( type ) => ( {
+									label: type,
+									value: type,
+								} ) ) }
+								onChange={ ( newType ) =>
+									updateQueryParam( 'meta_type', newType )
+								}
 								__nextHasNoMarginBottom
 							/>
 						</>
 					) }
-				</>
-			) }
-			<hr />
-			<HStack
-				alignment={ activeQuery?.meta_key ? 'edge' : 'right' }
-				style={ toggleMargin }
-			>
-				{ activeQuery?.meta_key && (
-					<ToggleControl
-						checked={ advancedMode }
-						label={ __( 'Advanced mode', 'advanced-query-loop' ) }
-						onChange={ () => setAdvancedMode( ! advancedMode ) }
-						disabled={ disableAdvancedToggle }
-					/>
-				) }
+				</Grid>
 				<Button
-					key={ id }
-					variant="secondary"
+					variant="tertiary"
 					size="small"
 					isDestructive
-					onClick={ () => {
-						const updatedQueries = queries.filter(
-							( query ) => query.id !== id
-						);
-
-						setAttributes( {
-							query: {
-								...attributes.query,
-								meta_query: {
-									...attributes.query.meta_query,
-									queries: updatedQueries,
-								},
-							},
-						} );
-					} }
+					onClick={ removeCondition }
+					className="aql-condition__remove"
 				>
 					{ __( 'Remove query', 'advanced-query-loop' ) }
 				</Button>
 			</HStack>
-			<hr />
-			<br />
-		</>
+			{ hasKey && (
+				<PlaceholderTextControl
+					label={ __( 'Meta Value', 'advanced-query-loop' ) }
+					value={ activeQuery.meta_value }
+					onChange={ ( newValue ) =>
+						updateQueryParam( 'meta_value', newValue )
+					}
+				/>
+			) }
+		</div>
 	);
 };

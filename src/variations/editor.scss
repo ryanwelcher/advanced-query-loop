@@ -10,3 +10,53 @@
 		display: none;
 	}
 }
+
+/**
+ * Query builder modal: body scrolls, footer stays put.
+ */
+.aql-query-builder-modal {
+	.components-modal__content {
+		display: flex;
+		flex-direction: column;
+		padding-bottom: 0;
+	}
+
+	&__body {
+		flex: 1;
+	}
+
+	&__footer {
+		position: sticky;
+		bottom: 0;
+		margin-top: 16px;
+		padding: 16px 0;
+		background: #fff;
+		border-top: 1px solid #ddd;
+	}
+}
+
+.aql-query-builder-summary {
+	margin: 8px 0 0;
+	color: #757575;
+	font-size: 12px;
+}
+
+.aql-condition {
+	margin-bottom: 16px;
+	padding: 16px;
+	border: 1px solid #ddd;
+	border-radius: 2px;
+
+	&__row {
+		flex: 1;
+	}
+
+	&__remove {
+		flex-shrink: 0;
+		margin-top: 20px;
+	}
+
+	.aql-token-field .components-form-token-field__help {
+		margin-bottom: 12px;
+	}
+}

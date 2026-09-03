@@ -105,3 +105,110 @@ test.describe( 'Meta query builder modal', () => {
 		).toBeVisible();
 	} );
 } );
+
+test.describe( 'Meta query builder layout', () => {
+	test.beforeEach( async ( { page, editor, playground, admin } ) => {
+		await playground.init( { page, editor } );
+		await admin.visitAdminPage( 'post-new.php' );
+
+		await editor.setPreferences( 'core/edit-post', {
+			welcomeGuide: false,
+			fullscreenMode: false,
+		} );
+		await insertAQL( { editor, page } );
+		await page
+			.getByRole( 'button', { name: 'Open Post Meta query builder' } )
+			.click();
+	} );
+
+	test.afterEach( async ( { playground } ) => {
+		await playground.cleanUp();
+	} );
+
+	const addCondition = async ( page, key: string ) => {
+		const dialog = page.getByRole( 'dialog', {
+			name: 'Meta Query Builder',
+		} );
+		await dialog.getByRole( 'button', { name: 'Add new query' } ).click();
+		await dialog
+			.getByRole( 'combobox', { name: 'Meta Key' } )
+			.last()
+			.fill( key );
+		await page.keyboard.press( 'Enter' );
+	};
+
+	test( 'shows compare and type for every keyed condition without a toggle', async ( {
+		page,
+		editor,
+	} ) => {
+		const dialog = page.getByRole( 'dialog', {
+			name: 'Meta Query Builder',
+		} );
+		await addCondition( page, 'price' );
+
+		await expect(
+			dialog.getByRole( 'combobox', { name: 'Meta Compare' } )
+		).toBeVisible();
+		await expect(
+			dialog.getByRole( 'combobox', { name: 'Meta Type' } )
+		).toBeVisible();
+		await expect(
+			dialog.getByRole( 'checkbox', { name: 'Advanced mode' } )
+		).toHaveCount( 0 );
+
+		await dialog
+			.getByRole( 'combobox', { name: 'Meta Compare' } )
+			.selectOption( '>=' );
+		await dialog
+			.getByRole( 'combobox', { name: 'Meta Type' } )
+			.selectOption( 'NUMERIC' );
+
+		const blocks = await editor.getBlocks();
+		const condition = blocks[ 0 ].attributes.query.meta_query.queries[ 0 ];
+		expect( condition.meta_compare ).toEqual( '>=' );
+		expect( condition.meta_type ).toEqual( 'NUMERIC' );
+	} );
+
+	test( 'summarises the conditions in the sidebar when closed', async ( {
+		page,
+	} ) => {
+		const dialog = page.getByRole( 'dialog', {
+			name: 'Meta Query Builder',
+		} );
+		await addCondition( page, 'price' );
+		await dialog.getByRole( 'button', { name: 'Close' } ).click();
+		await expect(
+			page.getByText( '1 condition', { exact: true } )
+		).toBeVisible();
+
+		await page
+			.getByRole( 'button', { name: 'Open Post Meta query builder' } )
+			.click();
+		await addCondition( page, 'color' );
+		await dialog.getByRole( 'radio', { name: 'Any condition' } ).click();
+		await dialog.getByRole( 'button', { name: 'Close' } ).click();
+		await expect(
+			page.getByText( '2 conditions, match any', { exact: true } )
+		).toBeVisible();
+	} );
+
+	test( 'keeps the footer reachable with many conditions', async ( {
+		page,
+	} ) => {
+		const dialog = page.getByRole( 'dialog', {
+			name: 'Meta Query Builder',
+		} );
+		for ( let i = 0; i < 10; i++ ) {
+			await addCondition( page, `key_${ i }` );
+		}
+		await expect(
+			dialog.getByRole( 'combobox', { name: 'Meta Key' } )
+		).toHaveCount( 10 );
+		await expect(
+			dialog.getByRole( 'button', { name: 'Add new query' } )
+		).toBeInViewport();
+		await expect(
+			dialog.getByRole( 'button', { name: 'Reset queries' } )
+		).toBeInViewport();
+	} );
+} );
