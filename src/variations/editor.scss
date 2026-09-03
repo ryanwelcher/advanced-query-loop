@@ -6,8 +6,26 @@
  * component's built-in "No results." announcement.
  */
 .aql-token-field {
+	position: relative;
+
 	.components-form-token-field__suggestion.is-empty {
 		display: none;
+	}
+
+	/*
+	 * Overlay the suggestions instead of pushing content down. An inline
+	 * list collapses on blur, which shifts everything below it between
+	 * mousedown and mouseup and swallows the click.
+	 */
+	.components-form-token-field__suggestions-list {
+		position: absolute;
+		z-index: 10;
+		left: 0;
+		right: 0;
+		border: 1px solid #949494;
+		border-top: 0;
+		background: #fff;
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 	}
 }
 
@@ -132,5 +150,14 @@
 		color: #757575;
 		font-size: 11px;
 		line-height: 1.4;
+	}
+}
+
+.aql-meta-value-picker {
+	margin-bottom: 8px;
+
+	.components-datetime,
+	.components-datetime__time {
+		margin-top: 8px;
 	}
 }

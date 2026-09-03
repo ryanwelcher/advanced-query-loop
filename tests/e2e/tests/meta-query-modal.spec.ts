@@ -296,3 +296,153 @@ test.describe( 'Placeholder reference', () => {
 		).toEqual( '' );
 	} );
 } );
+
+test.describe( 'Type guidance', () => {
+	test.beforeEach( async ( { page, editor, playground, admin } ) => {
+		await playground.init( { page, editor } );
+		await admin.visitAdminPage( 'post-new.php' );
+
+		await editor.setPreferences( 'core/edit-post', {
+			welcomeGuide: false,
+			fullscreenMode: false,
+		} );
+		await insertAQL( { editor, page } );
+		await page
+			.getByRole( 'button', { name: 'Open Post Meta query builder' } )
+			.click();
+		await page.getByRole( 'button', { name: 'Add new query' } ).click();
+		await page
+			.getByRole( 'combobox', { name: 'Meta Key' } )
+			.fill( 'price' );
+		await page.keyboard.press( 'Enter' );
+	} );
+
+	test.afterEach( async ( { playground } ) => {
+		await playground.cleanUp();
+	} );
+
+	test( 'hides text operators for numeric types', async ( { page } ) => {
+		const dialog = page.getByRole( 'dialog', {
+			name: 'Meta Query Builder',
+		} );
+		const compare = dialog.getByRole( 'combobox', {
+			name: 'Meta Compare',
+		} );
+		await expect( compare.locator( 'option[value="LIKE"]' ) ).toHaveCount(
+			1
+		);
+		await dialog
+			.getByRole( 'combobox', { name: 'Meta Type' } )
+			.selectOption( 'NUMERIC' );
+		await expect( compare.locator( 'option[value="LIKE"]' ) ).toHaveCount(
+			0
+		);
+		await expect( compare.locator( 'option[value=">="]' ) ).toHaveCount(
+			1
+		);
+	} );
+
+	test( 'keeps a saved operator the type would otherwise hide', async ( {
+		page,
+	} ) => {
+		await page.evaluate( () => {
+			const { dispatch, select } = ( window as any ).wp.data;
+			const block = select( 'core/block-editor' )
+				.getBlocks()
+				.find( ( b ) => b.name === 'core/query' );
+			dispatch( 'core/block-editor' ).updateBlockAttributes(
+				block.clientId,
+				{
+					query: {
+						...block.attributes.query,
+						meta_query: {
+							relation: 'AND',
+							queries: [
+								{
+									id: 'legacy',
+									meta_key: 'price',
+									meta_value: '10',
+									meta_compare: 'LIKE',
+									meta_type: 'NUMERIC',
+								},
+							],
+						},
+					},
+				}
+			);
+		} );
+
+		const dialog = page.getByRole( 'dialog', {
+			name: 'Meta Query Builder',
+		} );
+		await expect(
+			dialog.getByRole( 'combobox', { name: 'Meta Compare' } )
+		).toHaveValue( 'LIKE' );
+		await expect(
+			dialog.getByRole( 'combobox', { name: 'Meta Type' } )
+		).toHaveValue( 'NUMERIC' );
+	} );
+
+	test( 'EXISTS hides the value field and clears the stored value', async ( {
+		page,
+		editor,
+	} ) => {
+		const dialog = page.getByRole( 'dialog', {
+			name: 'Meta Query Builder',
+		} );
+		const value = dialog.getByRole( 'combobox', { name: 'Meta Value' } );
+		await value.fill( 'anything' );
+		await page.keyboard.press( 'Enter' );
+
+		await dialog
+			.getByRole( 'combobox', { name: 'Meta Compare' } )
+			.selectOption( 'EXISTS' );
+		await expect( value ).toBeHidden();
+
+		const blocks = await editor.getBlocks();
+		expect(
+			blocks[ 0 ].attributes.query.meta_query.queries[ 0 ].meta_value
+		).toEqual( '' );
+	} );
+
+	test( 'BETWEEN and IN show value hints', async ( { page } ) => {
+		const dialog = page.getByRole( 'dialog', {
+			name: 'Meta Query Builder',
+		} );
+		const compare = dialog.getByRole( 'combobox', {
+			name: 'Meta Compare',
+		} );
+		await compare.selectOption( 'BETWEEN' );
+		await expect(
+			dialog.getByText( /lower and upper bounds separated by a comma/ )
+		).toBeVisible();
+		await compare.selectOption( 'IN' );
+		await expect(
+			dialog.getByText( /Separate multiple values with commas/ )
+		).toBeVisible();
+	} );
+
+	test( 'DATE type offers a picker that writes YYYY-MM-DD', async ( {
+		page,
+		editor,
+	} ) => {
+		const dialog = page.getByRole( 'dialog', {
+			name: 'Meta Query Builder',
+		} );
+		await dialog
+			.getByRole( 'combobox', { name: 'Meta Type' } )
+			.selectOption( 'DATE' );
+		await dialog.getByRole( 'button', { name: 'Pick a date' } ).click();
+		await dialog
+			.getByRole( 'button', { name: /^[A-Z][a-z]+ 15, \d{4}/ } )
+			.click();
+
+		const blocks = await editor.getBlocks();
+		const stored =
+			blocks[ 0 ].attributes.query.meta_query.queries[ 0 ].meta_value;
+		expect( stored ).toMatch( /^\d{4}-\d{2}-15$/ );
+		await expect(
+			dialog.getByRole( 'combobox', { name: 'Meta Value' } )
+		).toBeVisible();
+	} );
+} );

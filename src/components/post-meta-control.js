@@ -16,6 +16,7 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import { PlaceholderTextControl } from './placeholder-text-control';
+import { MetaValuePicker, dateTypeHint } from './meta-value-picker';
 
 const compareMetaOptions = [
 	'=',
@@ -36,6 +37,22 @@ const compareMetaOptions = [
 	'NOT REGEXP',
 	'RLIKE',
 ];
+
+/**
+ * Operators that only make sense against text. They are hidden for the
+ * numeric and date types, where MySQL would cast the value first.
+ */
+const textOnlyOperators = [
+	'LIKE',
+	'NOT LIKE',
+	'REGEXP',
+	'NOT REGEXP',
+	'RLIKE',
+];
+const textTypes = [ '', 'CHAR', 'BINARY' ];
+const valuelessOperators = [ 'EXISTS', 'NOT EXISTS' ];
+const listOperators = [ 'IN', 'NOT IN' ];
+const rangeOperators = [ 'BETWEEN', 'NOT BETWEEN' ];
 
 const metaTypeOptions = [
 	'CHAR',
@@ -74,24 +91,52 @@ export const PostMetaControl = ( {
 	const hasKey = activeQuery?.meta_key?.length > 0;
 
 	/**
-	 * Write one field of this condition back to the block.
+	 * Write one or more fields of this condition back to the block.
 	 *
-	 * @param {string} item  The condition key to update.
-	 * @param {string} value The new value.
+	 * @param {string|Object} item  The condition key to update, or an
+	 *                              object of key/value pairs.
+	 * @param {string}        value The new value when item is a key.
 	 */
 	const updateQueryParam = ( item, value ) => {
+		const changes = typeof item === 'object' ? item : { [ item ]: value };
 		setAttributes( {
 			query: {
 				...attributes.query,
 				meta_query: {
 					...attributes.query.meta_query,
 					queries: queries.map( ( query ) =>
-						query.id === id ? { ...query, [ item ]: value } : query
+						query.id === id ? { ...query, ...changes } : query
 					),
 				},
 			},
 		} );
 	};
+
+	const metaType = activeQuery?.meta_type || 'CHAR';
+	const metaCompare = activeQuery?.meta_compare || '=';
+	const isValueless = valuelessOperators.includes( metaCompare );
+
+	// Offer only operators that suit the type, but never drop the one a
+	// saved block already uses.
+	const compareOptions = compareMetaOptions.filter(
+		( operator ) =>
+			operator === metaCompare ||
+			textTypes.includes( metaType ) ||
+			! textOnlyOperators.includes( operator )
+	);
+
+	let valueHelp = dateTypeHint( metaType );
+	if ( listOperators.includes( metaCompare ) ) {
+		valueHelp = __(
+			'Separate multiple values with commas.',
+			'advanced-query-loop'
+		);
+	} else if ( rangeOperators.includes( metaCompare ) ) {
+		valueHelp = __(
+			'Enter the lower and upper bounds separated by a comma, for example 10,20.',
+			'advanced-query-loop'
+		);
+	}
 
 	const removeCondition = () => {
 		setAttributes( {
@@ -141,8 +186,8 @@ export const PostMetaControl = ( {
 									'Meta Compare',
 									'advanced-query-loop'
 								) }
-								value={ activeQuery.meta_compare || '=' }
-								options={ compareMetaOptions.map(
+								value={ metaCompare }
+								options={ compareOptions.map(
 									( operator ) => ( {
 										label: operator,
 										value: operator,
@@ -150,8 +195,14 @@ export const PostMetaControl = ( {
 								) }
 								onChange={ ( newCompare ) =>
 									updateQueryParam(
-										'meta_compare',
-										newCompare
+										valuelessOperators.includes(
+											newCompare
+										)
+											? {
+													meta_compare: newCompare,
+													meta_value: '',
+											  }
+											: { meta_compare: newCompare }
 									)
 								}
 								__nextHasNoMarginBottom
@@ -161,7 +212,7 @@ export const PostMetaControl = ( {
 									'Meta Type',
 									'advanced-query-loop'
 								) }
-								value={ activeQuery.meta_type || 'CHAR' }
+								value={ metaType }
 								options={ metaTypeOptions.map( ( type ) => ( {
 									label: type,
 									value: type,
@@ -184,15 +235,31 @@ export const PostMetaControl = ( {
 					{ __( 'Remove query', 'advanced-query-loop' ) }
 				</Button>
 			</HStack>
-			{ hasKey && (
-				<PlaceholderTextControl
-					label={ __( 'Meta Value', 'advanced-query-loop' ) }
-					value={ activeQuery.meta_value }
-					onChange={ ( newValue ) =>
-						updateQueryParam( 'meta_value', newValue )
-					}
-					onFocus={ onValueFocus }
-				/>
+			{ hasKey && ! isValueless && (
+				<>
+					{ /*
+					 * The picker sits above the value field on purpose: the
+					 * field's suggestion list expands below it, and anything
+					 * placed there would shift when the list collapses on blur,
+					 * swallowing the click.
+					 */ }
+					<MetaValuePicker
+						metaType={ metaType }
+						value={ activeQuery.meta_value }
+						onChange={ ( newValue ) =>
+							updateQueryParam( 'meta_value', newValue )
+						}
+					/>
+					<PlaceholderTextControl
+						label={ __( 'Meta Value', 'advanced-query-loop' ) }
+						value={ activeQuery.meta_value }
+						onChange={ ( newValue ) =>
+							updateQueryParam( 'meta_value', newValue )
+						}
+						onFocus={ onValueFocus }
+						help={ valueHelp }
+					/>
+				</>
 			) }
 		</div>
 	);
