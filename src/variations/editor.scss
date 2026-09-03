@@ -17,6 +17,15 @@
 	 * list collapses on blur, which shifts everything below it between
 	 * mousedown and mouseup and swallows the click.
 	 */
+	/*
+	 * These fields hold one token. Once it is set nothing more can be
+	 * picked, so keep the overlay from lingering over the controls below.
+	 */
+	.components-form-token-field__input-container:has(.components-form-token-field__token)
+		.components-form-token-field__suggestions-list {
+		display: none;
+	}
+
 	.components-form-token-field__suggestions-list {
 		position: absolute;
 		z-index: 10;
@@ -159,5 +168,25 @@
 	.components-datetime,
 	.components-datetime__time {
 		margin-top: 8px;
+	}
+}
+
+.aql-condition-group {
+	margin-bottom: 16px;
+	padding: 16px;
+	border: 1px dashed #949494;
+	border-radius: 2px;
+	background: #fafafa;
+
+	&__header {
+		margin-bottom: 12px;
+	}
+
+	&__title {
+		font-weight: 600;
+	}
+
+	.aql-condition {
+		background: #fff;
 	}
 }

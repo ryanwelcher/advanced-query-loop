@@ -71,23 +71,21 @@ const metaTypeOptions = [
  * on one row, the value below, and a remove action in the corner.
  *
  * @param {Object}   props
+ * @param {Object}   props.condition          The condition entry.
  * @param {string[]} props.registeredMetaKeys Meta keys to suggest.
- * @param {string}   props.id                 Condition ID.
- * @param {Array}    props.queries            All conditions.
- * @param {Object}   props.attributes         Block attributes.
- * @param {Function} props.setAttributes      Block attribute setter.
+ * @param {Function} props.onChange           Receives an object of changed fields.
+ * @param {Function} props.onRemove           Removes this condition.
  * @param {Function} props.onValueFocus       Called when the value field gains focus.
  * @return {Element} The condition card.
  */
 export const PostMetaControl = ( {
+	condition,
 	registeredMetaKeys,
-	id,
-	queries,
-	attributes,
-	setAttributes,
+	onChange,
+	onRemove,
 	onValueFocus,
 } ) => {
-	const activeQuery = queries.find( ( query ) => query.id === id );
+	const activeQuery = condition;
 	const hasKey = activeQuery?.meta_key?.length > 0;
 
 	/**
@@ -98,18 +96,7 @@ export const PostMetaControl = ( {
 	 * @param {string}        value The new value when item is a key.
 	 */
 	const updateQueryParam = ( item, value ) => {
-		const changes = typeof item === 'object' ? item : { [ item ]: value };
-		setAttributes( {
-			query: {
-				...attributes.query,
-				meta_query: {
-					...attributes.query.meta_query,
-					queries: queries.map( ( query ) =>
-						query.id === id ? { ...query, ...changes } : query
-					),
-				},
-			},
-		} );
+		onChange( typeof item === 'object' ? item : { [ item ]: value } );
 	};
 
 	const metaType = activeQuery?.meta_type || 'CHAR';
@@ -137,18 +124,6 @@ export const PostMetaControl = ( {
 			'advanced-query-loop'
 		);
 	}
-
-	const removeCondition = () => {
-		setAttributes( {
-			query: {
-				...attributes.query,
-				meta_query: {
-					...attributes.query.meta_query,
-					queries: queries.filter( ( query ) => query.id !== id ),
-				},
-			},
-		} );
-	};
 
 	return (
 		<div className="aql-condition">
@@ -229,7 +204,7 @@ export const PostMetaControl = ( {
 					variant="tertiary"
 					size="small"
 					isDestructive
-					onClick={ removeCondition }
+					onClick={ onRemove }
 					className="aql-condition__remove"
 				>
 					{ __( 'Remove query', 'advanced-query-loop' ) }

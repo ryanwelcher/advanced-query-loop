@@ -446,3 +446,170 @@ test.describe( 'Type guidance', () => {
 		).toBeVisible();
 	} );
 } );
+
+test.describe( 'Nested condition groups', () => {
+	test.beforeEach( async ( { page, editor, playground, admin } ) => {
+		await playground.init( { page, editor } );
+		await admin.visitAdminPage( 'post-new.php' );
+
+		await editor.setPreferences( 'core/edit-post', {
+			welcomeGuide: false,
+			fullscreenMode: false,
+		} );
+		await insertAQL( { editor, page } );
+		await page
+			.getByRole( 'button', { name: 'Open Post Meta query builder' } )
+			.click();
+	} );
+
+	test.afterEach( async ( { playground } ) => {
+		await playground.cleanUp();
+	} );
+
+	const fillLastKey = async ( scope, page, key: string ) => {
+		await scope
+			.getByRole( 'combobox', { name: 'Meta Key' } )
+			.last()
+			.fill( key );
+		await page.keyboard.press( 'Enter' );
+	};
+
+	const fillLastValue = async ( scope, page, value: string ) => {
+		await scope
+			.getByRole( 'combobox', { name: 'Meta Value' } )
+			.last()
+			.fill( value );
+		await page.keyboard.press( 'Enter' );
+	};
+
+	test( 'builds (A and B) or C and stores a nested group', async ( {
+		page,
+		editor,
+	} ) => {
+		const dialog = page.getByRole( 'dialog', {
+			name: 'Meta Query Builder',
+		} );
+		const group = dialog.getByRole( 'group', { name: 'Condition group' } );
+
+		// C at the top level.
+		await dialog.getByRole( 'button', { name: 'Add new query' } ).click();
+		await fillLastKey( dialog, page, 'c' );
+
+		// A group with A and B.
+		await dialog.getByRole( 'button', { name: 'Add group' } ).click();
+		await expect( group ).toBeVisible();
+		await fillLastKey( group, page, 'a' );
+		await group.getByRole( 'button', { name: 'Add condition' } ).click();
+		await fillLastKey( group, page, 'b' );
+
+		// Groups do not offer nested groups.
+		await expect(
+			group.getByRole( 'button', { name: 'Add group' } )
+		).toHaveCount( 0 );
+
+		// Top level matches any; the group keeps its default of all.
+		await dialog
+			.getByRole( 'radio', { name: 'Any condition' } )
+			.first()
+			.click();
+
+		const blocks = await editor.getBlocks();
+		const metaQuery = blocks[ 0 ].attributes.query.meta_query;
+		expect( metaQuery.relation ).toEqual( 'OR' );
+		expect( metaQuery.queries ).toHaveLength( 2 );
+		expect( metaQuery.queries[ 0 ].meta_key ).toEqual( 'c' );
+		expect( metaQuery.queries[ 1 ].relation ).toEqual( 'AND' );
+		expect(
+			metaQuery.queries[ 1 ].queries.map( ( q ) => q.meta_key )
+		).toEqual( [ 'a', 'b' ] );
+
+		await dialog.getByRole( 'button', { name: 'Close' } ).click();
+		await expect(
+			page.getByText( '3 conditions, match any', { exact: true } )
+		).toBeVisible();
+	} );
+
+	test( 'removing a group drops its conditions', async ( {
+		page,
+		editor,
+	} ) => {
+		const dialog = page.getByRole( 'dialog', {
+			name: 'Meta Query Builder',
+		} );
+		const group = dialog.getByRole( 'group', { name: 'Condition group' } );
+		await dialog.getByRole( 'button', { name: 'Add group' } ).click();
+		await fillLastKey( group, page, 'a' );
+		await group.getByRole( 'button', { name: 'Remove group' } ).click();
+		await expect( group ).toHaveCount( 0 );
+
+		const blocks = await editor.getBlocks();
+		expect( blocks[ 0 ].attributes.query.meta_query.queries ).toEqual( [] );
+	} );
+
+	test( 'a nested query returns the same posts in the editor and on the frontend', async ( {
+		page,
+		editor,
+	} ) => {
+		const dialog = page.getByRole( 'dialog', {
+			name: 'Meta Query Builder',
+		} );
+		const group = dialog.getByRole( 'group', { name: 'Condition group' } );
+
+		// ( _test_featured = yes AND _test_noise EXISTS ) OR no_such_key = x
+		await dialog.getByRole( 'button', { name: 'Add group' } ).click();
+		await fillLastKey( group, page, '_test_featured' );
+		await fillLastValue( group, page, 'yes' );
+		await group.getByRole( 'button', { name: 'Add condition' } ).click();
+		await fillLastKey( group, page, '_test_noise' );
+		await group
+			.getByRole( 'combobox', { name: 'Meta Compare' } )
+			.last()
+			.selectOption( 'EXISTS' );
+
+		await dialog.getByRole( 'button', { name: 'Add new query' } ).click();
+		await fillLastKey( dialog, page, 'no_such_key' );
+		await fillLastValue( dialog, page, 'x' );
+
+		await dialog
+			.getByRole( 'radio', { name: 'Any condition' } )
+			.first()
+			.click();
+		await dialog.getByRole( 'button', { name: 'Close' } ).click();
+
+		await page
+			.getByRole( 'spinbutton', { name: 'Items per page' } )
+			.fill( '10' );
+
+		// The canvas also holds the page's own title block and renders the
+		// active post twice, so compare the set of post IDs instead.
+		const idsFrom = ( titles: string[] ) =>
+			[
+				...new Set(
+					titles
+						.map( ( title ) => title.match( /ID:\s*(\d+)/ )?.[ 1 ] )
+						.filter( Boolean )
+				),
+			].sort();
+
+		await page.waitForTimeout( 1500 );
+		const editorIds = idsFrom(
+			await editor.canvas
+				.locator( '.wp-block-post-title' )
+				.allTextContents()
+		);
+		// Two posts carry _test_featured in the blueprint.
+		expect( editorIds ).toHaveLength( 2 );
+
+		await editor.publishPost();
+		const postId = new URL( page.url() ).searchParams.get( 'post' );
+		await page.goto( `/?p=${ postId }` );
+		const frontendIds = idsFrom(
+			await page
+				.locator(
+					'.wp-block-post-content .wp-block-query .wp-block-post-title'
+				)
+				.allTextContents()
+		);
+		expect( frontendIds ).toEqual( editorIds );
+	} );
+} );
