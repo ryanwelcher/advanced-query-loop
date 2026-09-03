@@ -4,7 +4,7 @@ Since version 1.5, AQL is now completely extendable. Using the SlotFills and fil
 
 #### SlotFills
 
-There are two SlotFills available to extend the UI of AQL that are exposed based the value of the `Inherit query from template` setting of the block.
+There are two SlotFills available to extend the UI of AQL that are exposed based on the value of the `Inherit query from template` setting of the block.
 
 The purpose of having two options is to be able to customize when a UI element is added. There may be cases that a particular control doesn't make sense to be shown when the query is being inherited.
 For example, a control that makes changes to the content types being displayed may not make sense when used in an archive template and so that control would only be added using the `<AQLControls` SlotFill so that it doesn't appear when `Inherit query from template` is enabled.
@@ -12,7 +12,7 @@ For example, a control that makes changes to the content types being displayed m
 -   AQLControls
 -   AQLControlsInheritedQuery
 
-Both SlotFills are passed all `props` from the main block and are available on the `window.aql` object for use.
+Both SlotFills are passed all `props` from the main block and are available on the `window.aql` object for use. Built-in AQL controls now live in their own grouped panels (AQL: Post, AQL: Taxonomy, AQL: Meta, AQL: Date, AQL: Order by, AQL: Performance, and AQL: Advanced). When `Inherit query from template` is disabled, fills registered via `AQLControls` (and the legacy `AQLLegacyControls`) render in a separate, trailing "AQL: Extensions" panel; this panel is only rendered when at least one fill is registered, so it stays hidden until an extension adds one. When `Inherit query from template` is enabled, fills registered via `AQLControlsInheritedQuery` continue to render inside the existing "Advanced Query Settings" panel, and the "AQL: Order by" panel offers only the primary order and direction — multi-property ordering (the meta sort key and the secondary sort) applies to non-inherited queries only, since inherited queries do not run the AQL query generator on the frontend.
 
 ##### Available props
 
@@ -237,13 +237,13 @@ lifetime at most one day behind.
 
 ### Tutorial
 
-Using he example code above, you can make a custom extension plugin for AQL that will filter the displayed posts by author.
+Using the example code above, you can make a custom extension plugin for AQL that will filter the displayed posts by author.
 
 #### Step 1
 
 Start by using the `@wordpress/create-block` package to scaffold all of the files we need. We will be removing all of the block-related ones but this tool can quickly get us set up and ready to go.
 
-The the following in the command line tool of your choice inside the wp-content folder of a local WordPress installation.
+Run the following in the command line tool of your choice inside the wp-content folder of a local WordPress installation.
 
 ```bash
 npx @wordpress/create-block custom-aql-extension
@@ -252,21 +252,21 @@ npx @wordpress/create-block custom-aql-extension
 
 #### Step 2
 
-Once the scaffold has been completed, delete all of the files in `custom-aql-extension/src` we don't need them.
+Once the scaffold has been completed, delete all of the files in `custom-aql-extension/src` — we don't need them.
 
 #### Step 3
 
-Create a new files called`webpack.config.js` in the root of the directory with with the following contents:
+Create a new file called `webpack.config.js` in the root of the directory with the following contents:
 
 ```js
 // Import the original config from the @wordpress/scripts package.
-const defaultConfig = require("@wordpress/scripts/config/webpack.config");
+const defaultConfig = require( '@wordpress/scripts/config/webpack.config' );
 
-// Add any a new entry point by extending the webpack config.
+// Add a new entry point by extending the webpack config.
 module.exports = {
 	...defaultConfig,
 	entry: {
-		`aql-extension`: './src/index.js
+		'aql-extension': './src/index.js',
 	},
 };
 ```
@@ -367,12 +367,12 @@ function aql_extension_show_current_author_only( $query_args, $block_query, $inh
 
 #### Step 6
 
-Now that all the code is in place, back in your terminal run the one of the following commands:
+Now that all the code is in place, back in your terminal run one of the following commands:
 
 -   `npm run start` - starts development mode for the plugin that will rebuild when things change
 -   `npm run build` - creates a production build of the plugin
 
-Before you can use the plugin you need to run of the two
+Before you can use the plugin you need to run one of the two.
 
 #### Step 7
 

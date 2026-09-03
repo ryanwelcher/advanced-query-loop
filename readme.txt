@@ -1,9 +1,9 @@
 === Advanced Query Loop ===
 Contributors: welcher
 Tags: Query Loop, Custom Queries, Advanced Queries, Post Meta, Taxonomy
-Requires at least: 6.2
-Tested up to: 6.9
-Stable tag: 4.4.1
+Requires at least: 6.7
+Tested up to: 7.1
+Stable tag: 5.0.0
 Requires PHP: 7.4
 License: GPL v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -29,8 +29,11 @@ Need help? We've got you covered!
 
 * **WordPress.org Support Forum**: [Get help here](https://wordpress.org/support/plugin/advanced-query-loop/)
 * **GitHub Repository**: [Report issues & contribute](https://github.com/ryanwelcher/advanced-query-loop)
+* **Interactive Demo**: [Try Advanced Query Loop in WordPress Playground](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/ryanwelcher/advanced-query-loop/trunk/_blueprints/blueprint.json) - a self-contained demo site with seeded content and a step-by-step guide for every feature panel
 
 === Powerful Features at Your Fingertips ===
+
+Controls are organized into grouped panels in the block inspector: AQL: Post, AQL: Taxonomy, AQL: Meta, AQL: Date, AQL: Order by, AQL: Performance, and AQL: Advanced. A trailing AQL: Extensions panel appears only when a third-party extension has registered controls via the AQL SlotFills.
 
 ==== 🏷️ Advanced Taxonomy Queries ====
 
@@ -83,6 +86,7 @@ Sort your content exactly how you want:
 * **Post ID**: Sort by post ID
 * **Comment Count**: Sort by engagement
 * **Included Posts**: Sort by post inclusion order
+* **Multi-property ordering**: Order by multiple properties (primary + secondary sort), including meta values; posts without the meta key sort last in descending order. Applies to non-inherited queries only
 
 ==== ⚡ Performance Optimization ====
 
@@ -96,6 +100,10 @@ Use values like Current Post ID, Author ID, Logged-in User ID, Current Term ID, 
 * **Built-in placeholders**: Current post, parent, author, user, and archive term IDs; the current date (YYYY-MM-DD or YYYYMMDD), date and time, time, and timestamp; current year, month, day, hour, and week; and dates 1, 3, 6, or 12 months in the past or future, all in the site timezone
 * **Editor preview**: See resolved values in the block editor before publishing
 * **Extensible**: Register custom placeholders with simple PHP filters
+
+==== 🆔 Query Identifier ====
+
+Give any AQL block a unique Query ID from the AQL: Advanced panel. Developers can then target that specific block with the `aql_query_vars` filter to modify its query arguments in code without affecting other Query Loop blocks on the page.
 
 === Customization & Extensibility ===
 
@@ -159,13 +167,23 @@ Advanced Query Loop is built with developers in mind:
 
 == Screenshots ==
 
-1. Select how many posts you want to display and the number to start at.
-2. Create complicated queries for post types with registered post meta.x
-3. Query posts before a date, after a date or between two dates.
+1. Combine post types into a single query.
+2. Build complicated meta queries using the Meta query builder.
+3. Build advanced taxonomy queries using the Taxonomy query builder.
+4. Streamline the performance for each query.
 
 == Changelog ==
-= 4.5.0 =
+= unreleased =
 * New: Dynamic placeholders for query values ({aql:current_post_id}, {aql:current_post_parent_id}, {aql:author_id}, {aql:user_id}, {aql:current_term_id}, {aql:current_date}, {aql:current_date_compact}, {aql:current_datetime}, {aql:current_time}, {aql:current_timestamp}, current year/month/day/hour/week, and dates 1 to 12 months in the past or future) with an editor picker, plus aql_resolve_placeholder / aql_placeholder_list filters for extenders. Props @roborourke for the date function idea in #158.
+
+= 5.0.0 =
+* Bump Tested up to for WordPress 7.1.
+* Raise the minimum supported WordPress version to 6.7.
+* Remove the pre-Gutenberg-19 legacy per page/offset/max count controls (core's Query block has provided them since WordPress 6.7).
+* Order by multiple properties (primary + secondary sort), including meta values, for non-inherited queries.
+* Reorganize inspector controls into grouped panels (AQL: Post, Taxonomy, Meta, Date, Order by, Performance, Advanced).
+* Add an "AQL: Extensions" panel for third-party controls (formerly inside "Advanced Query Settings"), shown only when extensions are registered.
+* Split date filters into separate Dynamic range and Date relationship options.
 
 = 4.4.1 =
 * Add optional chaining to fix crash on templates

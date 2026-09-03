@@ -16,7 +16,7 @@ import { insertAQL } from '../utils';
  */
 const addPaginationControl = async ( page ) => {
 	await page
-		.getByRole( 'button', { name: 'AQL: Performance Controls options' } )
+		.getByRole( 'button', { name: 'AQL: Performance options' } )
 		.click();
 	await page.getByRole( 'menuitemcheckbox', { name: 'Pagination' } ).click();
 	await page.keyboard.press( 'Escape' );

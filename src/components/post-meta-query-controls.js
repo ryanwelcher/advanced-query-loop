@@ -39,7 +39,7 @@ export const PostMetaQueryControls = ( {
 		} = {},
 	} = attributes;
 
-	const registeredMeta = usePostTypeMetaFields( [
+	const registeredMetaKeys = usePostTypeMetaFields( [
 		postType,
 		...multiplePosts,
 	] );
@@ -77,7 +77,6 @@ export const PostMetaQueryControls = ( {
 						onClick={ onToggle }
 						aria-haspopup="true"
 						aria-expanded={ isOpen }
-						disabled={ Object.keys( registeredMeta ).length === 0 }
 					>
 						{ isOpen
 							? __(
@@ -154,9 +153,9 @@ export const PostMetaQueryControls = ( {
 												metaKey={ metaKey }
 												metaValue={ metaValue }
 												metaCompare={ compare }
-												registeredMetaKeys={ Object.keys(
-													registeredMeta
-												) }
+												registeredMetaKeys={
+													registeredMetaKeys
+												}
 												queries={ queries }
 												attributes={ attributes }
 												setAttributes={ setAttributes }

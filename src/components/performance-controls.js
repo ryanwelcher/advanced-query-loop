@@ -11,6 +11,11 @@ import {
 
 import { __ } from '@wordpress/i18n';
 
+/**
+ * Internal dependencies
+ */
+import { useToolsPanelDropdownMenuProps } from '../groups/use-dropdown-menu-props';
+
 export const PerformanceControls = ( {
 	attributes,
 	setAttributes,
@@ -23,6 +28,7 @@ export const PerformanceControls = ( {
 			disable_pagination: disablePagination,
 		} = {},
 	} = attributes;
+	const dropdownMenuProps = useToolsPanelDropdownMenuProps();
 
 	if (
 		! allowedControls.includes( 'enable_caching' ) &&
@@ -33,7 +39,8 @@ export const PerformanceControls = ( {
 
 	return (
 		<ToolsPanel
-			label={ __( 'AQL: Performance Controls', 'advanced-query-loop' ) }
+			label={ __( 'AQL: Performance', 'advanced-query-loop' ) }
+			dropdownMenuProps={ dropdownMenuProps }
 			resetAll={ () => {
 				const updates = {};
 				if ( allowedControls.includes( 'enable_caching' ) ) {

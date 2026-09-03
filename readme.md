@@ -14,9 +14,11 @@ Please use the either the [support](https://wordpress.org/support/plugin/advance
 
 ### Available Controls
 
+Controls are organized into grouped panels in the block inspector: AQL: Post, AQL: Taxonomy, AQL: Meta, AQL: Date, AQL: Order by, AQL: Performance, and AQL: Advanced. A trailing **AQL: Extensions** panel appears only when a third-party extension has registered controls via the AQL SlotFills.
+
 #### Taxonomy queries
 
-Built complicated taxonomy queries!
+Build complicated taxonomy queries!
 
 #### Multiple post types
 
@@ -40,7 +42,7 @@ Generate complicated post meta queries using an interface that allows you to cre
 
 #### Date Query
 
-Query items before/after the current or selected or choose to show the post from the last 1, 3, 6 and 12 months.
+Query items before/after the current or a selected date, or choose to show posts from the last 1, 3, 6 or 12 months.
 
 #### Post Order controls
 
@@ -59,13 +61,15 @@ Sort in ascending or descending order by:
 -   Random
 -   Title
 
+Order by multiple properties (primary + secondary sort), including meta values; posts without the meta key sort last in descending order. Multi-property ordering (the meta sort key and the secondary sort) applies to non-inherited queries only — when `Inherit query from template` is enabled, only the primary order and direction are used.
+
 #### Disable Pagination
 
 Improve the performance of the query by disabling pagination.
 
 #### Enable Caching
 
-Store query results in a transient for one hour to reduce database load on subsequent page loads. The caching toggle is unavailable when the order is set to Random, and switching to Random order will clear any existing caching setting. Found in the **AQL: Performance Controls** panel.
+Store query results in a transient for one hour to reduce database load on subsequent page loads. The caching toggle is unavailable when the order is set to Random, and switching to Random order will clear any existing caching setting. Found in the **AQL: Performance** panel.
 
 #### Dynamic Placeholders
 
