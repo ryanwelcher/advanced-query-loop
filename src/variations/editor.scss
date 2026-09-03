@@ -78,9 +78,10 @@
 		flex: 1;
 	}
 
-	&__remove {
-		flex-shrink: 0;
-		margin-top: 20px;
+	&__footer {
+		margin-top: 12px;
+		padding-top: 12px;
+		border-top: 1px solid #e0e0e0;
 	}
 
 	.aql-token-field .components-form-token-field__help {

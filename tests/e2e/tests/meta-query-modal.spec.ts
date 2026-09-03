@@ -137,7 +137,7 @@ test.describe( 'Meta query builder layout', () => {
 		await page.keyboard.press( 'Enter' );
 	};
 
-	test( 'shows compare and type for every keyed condition without a toggle', async ( {
+	test( 'reveals compare and type behind Advanced mode', async ( {
 		page,
 		editor,
 	} ) => {
@@ -146,22 +146,26 @@ test.describe( 'Meta query builder layout', () => {
 		} );
 		await addCondition( page, 'price' );
 
-		await expect(
-			dialog.getByRole( 'combobox', { name: 'Meta Compare' } )
-		).toBeVisible();
-		await expect(
-			dialog.getByRole( 'combobox', { name: 'Meta Type' } )
-		).toBeVisible();
-		await expect(
-			dialog.getByRole( 'checkbox', { name: 'Advanced mode' } )
-		).toHaveCount( 0 );
+		const compare = dialog.getByRole( 'combobox', {
+			name: 'Meta Compare',
+		} );
+		const type = dialog.getByRole( 'combobox', { name: 'Meta Type' } );
+		await expect( compare ).toBeHidden();
+		await expect( type ).toBeHidden();
 
-		await dialog
-			.getByRole( 'combobox', { name: 'Meta Compare' } )
-			.selectOption( '>=' );
-		await dialog
-			.getByRole( 'combobox', { name: 'Meta Type' } )
-			.selectOption( 'NUMERIC' );
+		const toggle = dialog.getByRole( 'checkbox', {
+			name: 'Advanced mode',
+		} );
+		await toggle.check();
+		await expect( compare ).toBeVisible();
+		await expect( type ).toBeVisible();
+
+		await compare.selectOption( '>=' );
+		await type.selectOption( 'NUMERIC' );
+
+		// Non-default values keep the controls visible and lock the toggle.
+		await expect( toggle ).toBeChecked();
+		await expect( toggle ).toBeDisabled();
 
 		const blocks = await editor.getBlocks();
 		const condition = blocks[ 0 ].attributes.query.meta_query.queries[ 0 ];
@@ -315,6 +319,7 @@ test.describe( 'Type guidance', () => {
 			.getByRole( 'combobox', { name: 'Meta Key' } )
 			.fill( 'price' );
 		await page.keyboard.press( 'Enter' );
+		await page.getByRole( 'checkbox', { name: 'Advanced mode' } ).check();
 	} );
 
 	test.afterEach( async ( { playground } ) => {
@@ -381,6 +386,11 @@ test.describe( 'Type guidance', () => {
 		await expect(
 			dialog.getByRole( 'combobox', { name: 'Meta Type' } )
 		).toHaveValue( 'NUMERIC' );
+		const toggle = dialog.getByRole( 'checkbox', {
+			name: 'Advanced mode',
+		} );
+		await expect( toggle ).toBeChecked();
+		await expect( toggle ).toBeDisabled();
 	} );
 
 	test( 'EXISTS hides the value field and clears the stored value', async ( {
@@ -561,6 +571,10 @@ test.describe( 'Nested condition groups', () => {
 		await fillLastValue( group, page, 'yes' );
 		await group.getByRole( 'button', { name: 'Add condition' } ).click();
 		await fillLastKey( group, page, '_test_noise' );
+		await group
+			.getByRole( 'checkbox', { name: 'Advanced mode' } )
+			.last()
+			.check();
 		await group
 			.getByRole( 'combobox', { name: 'Meta Compare' } )
 			.last()

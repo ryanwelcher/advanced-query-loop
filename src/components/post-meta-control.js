@@ -9,8 +9,10 @@ import {
 	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
 	__experimentalHStack as HStack,
 	SelectControl,
+	ToggleControl,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { useState } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -67,8 +69,9 @@ const metaTypeOptions = [
 ];
 
 /**
- * A single meta query condition rendered as a card: key, compare, and type
- * on one row, the value below, and a remove action in the corner.
+ * A single meta query condition rendered as a card: the key (with compare
+ * and type beside it in Advanced mode), the value below, and a footer with
+ * the Advanced mode toggle and the remove action.
  *
  * @param {Object}   props
  * @param {Object}   props.condition          The condition entry.
@@ -87,6 +90,7 @@ export const PostMetaControl = ( {
 } ) => {
 	const activeQuery = condition;
 	const hasKey = activeQuery?.meta_key?.length > 0;
+	const [ advancedOpen, setAdvancedOpen ] = useState( false );
 
 	/**
 	 * Write one or more fields of this condition back to the block.
@@ -102,6 +106,14 @@ export const PostMetaControl = ( {
 	const metaType = activeQuery?.meta_type || 'CHAR';
 	const metaCompare = activeQuery?.meta_compare || '=';
 	const isValueless = valuelessOperators.includes( metaCompare );
+
+	// Compare and type only matter when they leave the defaults, so they
+	// stay tucked behind Advanced mode. A condition that already uses
+	// non-default values keeps them visible so nothing is hidden.
+	const hasNonDefault =
+		( activeQuery?.meta_compare && activeQuery.meta_compare !== '=' ) ||
+		( activeQuery?.meta_type && activeQuery.meta_type !== 'CHAR' );
+	const showAdvanced = hasKey && ( advancedOpen || !! hasNonDefault );
 
 	// Offer only operators that suit the type, but never drop the one a
 	// saved block already uses.
@@ -127,89 +139,71 @@ export const PostMetaControl = ( {
 
 	return (
 		<div className="aql-condition">
-			<HStack alignment="top" spacing={ 3 }>
-				<Grid
-					columns={ hasKey ? 3 : 1 }
-					templateColumns={ hasKey ? '2fr 1fr 1fr' : '1fr' }
-					gap={ 3 }
-					align="start"
-					className="aql-condition__row"
-				>
-					<div className="aql-token-field">
-						<FormTokenField
-							label={ __( 'Meta Key', 'advanced-query-loop' ) }
-							value={ hasKey ? [ activeQuery.meta_key ] : [] }
-							__experimentalExpandOnFocus
-							__experimentalShowHowTo={ false }
-							suggestions={ registeredMetaKeys }
-							maxLength={ 1 }
-							onChange={ ( newMeta ) =>
-								updateQueryParam( 'meta_key', newMeta[ 0 ] )
-							}
-						/>
-						<p className="components-form-token-field__help">
-							{ __(
-								'Pick from the list, or type a key and press Enter.',
+			<Grid
+				columns={ showAdvanced ? 3 : 1 }
+				templateColumns={ showAdvanced ? '2fr 1fr 1fr' : '1fr' }
+				gap={ 3 }
+				align="start"
+				className="aql-condition__row"
+			>
+				<div className="aql-token-field">
+					<FormTokenField
+						label={ __( 'Meta Key', 'advanced-query-loop' ) }
+						value={ hasKey ? [ activeQuery.meta_key ] : [] }
+						__experimentalExpandOnFocus
+						__experimentalShowHowTo={ false }
+						suggestions={ registeredMetaKeys }
+						maxLength={ 1 }
+						onChange={ ( newMeta ) =>
+							updateQueryParam( 'meta_key', newMeta[ 0 ] )
+						}
+					/>
+					<p className="components-form-token-field__help">
+						{ __(
+							'Pick from the list, or type a key and press Enter.',
+							'advanced-query-loop'
+						) }
+					</p>
+				</div>
+				{ showAdvanced && (
+					<>
+						<SelectControl
+							label={ __(
+								'Meta Compare',
 								'advanced-query-loop'
 							) }
-						</p>
-					</div>
-					{ hasKey && (
-						<>
-							<SelectControl
-								label={ __(
-									'Meta Compare',
-									'advanced-query-loop'
-								) }
-								value={ metaCompare }
-								options={ compareOptions.map(
-									( operator ) => ( {
-										label: operator,
-										value: operator,
-									} )
-								) }
-								onChange={ ( newCompare ) =>
-									updateQueryParam(
-										valuelessOperators.includes(
-											newCompare
-										)
-											? {
-													meta_compare: newCompare,
-													meta_value: '',
-											  }
-											: { meta_compare: newCompare }
-									)
-								}
-								__nextHasNoMarginBottom
-							/>
-							<SelectControl
-								label={ __(
-									'Meta Type',
-									'advanced-query-loop'
-								) }
-								value={ metaType }
-								options={ metaTypeOptions.map( ( type ) => ( {
-									label: type,
-									value: type,
-								} ) ) }
-								onChange={ ( newType ) =>
-									updateQueryParam( 'meta_type', newType )
-								}
-								__nextHasNoMarginBottom
-							/>
-						</>
-					) }
-				</Grid>
-				<Button
-					variant="tertiary"
-					size="small"
-					isDestructive
-					onClick={ onRemove }
-					className="aql-condition__remove"
-				>
-					{ __( 'Remove query', 'advanced-query-loop' ) }
-				</Button>
-			</HStack>
+							value={ metaCompare }
+							options={ compareOptions.map( ( operator ) => ( {
+								label: operator,
+								value: operator,
+							} ) ) }
+							onChange={ ( newCompare ) =>
+								updateQueryParam(
+									valuelessOperators.includes( newCompare )
+										? {
+												meta_compare: newCompare,
+												meta_value: '',
+										  }
+										: { meta_compare: newCompare }
+								)
+							}
+							__nextHasNoMarginBottom
+						/>
+						<SelectControl
+							label={ __( 'Meta Type', 'advanced-query-loop' ) }
+							value={ metaType }
+							options={ metaTypeOptions.map( ( type ) => ( {
+								label: type,
+								value: type,
+							} ) ) }
+							onChange={ ( newType ) =>
+								updateQueryParam( 'meta_type', newType )
+							}
+							__nextHasNoMarginBottom
+						/>
+					</>
+				) }
+			</Grid>
 			{ hasKey && ! isValueless && (
 				<>
 					{ /*
@@ -236,6 +230,29 @@ export const PostMetaControl = ( {
 					/>
 				</>
 			) }
+			<HStack
+				justify={ hasKey ? 'space-between' : 'flex-end' }
+				alignment="center"
+				className="aql-condition__footer"
+			>
+				{ hasKey && (
+					<ToggleControl
+						label={ __( 'Advanced mode', 'advanced-query-loop' ) }
+						checked={ showAdvanced }
+						disabled={ !! hasNonDefault }
+						onChange={ () => setAdvancedOpen( ! advancedOpen ) }
+						__nextHasNoMarginBottom
+					/>
+				) }
+				<Button
+					variant="secondary"
+					size="small"
+					isDestructive
+					onClick={ onRemove }
+				>
+					{ __( 'Remove query', 'advanced-query-loop' ) }
+				</Button>
+			</HStack>
 		</div>
 	);
 };
