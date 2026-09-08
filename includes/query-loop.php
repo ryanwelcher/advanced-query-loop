@@ -18,6 +18,39 @@ if ( ! function_exists( 'add_filter' ) ) {
 }
 
 /**
+ * Build the context array used to resolve dynamic placeholders.
+ *
+ * @param array $block_query       The query attribute from the block.
+ * @param bool  $inherited         Whether the query is inherited from the template.
+ * @param bool  $is_editor_preview Whether this is a REST editor-preview request.
+ * @param int   $preview_post_id   The edited post ID sent by the editor (REST only).
+ *
+ * @return array
+ */
+function build_placeholder_context( array $block_query, bool $inherited, bool $is_editor_preview = false, int $preview_post_id = 0 ): array {
+	if ( $is_editor_preview ) {
+		$post_id = $preview_post_id;
+	} else {
+		$post_id = \is_singular() ? (int) \get_queried_object_id() : 0;
+	}
+
+	// Only real taxonomy archives have a current term; the editor preview has none.
+	$term_id = ( ! $is_editor_preview && ( \is_tax() || \is_category() || \is_tag() ) ) ? (int) \get_queried_object_id() : 0;
+
+	return array(
+		'post_id'           => $post_id,
+		'post_type'         => $post_id ? (string) \get_post_type( $post_id ) : '',
+		'post_parent_id'    => $post_id ? (int) \wp_get_post_parent_id( $post_id ) : 0,
+		'author_id'         => $post_id ? (int) \get_post_field( 'post_author', $post_id ) : 0,
+		'user_id'           => (int) \get_current_user_id(),
+		'term_id'           => $term_id,
+		'is_editor_preview' => $is_editor_preview,
+		'block_query'       => $block_query,
+		'inherited'         => $inherited,
+	);
+}
+
+/**
  * Updates the query on the front end based on custom query attributes.
  */
 \add_filter(
@@ -64,6 +97,12 @@ if ( ! function_exists( 'add_filter' ) ) {
 					function ( $default_query, $block ) {
 						// Retrieve the query from the passed block context.
 						$block_query = $block->context['query'] ?? array();
+
+						// Resolve dynamic placeholders before any processing.
+						$block_query = Placeholder_Resolver::resolve_params(
+							$block_query,
+							build_placeholder_context( $block_query, false )
+						);
 
 						// Process all of the params
 						$qpg = new Query_Params_Generator( $default_query, $block_query );
@@ -148,8 +187,20 @@ function add_more_sort_by( $query_params ) {
  */
 function add_custom_query_params( $args, $request ) {
 
+	// Resolve dynamic placeholders before any processing.
+	$params = $request->get_params();
+
+	// Only honor the caller-supplied preview post ID when they're allowed to edit it.
+	$preview_post_id = \absint( $request->get_param( 'aql_preview_post_id' ) ?? 0 );
+	if ( $preview_post_id && ! \current_user_can( 'edit_post', $preview_post_id ) ) {
+		$preview_post_id = 0;
+	}
+
+	$context = build_placeholder_context( $params, false, true, $preview_post_id );
+	$params  = Placeholder_Resolver::resolve_params( $params, $context );
+
 	// Process all of the params
-	$qpg = new Query_Params_Generator( $args, $request->get_params() );
+	$qpg = new Query_Params_Generator( $args, $params );
 	$qpg->process_all();
 	$query_args = $qpg->get_query_args();
 
@@ -157,7 +208,7 @@ function add_custom_query_params( $args, $request ) {
 	$filtered_query_args = \apply_filters(
 		'aql_query_vars',
 		$query_args,
-		$request->get_params(),
+		$params,
 		false,
 	);
 	// Merge all queries.

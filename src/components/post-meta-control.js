@@ -7,11 +7,15 @@ import {
 	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
 	__experimentalHStack as HStack,
 	SelectControl,
-	TextControl,
 	ToggleControl,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState, useEffect } from '@wordpress/element';
+
+/**
+ * Internal dependencies
+ */
+import { PlaceholderTextControl } from './placeholder-text-control';
 
 const compareMetaOptions = [
 	'=',
@@ -98,36 +102,45 @@ export const PostMetaControl = ( {
 
 	return (
 		<>
-			<FormTokenField
-				label={ __( 'Meta Key', 'advanced-query-loop' ) }
-				value={
-					activeQuery?.meta_key?.length
-						? [ activeQuery.meta_key ]
-						: []
-				}
-				__experimentalShowHowTo={ false }
-				suggestions={ registeredMetaKeys }
-				maxLength={ 1 }
-				onChange={ ( newMeta ) => {
-					setAttributes( {
-						query: {
-							...attributes.query,
-							meta_query: {
-								...attributes.query.meta_query,
-								queries: updateQueryParam(
-									queries,
-									id,
-									'meta_key',
-									newMeta[ 0 ]
-								),
+			<div className="aql-token-field">
+				<FormTokenField
+					label={ __( 'Meta Key', 'advanced-query-loop' ) }
+					value={
+						activeQuery?.meta_key?.length
+							? [ activeQuery.meta_key ]
+							: []
+					}
+					__experimentalExpandOnFocus
+					__experimentalShowHowTo={ false }
+					suggestions={ registeredMetaKeys }
+					maxLength={ 1 }
+					onChange={ ( newMeta ) => {
+						setAttributes( {
+							query: {
+								...attributes.query,
+								meta_query: {
+									...attributes.query.meta_query,
+									queries: updateQueryParam(
+										queries,
+										id,
+										'meta_key',
+										newMeta[ 0 ]
+									),
+								},
 							},
-						},
-					} );
-				} }
-			/>
+						} );
+					} }
+				/>
+				<p className="components-form-token-field__help">
+					{ __(
+						'Pick from the list, or type a key and press Enter.',
+						'advanced-query-loop'
+					) }
+				</p>
+			</div>
 			{ activeQuery?.meta_key?.length > 0 && (
 				<>
-					<TextControl
+					<PlaceholderTextControl
 						label={ __( 'Meta Value', 'advanced-query-loop' ) }
 						value={ activeQuery.meta_value }
 						onChange={ ( newValue ) => {

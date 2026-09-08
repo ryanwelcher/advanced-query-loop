@@ -133,6 +133,108 @@ function aql_extension_target_homepage_featured( $query_args, $block_query, $inh
 \add_filter( 'aql_query_vars', 'aql_extension_target_homepage_featured', 10, 3 );
 ```
 
+#### Dynamic placeholders
+
+AQL supports dynamic placeholder tokens in query values, e.g. `{aql:current_post_id}`
+in a meta query's value. Tokens are resolved centrally before the query runs, in the
+editor preview and on the frontend, so they work in any query param — including params
+added by third-party controls.
+
+Built-in placeholders:
+
+| Token | Value |
+| --- | --- |
+| `current_post_id` | ID of the post being viewed |
+| `current_post_parent_id` | Parent ID of the post being viewed |
+| `author_id` | Author ID of the post being viewed |
+| `user_id` | Logged-in user ID (matches nothing when logged out) |
+| `current_term_id` | Term ID on category, tag, and taxonomy archives |
+| `current_date` | `YYYY-MM-DD` |
+| `current_date_compact` | `YYYYMMDD` (the default ACF date format) |
+| `current_datetime` | `YYYY-MM-DD HH:MM:SS` |
+| `current_time` | `HH:MM:SS` |
+| `current_timestamp` | Unix timestamp |
+| `current_year`, `current_month`, `current_day`, `current_hour`, `current_week` | Zero-padded date parts |
+| `date_minus_1_month`, `date_minus_3_months`, `date_minus_6_months`, `date_minus_12_months` | `YYYY-MM-DD` in the past |
+| `date_plus_1_month`, `date_plus_3_months`, `date_plus_6_months`, `date_plus_12_months` | `YYYY-MM-DD` in the future |
+
+All dates and times use the site timezone. Pair date and time tokens with the
+matching meta type (`DATE`, `DATETIME`, `TIME`, or `NUMERIC` for compact dates) in
+the meta query builder's advanced mode so comparisons are cast correctly.
+
+Common recipes, each a meta query clause with the token as the value:
+
+- Upcoming events (ACF date, `Ymd`): `event_date` `>=` `{aql:current_date_compact}`, type `NUMERIC`.
+- Currently running events (ACF time): `start_time` `<=` `{aql:current_time}` AND `end_time` `>=` `{aql:current_time}`, type `TIME`.
+- Posts related to the viewed post via an ACF relationship field: `related_posts` `LIKE` `"{aql:current_post_id}"`, type `CHAR`.
+- Posts from the current year: `year_meta` `=` `{aql:current_year}`.
+
+##### Registering a custom placeholder
+
+Two small filters — one resolves the value, one lists it in the editor picker:
+
+```php
+// Resolve {aql:todays_special} at query time.
+add_filter(
+	'aql_resolve_placeholder',
+	function ( $resolved, $name, $context ) {
+		if ( 'todays_special' === $name ) {
+			return get_option( 'todays_special_post_id', '' );
+		}
+		return $resolved;
+	},
+	10,
+	3
+);
+
+// Show it as a suggestion in the editor's Meta Value field.
+add_filter(
+	'aql_placeholder_list',
+	function ( $list ) {
+		$list[] = array(
+			'name'        => 'todays_special',
+			'label'       => __( "Today's Special", 'my-plugin' ),
+			'description' => __( 'The post ID of the daily featured item.', 'my-plugin' ),
+		);
+		return $list;
+	}
+);
+```
+
+Resolution rules: return a string to resolve the token; return null, or leave
+`$resolved` untouched, for names you don't handle. A token that resolves to
+nothing — unknown, or known but currently valueless (e.g. `{aql:user_id}` for
+a logged-out visitor) — is left in the value verbatim, so equality-style
+comparisons against it match nothing.
+
+The `$context` array includes `post_id`, `post_type`, `post_parent_id`, `author_id`,
+`user_id`, `term_id`, `is_editor_preview`, `block_query`, and `inherited`.
+
+##### Placeholder-aware custom controls
+
+Custom SlotFill controls can reuse AQL's picker UI so their inputs accept
+placeholders too:
+
+```js
+const { PlaceholderTextControl } = window.aql;
+
+<PlaceholderTextControl
+	label={ 'My Value' }
+	value={ myValue }
+	onChange={ ( next ) => setMyValue( next ) }
+/>;
+```
+
+Because resolution happens on the raw query attributes, any value your control
+stores in the block's `query` attribute supports placeholders automatically.
+
+##### A note on caching
+
+The **Enable caching** option keys its transients on the resolved query vars, so
+user-dependent placeholders like `{aql:user_id}` produce separate (correct) cache
+entries per user, and `{aql:current_date}` re-resolves within the one-hour cache
+lifetime at most one day behind.
+
 ### Tutorial
 
 Using the example code above, you can make a custom extension plugin for AQL that will filter the displayed posts by author.

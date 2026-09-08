@@ -7,9 +7,13 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import './controls';
+import './editor.scss';
+import '../utils/placeholder-preview-middleware';
 import AQLIcon from '../components/icons';
 import AQLControls from '../slots/aql-controls';
 import AQLControlsInheritedQuery from '../slots/aql-controls-inherited-query';
+import { PlaceholderTextControl } from '../components/placeholder-text-control';
+import usePlaceholders from '../hooks/usePlaceholders';
 const AQL = 'advanced-query-loop';
 
 registerBlockVariation( 'core/query', {
@@ -24,4 +28,10 @@ registerBlockVariation( 'core/query', {
 	scope: [ 'inserter', 'transform' ],
 } );
 
-export { AQL, AQLControls, AQLControlsInheritedQuery };
+export {
+	AQL,
+	AQLControls,
+	AQLControlsInheritedQuery,
+	PlaceholderTextControl,
+	usePlaceholders,
+};
