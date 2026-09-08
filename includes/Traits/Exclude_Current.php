@@ -6,7 +6,15 @@
 namespace AdvancedQueryLoop\Traits;
 
 /**
- * Trait
+ * Legacy trait.
+ *
+ * Core's Query Loop block resolves its own `excludeCurrent` query property as
+ * of WordPress 7.1, and the editor migrates AQL's `exclude_current` key to it
+ * the next time a block is edited. This trait remains for content saved before
+ * that migration and for sites without core support, and should not be
+ * extended with new behaviour.
+ *
+ * @deprecated 5.1.0 Superseded by core's `excludeCurrent`.
  */
 trait Exclude_Current {
 

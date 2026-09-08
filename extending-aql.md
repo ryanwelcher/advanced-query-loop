@@ -111,6 +111,10 @@ function aql_extension_show_current_author_only( $query_args, $block_query, $inh
 \add_filter( 'aql_query_vars', 'aql_extension_show_current_author_only', 10, 3 );
 ```
 
+#### Deprecated control identifiers
+
+The `aql_allowed_controls` filter still accepts the `'exclude_current_post'` identifier, but it is deprecated. Core's Query Loop block ships its own **Exclude current** toggle (`query.excludeCurrent`) as of WordPress 7.1, and AQL migrates the legacy `exclude_current` key to it the next time a block is edited. On WordPress 7.1+ (or with the Gutenberg plugin) the identifier has no effect, because AQL no longer renders the control; use core's `allowedControls` block setting to hide `excludeCurrent` instead. On older sites it still gates the legacy toggle, which renders in the "AQL: Extensions" panel.
+
 #### Targeting a specific block
 
 Every AQL block has an optional Query identifier control. The value is stored in the `aql_query_id` query variable and is available in the `$block_query` parameter of the `aql_query_vars` filter (and in `$query_args` for non-inherited queries), making it easy to modify the query for a single block when a site contains multiple AQL blocks.

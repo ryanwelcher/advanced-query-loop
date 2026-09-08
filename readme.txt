@@ -53,7 +53,7 @@ Take full control over which posts appear in your query:
 ==== 🚫 Intelligent Post Exclusion ====
 
 Keep your queries clean and relevant:
-* **Exclude current post**: Automatically hide the post being viewed
+* **Exclude current post**: Automatically hide the post being viewed (uses core's toggle on WordPress 7.1+)
 * **Exclude a list of posts**: Curate a list of posts to exclude from the query
 
 ==== 🔍 Advanced Post Meta Queries ====
@@ -123,7 +123,7 @@ add_filter(
 * `'taxonomy_query_builder'` - Advanced taxonomy queries
 * `'post_meta_query'` - Meta field queries
 * `'post_order'` - Sorting options
-* `'exclude_current_post'` - Current post exclusion
+* `'exclude_current_post'` - Current post exclusion (deprecated: no effect on WordPress 7.1+, where core's toggle is used)
 * `'exclude_posts'` - Exclude a curated list of posts
 * `'include_posts'` - Manual post inclusion
 * `'child_items_only'` - Child post filtering
