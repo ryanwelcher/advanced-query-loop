@@ -118,27 +118,29 @@ export const PostMetaQueryControls = ( {
 			) }
 			summary={ summary }
 			footer={
-				<HStack justify="flex-start">
-					<Button variant="primary" onClick={ addCondition }>
-						{ __( 'Add new query', 'advanced-query-loop' ) }
-					</Button>
-					<Button variant="secondary" onClick={ addGroup }>
-						{ __( 'Add group', 'advanced-query-loop' ) }
-					</Button>
-					{ queries.length > 0 && (
-						<Button
-							variant="secondary"
-							isDestructive
-							onClick={ resetConditions }
-						>
-							{ __( 'Reset queries', 'advanced-query-loop' ) }
+				<HStack justify="space-between">
+					<HStack justify="flex-start">
+						<Button variant="primary" onClick={ addCondition }>
+							{ __( 'Add new query', 'advanced-query-loop' ) }
 						</Button>
-					) }
+						<Button variant="secondary" onClick={ addGroup }>
+							{ __( 'Add group', 'advanced-query-loop' ) }
+						</Button>
+						{ queries.length > 0 && (
+							<Button
+								variant="secondary"
+								isDestructive
+								onClick={ resetConditions }
+							>
+								{ __( 'Reset queries', 'advanced-query-loop' ) }
+							</Button>
+						) }
+					</HStack>
+					<PlaceholderReference />
 				</HStack>
 			}
 		>
 			<div className="aql-meta-builder">
-				<PlaceholderReference />
 				<MetaConditionList
 					entries={ queries }
 					relation={ relation }

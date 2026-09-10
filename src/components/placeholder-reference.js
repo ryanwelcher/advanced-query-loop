@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { Button, PanelBody } from '@wordpress/components';
+import { Button, PanelBody, Popover } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { info, close } from '@wordpress/icons';
@@ -104,17 +104,19 @@ const PlaceholderList = ( { items } ) => (
 );
 
 /**
- * A toggleable, reference-only panel describing the dynamic placeholders the
- * site exposes. Hidden until the info button is pressed. Tokens are inserted
+ * A reference-only panel describing the dynamic placeholders the site
+ * exposes, opened from an info button as a popover so it floats over the
+ * builder instead of pushing the conditions around. Tokens are inserted
  * through the Meta Value field's own suggestions, not from here.
  *
  * Renders nothing when no placeholders are registered.
  *
- * @return {Element|null} The info button and, while open, the panel.
+ * @return {Element|null} The info button and, while open, the popover.
  */
 export const PlaceholderReference = () => {
 	const placeholders = usePlaceholders();
 	const [ isOpen, setIsOpen ] = useState( false );
+	const [ anchor, setAnchor ] = useState( null );
 
 	if ( ! placeholders.length ) {
 		return null;
@@ -123,7 +125,7 @@ export const PlaceholderReference = () => {
 	const panelId = 'aql-placeholder-reference-panel';
 
 	return (
-		<div className="aql-placeholder-reference">
+		<div className="aql-placeholder-reference" ref={ setAnchor }>
 			<Button
 				className="aql-placeholder-reference__toggle"
 				icon={ info }
@@ -137,55 +139,67 @@ export const PlaceholderReference = () => {
 				onClick={ () => setIsOpen( ! isOpen ) }
 			/>
 			{ isOpen && (
-				<section
-					id={ panelId }
-					className="aql-placeholder-reference__panel"
-					aria-labelledby="aql-placeholder-reference-heading"
+				<Popover
+					anchor={ anchor }
+					placement="top-end"
+					offset={ 8 }
+					focusOnMount
+					onClose={ () => setIsOpen( false ) }
+					className="aql-placeholder-reference__popover"
 				>
-					<div className="aql-placeholder-reference__header">
-						<h3
-							id="aql-placeholder-reference-heading"
-							className="aql-placeholder-reference__heading"
-						>
-							{ __(
-								'Dynamic placeholders',
-								'advanced-query-loop'
-							) }
-						</h3>
-						<Button
-							icon={ close }
-							size="small"
-							label={ __(
-								'Hide placeholders',
-								'advanced-query-loop'
-							) }
-							onClick={ () => setIsOpen( false ) }
-						/>
-					</div>
-					<p className="aql-placeholder-reference__intro">
-						{ __(
-							'Pick any of these from the Meta Value field. They are resolved when the query runs.',
-							'advanced-query-loop'
-						) }
-					</p>
-					{ groupPlaceholders( placeholders ).map(
-						( { key, label, items } ) => (
-							<PanelBody
-								key={ key }
-								className="aql-placeholder-reference__group"
-								title={ sprintf(
-									/* translators: 1: group name, 2: number of placeholders */
-									__( '%1$s (%2$d)', 'advanced-query-loop' ),
-									label,
-									items.length
-								) }
-								initialOpen={ false }
+					<section
+						id={ panelId }
+						className="aql-placeholder-reference__panel"
+						aria-labelledby="aql-placeholder-reference-heading"
+					>
+						<div className="aql-placeholder-reference__header">
+							<h3
+								id="aql-placeholder-reference-heading"
+								className="aql-placeholder-reference__heading"
 							>
-								<PlaceholderList items={ items } />
-							</PanelBody>
-						)
-					) }
-				</section>
+								{ __(
+									'Dynamic placeholders',
+									'advanced-query-loop'
+								) }
+							</h3>
+							<Button
+								icon={ close }
+								size="small"
+								label={ __(
+									'Hide placeholders',
+									'advanced-query-loop'
+								) }
+								onClick={ () => setIsOpen( false ) }
+							/>
+						</div>
+						<p className="aql-placeholder-reference__intro">
+							{ __(
+								'Pick any of these from the Meta Value field. They are resolved when the query runs.',
+								'advanced-query-loop'
+							) }
+						</p>
+						{ groupPlaceholders( placeholders ).map(
+							( { key, label, items } ) => (
+								<PanelBody
+									key={ key }
+									className="aql-placeholder-reference__group"
+									title={ sprintf(
+										/* translators: 1: group name, 2: number of placeholders */
+										__(
+											'%1$s (%2$d)',
+											'advanced-query-loop'
+										),
+										label,
+										items.length
+									) }
+									initialOpen={ false }
+								>
+									<PlaceholderList items={ items } />
+								</PanelBody>
+							)
+						) }
+					</section>
+				</Popover>
 			) }
 		</div>
 	);

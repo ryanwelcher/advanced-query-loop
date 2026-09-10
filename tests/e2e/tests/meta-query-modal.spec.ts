@@ -279,6 +279,24 @@ test.describe( 'Placeholder reference', () => {
 		await expect( panel.getByRole( 'searchbox' ) ).toHaveCount( 0 );
 	} );
 
+	test( 'floats over the builder instead of pushing it down', async ( {
+		page,
+	} ) => {
+		await page.getByRole( 'button', { name: 'Add new query' } ).click();
+		const card = page.getByRole( 'combobox', { name: 'Meta Key' } );
+		const before = await card.boundingBox();
+
+		await page
+			.getByRole( 'button', { name: 'About dynamic placeholders' } )
+			.click();
+		await expect(
+			page.getByRole( 'region', { name: 'Dynamic placeholders' } )
+		).toBeVisible();
+
+		const after = await card.boundingBox();
+		expect( after?.y ).toEqual( before?.y );
+	} );
+
 	test( 'closes from the toggle and from the panel', async ( { page } ) => {
 		const toggle = page.getByRole( 'button', {
 			name: 'About dynamic placeholders',
