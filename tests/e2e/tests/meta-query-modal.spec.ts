@@ -273,6 +273,9 @@ test.describe( 'Placeholder reference', () => {
 		await contentGroup.click();
 		await expect( panel.getByText( 'Current Post ID' ) ).toBeVisible();
 		await expect( panel.getByText( '{aql:' ) ).toHaveCount( 0 );
+		await expect(
+			panel.getByText( 'The ID of the post being viewed.' )
+		).toBeVisible();
 
 		// Only one section is open at a time.
 		await panel
@@ -284,9 +287,6 @@ test.describe( 'Placeholder reference', () => {
 			'aria-expanded',
 			'false'
 		);
-		await expect(
-			panel.getByText( 'The ID of the post being viewed.' )
-		).toBeVisible();
 		await expect( panel.getByRole( 'searchbox' ) ).toHaveCount( 0 );
 	} );
 
