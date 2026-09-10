@@ -153,7 +153,7 @@ export const PostMetaControl = ( {
 						suggestions={ registeredMetaKeys }
 						maxLength={ 1 }
 						onChange={ ( newMeta ) =>
-							updateQueryParam( 'meta_key', newMeta[ 0 ] )
+							updateQueryParam( 'meta_key', newMeta[ 0 ] ?? '' )
 						}
 					/>
 					<p className="components-form-token-field__help">

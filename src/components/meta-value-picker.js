@@ -77,13 +77,6 @@ export const MetaValuePicker = ( { metaType, value, onChange } ) => {
 		}
 	};
 
-	let Picker = DatePicker;
-	if ( metaType === 'DATETIME' ) {
-		Picker = DateTimePicker;
-	} else if ( metaType === 'TIME' ) {
-		Picker = TimePicker;
-	}
-
 	return (
 		<div className="aql-meta-value-picker">
 			<Button
@@ -95,20 +88,23 @@ export const MetaValuePicker = ( { metaType, value, onChange } ) => {
 			>
 				{ picker.label }
 			</Button>
-			{ isOpen &&
-				( metaType === 'TIME' ? (
-					<TimePicker
-						currentTime={ current }
-						onChange={ handleChange }
-						is12Hour={ false }
-					/>
-				) : (
-					<Picker
-						currentDate={ current }
-						onChange={ handleChange }
-						is12Hour={ false }
-					/>
-				) ) }
+			{ isOpen && metaType === 'DATE' && (
+				<DatePicker currentDate={ current } onChange={ handleChange } />
+			) }
+			{ isOpen && metaType === 'DATETIME' && (
+				<DateTimePicker
+					currentDate={ current }
+					onChange={ handleChange }
+					is12Hour={ false }
+				/>
+			) }
+			{ isOpen && metaType === 'TIME' && (
+				<TimePicker
+					currentTime={ current }
+					onChange={ handleChange }
+					is12Hour={ false }
+				/>
+			) }
 		</div>
 	);
 };
