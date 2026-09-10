@@ -38,6 +38,11 @@ export const useHasCoreExcludeCurrent = () =>
  * falsy one is simply dropped. The legacy key is always deleted so the
  * `Exclude_Current` PHP trait no longer runs for this block.
  *
+ * The change is marked as not persistent so it doesn't add an undo step,
+ * matching core's own query cleanup. The marker is an unstable block-editor
+ * action, so the call is guarded: if it is ever missing the migration still
+ * runs, it just becomes a regular (undoable) change.
+ *
  * @param {Object}   attributes    Block attributes.
  * @param {Function} setAttributes Attribute setter.
  */
@@ -59,7 +64,7 @@ export const useMigrateExcludeCurrent = ( attributes, setAttributes ) => {
 		const nextQuery = legacyValue
 			? { ...rest, excludeCurrent: true }
 			: rest;
-		__unstableMarkNextChangeAsNotPersistent();
+		__unstableMarkNextChangeAsNotPersistent?.();
 		setAttributes( { query: nextQuery } );
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ needsMigration ] );
