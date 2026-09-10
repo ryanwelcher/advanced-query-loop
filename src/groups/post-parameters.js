@@ -14,7 +14,6 @@ import { __ } from '@wordpress/i18n';
  */
 import { MultiplePostSelect } from '../components/multiple-post-select';
 import { PostIncludeControls } from '../components/post-include-controls';
-import { ExcludeCurrentPostToggle } from '../components/post-exclude-controls';
 import { PostPickerControl } from '../components/post-picker-control';
 import { ChildItemsToggle } from '../components/child-items-toggle';
 import { useToolsPanelDropdownMenuProps } from './use-dropdown-menu-props';
@@ -23,7 +22,6 @@ const GROUP_CONTROLS = [
 	'additional_post_types',
 	'include_posts',
 	'exclude_posts',
-	'exclude_current_post',
 	'child_items_only',
 ];
 
@@ -52,7 +50,6 @@ export const PostParametersControls = ( props ) => {
 					'multiple_posts',
 					'include_posts',
 					'exclude_posts',
-					'exclude_current',
 					'post_parent',
 				] )
 			}
@@ -102,22 +99,6 @@ export const PostParametersControls = ( props ) => {
 							'advanced-query-loop'
 						) }
 					/>
-				</ToolsPanelItem>
-			) }
-			{ allowedControls.includes( 'exclude_current_post' ) && (
-				<ToolsPanelItem
-					label={ __(
-						'Exclude current post',
-						'advanced-query-loop'
-					) }
-					hasValue={ () => !! query.exclude_current }
-					onDeselect={ () =>
-						removeKeys( attributes, setAttributes, [
-							'exclude_current',
-						] )
-					}
-				>
-					<ExcludeCurrentPostToggle { ...props } />
 				</ToolsPanelItem>
 			) }
 			{ allowedControls.includes( 'child_items_only' ) && (

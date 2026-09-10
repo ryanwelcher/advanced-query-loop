@@ -1,15 +1,29 @@
 # Exclude Current Post E2E Tests
 
-This test suite covers the "Exclude Current Post" control functionality in the Advanced Query Loop block.
+This test suite covers the "Exclude current" behaviour of an Advanced Query Loop block.
+
+As of WordPress 7.1, core's Query Loop block owns the **Exclude current** toggle (`query.excludeCurrent`). AQL no longer renders its own toggle on sites with core support and instead migrates the legacy `exclude_current` query key to `excludeCurrent` the next time a block is edited. The legacy AQL toggle only renders (in the "AQL: Extensions" panel) on sites where `core/query` does not register `excludeCurrent`.
 
 ## Test Coverage
 
-### ✅ Tests for Regular Posts
+### ✅ Core toggle on an AQL block
 
-1. **Initial state** - Verifies the control is visible and unchecked by default
-2. **Toggle on** - Verifies toggling the control on stores `true` in block attributes
-3. **Toggle off** - Verifies toggling the control off stores `false` in block attributes
-4. **Not disabled** - Verifies the control is enabled in regular posts
+1. **Initial state** - The core toggle is visible and unchecked, `excludeCurrent` is `null` and no legacy key is present
+2. **Toggle on** - Stores `excludeCurrent: true`
+3. **Toggle off** - Stores `excludeCurrent: false`
+4. **No legacy UI** - The AQL "Exclude Current Post" toggle and the "AQL: Extensions" panel are absent
+
+### ✅ Legacy migration
+
+1. **`exclude_current: true`** becomes `excludeCurrent: true` and the legacy key is removed; core's toggle shows checked
+2. **`exclude_current: <post ID>`** (what older versions stored) becomes `excludeCurrent: true`
+3. **`exclude_current: false`** is dropped without enabling `excludeCurrent`
+
+### ✅ Frontend rendering
+
+1. **Excluded** - The current post is absent from the block's results while other posts remain
+2. **Not excluded** - The current post is present when the toggle is left off
+3. **Toggled on then off** - The current post is present
 
 ## Running the Tests
 
@@ -23,37 +37,16 @@ npm run test:e2e:ui -- tests/exclude-current-post.spec.ts
 
 ## Future Test Additions
 
-The following test scenarios were planned but require additional setup/configuration:
-
 ### Templates
-- Should be disabled in archive template
-- Should be disabled in search template
-- Should be disabled in home/front-page templates (when show_on_front is 'posts')
-- Should be enabled in single template
-- Should work in single template and store boolean value
+Core hides its toggle and clears `excludeCurrent` on non-singular templates (archive, search, home when the front page shows posts), so AQL no longer needs its own disabled state. A Site Editor test confirming the toggle is absent on an archive template would be useful once Site Editor navigation is reliable in Playground.
 
-### Synced Patterns
-- Should be visible and functional in a synced pattern
-- Synced pattern with exclude current should work when inserted in a post
-
-These tests require:
-- Proper theme configuration in the test environment
-- Site Editor navigation that works reliably with Playground
-- Pattern creation workflow that's compatible with the test environment
-
-## Test Structure
-
-All tests follow the same pattern:
-1. Initialize Playground with blueprint
-2. Visit post editor
-3. Insert AQL block with custom query
-4. Interact with "Exclude Current Post" control
-5. Assert expected behavior
-6. Clean up Playground instance
+### Legacy sites
+The legacy AQL toggle is gated on `core/query` not registering `excludeCurrent`. Covering it needs a Playground blueprint pinned to WordPress 7.0 or earlier without the Gutenberg plugin.
 
 ## Notes
 
 - Tests use WordPress Playground via `@wp-playground/cli` for isolated testing
 - Each test gets a fresh WordPress instance
 - The `insertAQL` utility handles block insertion and variation selection
-- Tests verify both UI state and block attributes
+- Migration tests insert the block with a full `query` attribute because the object attribute replaces core's default wholesale
+- Migration tests also insert inner blocks (`core/post-template` with a title and date): core's Query Loop only renders its inspector controls, including the Exclude current toggle, once the block has inner blocks; without them it shows the pattern placeholder

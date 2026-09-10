@@ -24,6 +24,8 @@ import { TaxonomyQueryGroupControls } from '../groups/taxonomy-query';
 import { MetaQueryGroupControls } from '../groups/meta-query';
 import { DateQueryControls } from '../groups/date-query';
 import { AdvancedControls } from '../groups/advanced';
+import { useMigrateExcludeCurrent } from '../hooks/useCoreExcludeCurrent';
+import '../legacy-controls/exclude-current-post';
 
 /**
  * Determines if the active variation is this one
@@ -80,6 +82,12 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 			};
 		},
 		[ props?.attributes?.namespace ]
+	);
+	// Core's Query Loop owns "Exclude current" as of WordPress 7.1; move any
+	// legacy AQL value across so the core toggle reflects it.
+	useMigrateExcludeCurrent(
+		isAdvancedQueryLoop( props ) ? props.attributes : undefined,
+		props.setAttributes
 	);
 
 	// If the is the correct variation, add the custom controls.

@@ -7,9 +7,13 @@ import { useEntityRecord, store as coreDataStore } from '@wordpress/core-data';
 import { __ } from '@wordpress/i18n';
 
 /**
- * ExcludeCurrentPostToggle is a React functional component used within the context
- * of advanced query loop settings. It toggles the exclusion of the current post
- * or content associated with the current template from query results.
+ * Legacy Exclude Current Post toggle.
+ *
+ * Core's Query Loop block provides its own Exclude current toggle
+ * (`query.excludeCurrent`) as of WordPress 7.1, and AQL migrates the legacy
+ * `exclude_current` key to it on edit. This component is only rendered on
+ * sites without core support, via the fill in
+ * `src/legacy-controls/exclude-current-post.js`.
  *
  * @param {Object}   props                 The properties passed to the component.
  * @param {Object}   props.attributes      The block attributes.

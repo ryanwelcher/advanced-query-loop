@@ -33,7 +33,7 @@ class Query_Params_Generator {
 		'taxonomy_query_builder'   => 'tax_query',
 		'post_meta_query'          => 'meta_query',
 		'post_order'               => 'orderBy',
-		'exclude_current_post'     => 'exclude_current',
+		'exclude_current_post'     => 'exclude_current', // Legacy: superseded by core's excludeCurrent in WP 7.1.
 		'include_posts'            => 'include_posts',
 		'child_items_only'         => 'post_parent',
 		'date_query_dynamic_range' => 'date_query',

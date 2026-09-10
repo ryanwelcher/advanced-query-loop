@@ -6,7 +6,15 @@
 namespace AdvancedQueryLoop\Traits;
 
 /**
- * Trait
+ * Legacy trait.
+ *
+ * Core's Query Loop block resolves its own `excludeCurrent` query property as
+ * of WordPress 7.1, and the editor migrates AQL's `exclude_current` key to it
+ * the next time a block is edited. This trait remains for content saved before
+ * that migration and for sites without core support, and should not be
+ * extended with new behaviour.
+ *
+ * @deprecated 5.1.0 Superseded by core's `excludeCurrent`.
  */
 trait Exclude_Current {
 
@@ -25,8 +33,7 @@ trait Exclude_Current {
 	 * @return array The ids to exclude
 	 */
 	public function get_exclude_ids( $exclude_current_post ) {
-		// If there are already posts to be excluded, we need to add to them.
-		$exclude_ids     = $this->custom_args['post__not_in'] ?? array();
+		$exclude_ids     = $this->get_existing_excluded_ids();
 		$post_to_exclude = 0;
 		if ( true !== $exclude_current_post && is_numeric( $exclude_current_post ) && $exclude_current_post >= 1 ) {
 			$post_to_exclude = intval( $exclude_current_post );
@@ -45,7 +52,7 @@ trait Exclude_Current {
 			}
 		}
 
-		if ( $post_to_exclude > 0 ) {
+		if ( $post_to_exclude > 0 && ! in_array( intval( $post_to_exclude ), $exclude_ids, true ) ) {
 			array_push( $exclude_ids, intval( $post_to_exclude ) );
 		}
 

@@ -30,7 +30,7 @@ Choose the posts you want to display manually or only the children of the curren
 
 #### Exclude current post
 
-Remove the current post from the query.
+Core's Query Loop block provides an **Exclude current** toggle as of WordPress 7.1, and AQL migrates its legacy `exclude_current` setting to it automatically. On older sites AQL still provides its own toggle.
 
 #### Exclude posts list
 
@@ -100,7 +100,7 @@ add_filter(
 -   `'taxonomy_query_builder'`
 -   `'post_meta_query'`
 -   `'post_order'`
--   `'exclude_current_post'`
+-   `'exclude_current_post'` (deprecated: no effect on WordPress 7.1+, where core's toggle is used)
 -   `'exclude_posts'`
 -   `'include_posts'`
 -   `'child_items_only'`
