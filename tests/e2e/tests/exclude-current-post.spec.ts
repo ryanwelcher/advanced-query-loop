@@ -52,6 +52,35 @@ const legacyQuery = ( excludeCurrent ) => ( {
 	exclude_current: excludeCurrent,
 } );
 
+/**
+ * Inserts an AQL block carrying a legacy `exclude_current` value.
+ *
+ * The block is inserted with inner blocks because core's Query Loop only
+ * renders its inspector controls (including the Exclude current toggle) once
+ * it has inner blocks; without them it shows the pattern placeholder instead.
+ *
+ * @param {import('@wordpress/e2e-test-utils-playwright').Editor} editor         Editor utils.
+ * @param {boolean|number}                                        excludeCurrent The legacy value to store.
+ */
+const insertLegacyAQL = async ( editor, excludeCurrent ) => {
+	await editor.insertBlock( {
+		name: 'core/query',
+		attributes: {
+			namespace: 'advanced-query-loop',
+			query: legacyQuery( excludeCurrent ),
+		},
+		innerBlocks: [
+			{
+				name: 'core/post-template',
+				innerBlocks: [
+					{ name: 'core/post-title' },
+					{ name: 'core/post-date' },
+				],
+			},
+		],
+	} );
+};
+
 test.describe( 'Exclude Current Post', () => {
 	test.beforeEach( async ( { page, editor, playground, admin } ) => {
 		await playground.init( { page, editor } );
@@ -135,13 +164,7 @@ test.describe( 'Exclude Current Post - Legacy migration', () => {
 		page,
 		editor,
 	} ) => {
-		await editor.insertBlock( {
-			name: 'core/query',
-			attributes: {
-				namespace: 'advanced-query-loop',
-				query: legacyQuery( true ),
-			},
-		} );
+		await insertLegacyAQL( editor, true );
 
 		await expect
 			.poll( async () => {
@@ -158,15 +181,10 @@ test.describe( 'Exclude Current Post - Legacy migration', () => {
 	} );
 
 	test( 'Should migrate a stored post ID to excludeCurrent: true', async ( {
+		page,
 		editor,
 	} ) => {
-		await editor.insertBlock( {
-			name: 'core/query',
-			attributes: {
-				namespace: 'advanced-query-loop',
-				query: legacyQuery( 42 ),
-			},
-		} );
+		await insertLegacyAQL( editor, 42 );
 
 		await expect
 			.poll( async () => {
@@ -177,18 +195,15 @@ test.describe( 'Exclude Current Post - Legacy migration', () => {
 
 		const blocks = await editor.getBlocks();
 		expect( blocks[ 0 ].attributes.query.exclude_current ).toBeUndefined();
+
+		await expect( excludeCurrentToggle( page ) ).toBeChecked();
 	} );
 
 	test( 'Should drop a falsy exclude_current without enabling excludeCurrent', async ( {
+		page,
 		editor,
 	} ) => {
-		await editor.insertBlock( {
-			name: 'core/query',
-			attributes: {
-				namespace: 'advanced-query-loop',
-				query: legacyQuery( false ),
-			},
-		} );
+		await insertLegacyAQL( editor, false );
 
 		await expect
 			.poll( async () => {
@@ -202,6 +217,8 @@ test.describe( 'Exclude Current Post - Legacy migration', () => {
 
 		const blocks = await editor.getBlocks();
 		expect( blocks[ 0 ].attributes.query.excludeCurrent ).toBeFalsy();
+
+		await expect( excludeCurrentToggle( page ) ).not.toBeChecked();
 	} );
 } );
 

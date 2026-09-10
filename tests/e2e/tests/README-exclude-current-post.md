@@ -49,3 +49,4 @@ The legacy AQL toggle is gated on `core/query` not registering `excludeCurrent`.
 - Each test gets a fresh WordPress instance
 - The `insertAQL` utility handles block insertion and variation selection
 - Migration tests insert the block with a full `query` attribute because the object attribute replaces core's default wholesale
+- Migration tests also insert inner blocks (`core/post-template` with a title and date): core's Query Loop only renders its inspector controls, including the Exclude current toggle, once the block has inner blocks; without them it shows the pattern placeholder
