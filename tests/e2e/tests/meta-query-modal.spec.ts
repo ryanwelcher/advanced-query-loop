@@ -617,6 +617,9 @@ test.describe( 'Nested condition groups', () => {
 		page,
 		editor,
 	} ) => {
+		// Builds three conditions, publishes, and loads the frontend; that
+		// runs past the default budget on a slow runner.
+		test.slow();
 		const dialog = page.getByRole( 'dialog', {
 			name: 'Meta Query Builder',
 		} );
