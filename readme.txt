@@ -166,6 +166,10 @@ Advanced Query Loop is built with developers in mind:
 4. Streamline the performance for each query.
 
 == Changelog ==
+= 5.1.0 =
+* Hand the Exclude current post control over to core's Query Loop toggle (`excludeCurrent`) on WordPress 7.1+, migrating the legacy `exclude_current` setting automatically when a block is edited. The AQL toggle remains for older sites.
+* Keep exclusions core has already applied (its Exclude current toggle and exclude list) when AQL's Exclude posts or legacy Exclude current post controls are also set, instead of overwriting them.
+
 = 5.0.0 =
 * Bump Tested up to for WordPress 7.1.
 * Raise the minimum supported WordPress version to 6.7.

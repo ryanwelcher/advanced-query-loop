@@ -102,6 +102,38 @@ class Exclude_Current_Tests extends TestCase {
 
 
 	/**
+	 * Exclusions core already placed on the query must be kept.
+	 */
+	public function test_exclude_current_merges_with_default_post_not_in() {
+		$default_data = array( 'post__not_in' => array( 99 ) );
+		$custom_data  = array( 'exclude_current' => 10 );
+
+		$qpg = new Query_Params_Generator( $default_data, $custom_data );
+		$qpg->process_all();
+
+		$this->assertEquals(
+			array(
+				'post__not_in' => array( 99, 10 ),
+				'is_aql'       => true,
+			),
+			$qpg->get_query_args()
+		);
+	}
+
+	/**
+	 * Core's `excludeCurrent` may already have added the current post; it must not be duplicated.
+	 */
+	public function test_exclude_current_does_not_duplicate_default_id() {
+		$default_data = array( 'post__not_in' => array( 10 ) );
+		$custom_data  = array( 'exclude_current' => 10 );
+
+		$qpg = new Query_Params_Generator( $default_data, $custom_data );
+		$qpg->process_all();
+
+		$this->assertEquals( array( 10 ), $qpg->get_query_args()['post__not_in'] );
+	}
+
+	/**
 	 * When Exclude current post is set on a template, it receives a string of the template name.
 	 */
 	public function test_exclude_current_receives_a_string() {

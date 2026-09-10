@@ -372,9 +372,9 @@ class Query_Params_Generator_Core_Tests extends TestCase {
 	}
 
 	/**
-	 * Test process_all called multiple times adds duplicate values
+	 * Test process_all called multiple times does not duplicate excluded IDs
 	 */
-	public function test_process_all_not_idempotent() {
+	public function test_process_all_dedupes_excluded_ids() {
 		$custom_data = array(
 			'exclude_current' => 10,
 		);
@@ -386,12 +386,10 @@ class Query_Params_Generator_Core_Tests extends TestCase {
 		$result1 = $qpg->get_query_args();
 		$this->assertEquals( array( 10 ), $result1['post__not_in'] );
 
-		// Process again - adds duplicate
+		// Process again - the ID is already present and is not added twice.
 		$qpg->process_all();
 		$result2 = $qpg->get_query_args();
-		$this->assertEquals( array( 10, 10 ), $result2['post__not_in'] );
-
-		// This documents that process_all should only be called once
+		$this->assertEquals( array( 10 ), $result2['post__not_in'] );
 	}
 
 	/**

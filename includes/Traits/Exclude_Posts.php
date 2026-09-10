@@ -25,8 +25,7 @@ trait Exclude_Posts {
 	 * @return array The ids to exclude
 	 */
 	public function get_excluded_post_ids( $to_exclude ) {
-		// If there are already posts to be excluded, we need to add to them.
-		$exclude_ids = $this->custom_args['post__not_in'] ?? array();
+		$exclude_ids = $this->get_existing_excluded_ids();
 
 		if ( empty( $to_exclude ) ) {
 			return $exclude_ids;
@@ -45,8 +44,24 @@ trait Exclude_Posts {
 			}
 			$to_exclude = $normalized;
 		}
-		$exclude_ids = array_unique( array_merge( $exclude_ids, (array) $to_exclude ) );
+		$exclude_ids = array_values( array_unique( array_merge( $exclude_ids, array_map( 'intval', (array) $to_exclude ) ) ) );
 
 		return $exclude_ids;
+	}
+
+	/**
+	 * Retrieve the IDs already marked for exclusion.
+	 *
+	 * Prefers the IDs added by an earlier AQL trait, then falls back to the
+	 * exclusions core has already placed on the query (e.g. the current post
+	 * from core's `excludeCurrent`, or its `exclude` list) so they survive the
+	 * merge of AQL's args over the defaults.
+	 *
+	 * @return int[]
+	 */
+	protected function get_existing_excluded_ids(): array {
+		$existing = $this->custom_args['post__not_in'] ?? $this->default_params['post__not_in'] ?? array();
+
+		return array_values( array_filter( array_map( 'intval', (array) $existing ) ) );
 	}
 }

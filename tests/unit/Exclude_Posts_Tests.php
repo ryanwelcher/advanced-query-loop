@@ -106,6 +106,26 @@ class Exclude_Posts_Tests extends TestCase {
 	}
 
 	/**
+	 * Exclusions core already placed on the query (e.g. the current post from
+	 * core's `excludeCurrent`) must be kept when AQL adds its own list.
+	 */
+	public function test_exclude_posts_merges_with_default_post_not_in() {
+		$default_data = array( 'post__not_in' => array( 99 ) );
+		$custom_data  = array( 'exclude_posts' => array( 12, 99 ) );
+
+		$qpg = new Query_Params_Generator( $default_data, $custom_data );
+		$qpg->process_all();
+
+		$this->assertEquals(
+			array(
+				'is_aql'       => true,
+				'post__not_in' => array( 99, 12 ),
+			),
+			$qpg->get_query_args()
+		);
+	}
+
+	/**
 	 * Data provider for the non-empty array tests
 	 *
 	 * @return array
