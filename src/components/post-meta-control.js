@@ -78,7 +78,6 @@ const metaTypeOptions = [
  * @param {string[]} props.registeredMetaKeys Meta keys to suggest.
  * @param {Function} props.onChange           Receives an object of changed fields.
  * @param {Function} props.onRemove           Removes this condition.
- * @param {Function} props.onValueFocus       Called when the value field gains focus.
  * @return {Element} The condition card.
  */
 export const PostMetaControl = ( {
@@ -86,7 +85,6 @@ export const PostMetaControl = ( {
 	registeredMetaKeys,
 	onChange,
 	onRemove,
-	onValueFocus,
 } ) => {
 	const activeQuery = condition;
 	const hasKey = activeQuery?.meta_key?.length > 0;
@@ -225,7 +223,6 @@ export const PostMetaControl = ( {
 						onChange={ ( newValue ) =>
 							updateQueryParam( 'meta_value', newValue )
 						}
-						onFocus={ onValueFocus }
 						help={ valueHelp }
 					/>
 				</>

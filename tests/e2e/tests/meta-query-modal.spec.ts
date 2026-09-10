@@ -230,70 +230,77 @@ test.describe( 'Placeholder reference', () => {
 		await page
 			.getByRole( 'button', { name: 'Open Post Meta query builder' } )
 			.click();
-		await page.getByRole( 'button', { name: 'Add new query' } ).click();
-		await page
-			.getByRole( 'combobox', { name: 'Meta Key' } )
-			.fill( 'related_post' );
-		await page.keyboard.press( 'Enter' );
 	} );
 
 	test.afterEach( async ( { playground } ) => {
 		await playground.cleanUp();
 	} );
 
-	test( 'lists placeholders with descriptions and filters them', async ( {
-		page,
-	} ) => {
-		const reference = page.getByRole( 'complementary', {
+	test( 'is hidden until the info button is pressed', async ( { page } ) => {
+		const toggle = page.getByRole( 'button', {
+			name: 'About dynamic placeholders',
+		} );
+		await expect( toggle ).toBeVisible();
+		await expect( toggle ).toHaveAttribute( 'aria-expanded', 'false' );
+		await expect(
+			page.getByRole( 'region', { name: 'Dynamic placeholders' } )
+		).toHaveCount( 0 );
+
+		await toggle.click();
+
+		const panel = page.getByRole( 'region', {
 			name: 'Dynamic placeholders',
 		} );
-		await expect( reference ).toBeVisible();
+		await expect( panel ).toBeVisible();
+		await expect( toggle ).toHaveAttribute( 'aria-expanded', 'true' );
+		await expect( panel.getByText( 'Current Post ID' ) ).toBeVisible();
 		await expect(
-			reference.getByRole( 'button', { name: /Current Post ID/ } )
+			panel.getByText( '{aql:current_post_id}' )
 		).toBeVisible();
 		await expect(
-			reference.getByText( 'The ID of the post being viewed.' )
+			panel.getByText( 'The ID of the post being viewed.' )
 		).toBeVisible();
-
-		await reference
-			.getByRole( 'searchbox', { name: 'Filter placeholders' } )
-			.fill( 'month' );
-		await expect(
-			reference.getByRole( 'button', { name: /3 Months Ago/ } )
-		).toBeVisible();
-		await expect(
-			reference.getByRole( 'button', { name: /Current Post ID/ } )
-		).toBeHidden();
+		await expect( panel.getByRole( 'searchbox' ) ).toHaveCount( 0 );
 	} );
 
-	test( 'inserts a token into the focused value field', async ( {
+	test( 'closes from the toggle and from the panel', async ( { page } ) => {
+		const toggle = page.getByRole( 'button', {
+			name: 'About dynamic placeholders',
+		} );
+		const panel = page.getByRole( 'region', {
+			name: 'Dynamic placeholders',
+		} );
+
+		await toggle.click();
+		await expect( panel ).toBeVisible();
+		await toggle.click();
+		await expect( panel ).toHaveCount( 0 );
+
+		await toggle.click();
+		await panel
+			.getByRole( 'button', { name: 'Hide placeholders' } )
+			.click();
+		await expect( panel ).toHaveCount( 0 );
+	} );
+
+	test( 'entries are reference only and do not write a value', async ( {
 		page,
 		editor,
 	} ) => {
-		await page.getByRole( 'combobox', { name: 'Meta Value' } ).click();
+		await page.getByRole( 'button', { name: 'Add new query' } ).click();
 		await page
-			.getByRole( 'complementary', { name: 'Dynamic placeholders' } )
-			.getByRole( 'button', { name: /Current Post ID/ } )
+			.getByRole( 'combobox', { name: 'Meta Key' } )
+			.fill( 'related_post' );
+		await page.keyboard.press( 'Enter' );
+
+		await page
+			.getByRole( 'button', { name: 'About dynamic placeholders' } )
+			.click();
+		await page
+			.getByRole( 'region', { name: 'Dynamic placeholders' } )
+			.getByText( 'Current Post ID' )
 			.click();
 
-		const blocks = await editor.getBlocks();
-		expect(
-			blocks[ 0 ].attributes.query.meta_query.queries[ 0 ].meta_value
-		).toEqual( '{aql:current_post_id}' );
-	} );
-
-	test( 'explains itself when no value field has been focused', async ( {
-		page,
-		editor,
-	} ) => {
-		await page
-			.getByRole( 'complementary', { name: 'Dynamic placeholders' } )
-			.getByRole( 'button', { name: /Current Post ID/ } )
-			.click();
-
-		await expect(
-			page.getByText( 'Select a Meta Value field first' )
-		).toBeVisible();
 		const blocks = await editor.getBlocks();
 		expect(
 			blocks[ 0 ].attributes.query.meta_query.queries[ 0 ].meta_value

@@ -61,7 +61,6 @@ const RelationToggle = ( { value, onChange } ) => (
  * @param {Function} props.onChange           Receives the replaced entries.
  * @param {Function} props.onRelationChange   Receives the new relation.
  * @param {string[]} props.registeredMetaKeys Meta keys to suggest.
- * @param {Function} props.onValueFocus       Receives the focused condition ID.
  * @return {Element} The list.
  */
 export const MetaConditionList = ( {
@@ -70,7 +69,6 @@ export const MetaConditionList = ( {
 	onChange,
 	onRelationChange,
 	registeredMetaKeys,
-	onValueFocus,
 } ) => {
 	const replaceAt = ( index, entry ) =>
 		onChange(
@@ -127,7 +125,6 @@ export const MetaConditionList = ( {
 								} )
 							}
 							registeredMetaKeys={ registeredMetaKeys }
-							onValueFocus={ onValueFocus }
 						/>
 						<Button
 							variant="secondary"
@@ -154,7 +151,6 @@ export const MetaConditionList = ( {
 							replaceAt( index, { ...entry, ...changes } )
 						}
 						onRemove={ () => removeAt( index ) }
-						onValueFocus={ () => onValueFocus( entry.id ) }
 					/>
 				)
 			) }
