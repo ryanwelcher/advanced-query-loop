@@ -273,6 +273,17 @@ test.describe( 'Placeholder reference', () => {
 		await contentGroup.click();
 		await expect( panel.getByText( 'Current Post ID' ) ).toBeVisible();
 		await expect( panel.getByText( '{aql:' ) ).toHaveCount( 0 );
+
+		// Only one section is open at a time.
+		await panel
+			.getByRole( 'button', { name: 'Relative dates (8)' } )
+			.click();
+		await expect( panel.getByText( '3 Months Ago' ) ).toBeVisible();
+		await expect( panel.getByText( 'Current Post ID' ) ).toBeHidden();
+		await expect( contentGroup ).toHaveAttribute(
+			'aria-expanded',
+			'false'
+		);
 		await expect(
 			panel.getByText( 'The ID of the post being viewed.' )
 		).toBeVisible();

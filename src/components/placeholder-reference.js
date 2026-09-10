@@ -116,7 +116,15 @@ const PlaceholderList = ( { items } ) => (
 export const PlaceholderReference = () => {
 	const placeholders = usePlaceholders();
 	const [ isOpen, setIsOpen ] = useState( false );
-	const [ anchor, setAnchor ] = useState( null );
+	const [ openGroup, setOpenGroup ] = useState( null );
+	const [ triggerNode, setTriggerNode ] = useState( null );
+
+	// Anchor below the modal header so the popover sits top-center and grows
+	// downward as sections open. Fall back to the trigger outside a modal.
+	const anchor =
+		triggerNode
+			?.closest( '.components-modal__content' )
+			?.querySelector( '.components-modal__header' ) ?? triggerNode;
 
 	if ( ! placeholders.length ) {
 		return null;
@@ -125,7 +133,7 @@ export const PlaceholderReference = () => {
 	const panelId = 'aql-placeholder-reference-panel';
 
 	return (
-		<div className="aql-placeholder-reference" ref={ setAnchor }>
+		<div className="aql-placeholder-reference" ref={ setTriggerNode }>
 			<Button
 				className="aql-placeholder-reference__toggle"
 				icon={ info }
@@ -141,8 +149,9 @@ export const PlaceholderReference = () => {
 			{ isOpen && (
 				<Popover
 					anchor={ anchor }
-					placement="top-end"
+					placement="bottom"
 					offset={ 8 }
+					flip={ false }
 					focusOnMount
 					onClose={ () => setIsOpen( false ) }
 					className="aql-placeholder-reference__popover"
@@ -192,7 +201,10 @@ export const PlaceholderReference = () => {
 										label,
 										items.length
 									) }
-									initialOpen={ false }
+									opened={ openGroup === key }
+									onToggle={ ( next ) =>
+										setOpenGroup( next ? key : null )
+									}
 								>
 									<PlaceholderList items={ items } />
 								</PanelBody>
