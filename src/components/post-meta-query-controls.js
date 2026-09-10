@@ -65,7 +65,7 @@ export const PostMetaQueryControls = ( {
 			query: {
 				...attributes.query,
 				meta_query: {
-					...attributes.query.meta_query,
+					...( attributes.query.meta_query ?? {} ),
 					relation: newRelation,
 				},
 			},
@@ -77,7 +77,7 @@ export const PostMetaQueryControls = ( {
 			query: {
 				...attributes.query,
 				meta_query: {
-					...attributes.query.meta_query,
+					...( attributes.query.meta_query ?? {} ),
 					queries: newQueries,
 				},
 			},

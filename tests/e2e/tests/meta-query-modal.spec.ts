@@ -199,6 +199,8 @@ test.describe( 'Meta query builder layout', () => {
 	test( 'keeps the footer reachable with many conditions', async ( {
 		page,
 	} ) => {
+		// Ten round-trips through the token field add up on a slow runner.
+		test.slow();
 		const dialog = page.getByRole( 'dialog', {
 			name: 'Meta Query Builder',
 		} );
@@ -660,14 +662,20 @@ test.describe( 'Nested condition groups', () => {
 				),
 			].sort();
 
-		await page.waitForTimeout( 1500 );
-		const editorIds = idsFrom(
-			await editor.canvas
-				.locator( '.wp-block-post-title' )
-				.allTextContents()
-		);
-		// Two posts carry _test_featured in the blueprint.
-		expect( editorIds ).toHaveLength( 2 );
+		const readEditorIds = async () =>
+			idsFrom(
+				await editor.canvas
+					.locator( '.wp-block-post-title' )
+					.allTextContents()
+			);
+		// Two posts carry _test_featured in the blueprint. Poll until the
+		// preview has re-rendered for the new query instead of sleeping.
+		await expect
+			.poll( async () => ( await readEditorIds() ).length, {
+				timeout: 15000,
+			} )
+			.toBe( 2 );
+		const editorIds = await readEditorIds();
 
 		await editor.publishPost();
 		const postId = new URL( page.url() ).searchParams.get( 'post' );
