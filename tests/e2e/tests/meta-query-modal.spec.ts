@@ -254,9 +254,7 @@ test.describe( 'Placeholder reference', () => {
 		await expect( panel ).toBeVisible();
 		await expect( toggle ).toHaveAttribute( 'aria-expanded', 'true' );
 		await expect( panel.getByText( 'Current Post ID' ) ).toBeVisible();
-		await expect(
-			panel.getByText( '{aql:current_post_id}' )
-		).toBeVisible();
+		await expect( panel.getByText( '{aql:' ) ).toHaveCount( 0 );
 		await expect(
 			panel.getByText( 'The ID of the post being viewed.' )
 		).toBeVisible();

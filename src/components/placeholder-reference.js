@@ -72,7 +72,7 @@ export const PlaceholderReference = () => {
 					</div>
 					<p className="aql-placeholder-reference__intro">
 						{ __(
-							'Type any of these into a Meta Value field. They are resolved when the query runs.',
+							'Pick any of these from the Meta Value field. They are resolved when the query runs.',
 							'advanced-query-loop'
 						) }
 					</p>
@@ -83,13 +83,8 @@ export const PlaceholderReference = () => {
 									key={ name }
 									className="aql-placeholder-reference__item"
 								>
-									<dt>
-										<span className="aql-placeholder-reference__label">
-											{ label }
-										</span>
-										<code className="aql-placeholder-reference__token">
-											{ `{aql:${ name }}` }
-										</code>
+									<dt className="aql-placeholder-reference__label">
+										{ label }
 									</dt>
 									{ description && <dd>{ description }</dd> }
 								</div>

@@ -129,29 +129,15 @@
 		margin: 0;
 	}
 
-	&__item {
-		dt {
-			display: flex;
-			flex-wrap: wrap;
-			align-items: baseline;
-			gap: 4px 8px;
-			font-weight: 500;
-		}
-
-		dd {
-			margin: 2px 0 0;
-			color: #757575;
-			font-size: 11px;
-			line-height: 1.4;
-		}
+	&__label {
+		font-weight: 500;
 	}
 
-	&__token {
+	&__item dd {
+		margin: 2px 0 0;
+		color: #757575;
 		font-size: 11px;
-		background: #fff;
-		padding: 1px 4px;
-		border: 1px solid #e0e0e0;
-		border-radius: 2px;
+		line-height: 1.4;
 	}
 }
 
