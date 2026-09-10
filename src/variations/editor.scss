@@ -6,7 +6,187 @@
  * component's built-in "No results." announcement.
  */
 .aql-token-field {
+	position: relative;
+
 	.components-form-token-field__suggestion.is-empty {
 		display: none;
+	}
+
+	/*
+	 * Overlay the suggestions instead of pushing content down. An inline
+	 * list collapses on blur, which shifts everything below it between
+	 * mousedown and mouseup and swallows the click.
+	 */
+	/*
+	 * These fields hold one token. Once it is set nothing more can be
+	 * picked, so keep the overlay from lingering over the controls below.
+	 */
+	.components-form-token-field__input-container:has(.components-form-token-field__token)
+		.components-form-token-field__suggestions-list {
+		display: none;
+	}
+
+	.components-form-token-field__suggestions-list {
+		position: absolute;
+		z-index: 10;
+		left: 0;
+		right: 0;
+		border: 1px solid #949494;
+		border-top: 0;
+		background: #fff;
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	}
+}
+
+/**
+ * Query builder modal: body scrolls, footer stays put.
+ */
+.aql-query-builder-modal {
+	.components-modal__content {
+		display: flex;
+		flex-direction: column;
+		padding-bottom: 0;
+	}
+
+	&__body {
+		flex: 1;
+	}
+
+	&__footer {
+		position: sticky;
+		bottom: 0;
+		margin-top: 16px;
+		padding: 16px 0;
+		background: #fff;
+		border-top: 1px solid #ddd;
+	}
+}
+
+.aql-query-builder-summary {
+	margin: 8px 0 0;
+	color: #757575;
+	font-size: 12px;
+}
+
+.aql-condition {
+	margin-bottom: 16px;
+	padding: 16px;
+	border: 1px solid #ddd;
+	border-radius: 2px;
+
+	&__row {
+		flex: 1;
+	}
+
+	&__footer {
+		margin-top: 12px;
+		padding-top: 12px;
+		border-top: 1px solid #e0e0e0;
+	}
+
+	.aql-token-field .components-form-token-field__help {
+		margin-bottom: 12px;
+	}
+}
+
+.aql-placeholder-reference {
+	flex-shrink: 0;
+
+	&__popover .components-popover__content {
+		width: min(640px, 90vw);
+		max-height: 70vh;
+		overflow-y: auto;
+	}
+
+	&__panel {
+		padding: 12px 16px;
+	}
+
+	&__header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	&__heading {
+		margin: 0;
+		font-size: 13px;
+		font-weight: 600;
+	}
+
+	&__intro {
+		margin: 4px 0 12px;
+		color: #757575;
+		font-size: 12px;
+	}
+
+	&__group.components-panel__body {
+		margin: 0 -16px;
+		border-top: 1px solid #ddd;
+		border-bottom: 0;
+
+		&:last-child {
+			border-bottom: 1px solid #ddd;
+		}
+
+		> .components-panel__body-title .components-button {
+			font-size: 12px;
+			font-weight: 600;
+		}
+	}
+
+	&__intro {
+		margin-bottom: 8px;
+	}
+
+	&__panel {
+		padding-bottom: 0;
+	}
+
+	&__list {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+		gap: 8px 24px;
+		margin: 0;
+	}
+
+	&__label {
+		font-weight: 500;
+	}
+
+	&__item dd {
+		margin: 2px 0 0;
+		color: #757575;
+		font-size: 11px;
+		line-height: 1.4;
+	}
+}
+
+.aql-meta-value-picker {
+	margin-bottom: 8px;
+
+	.components-datetime,
+	.components-datetime__time {
+		margin-top: 8px;
+	}
+}
+
+.aql-condition-group {
+	margin-bottom: 16px;
+	padding: 16px;
+	border: 1px dashed #949494;
+	border-radius: 2px;
+	background: #fafafa;
+
+	&__header {
+		margin-bottom: 12px;
+	}
+
+	&__title {
+		font-weight: 600;
+	}
+
+	.aql-condition {
+		background: #fff;
 	}
 }

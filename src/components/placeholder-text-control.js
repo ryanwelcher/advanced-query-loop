@@ -20,8 +20,16 @@ import usePlaceholders from '../hooks/usePlaceholders';
  * @param {string}   props.label    Field label.
  * @param {string}   props.value    Current value.
  * @param {Function} props.onChange Change handler receiving the new value.
+ * @param {Function} props.onFocus  Optional focus handler.
+ * @param {string}   props.help     Optional help text replacing the default.
  */
-export const PlaceholderTextControl = ( { label, value, onChange } ) => {
+export const PlaceholderTextControl = ( {
+	label,
+	value,
+	onChange,
+	onFocus,
+	help,
+} ) => {
 	const placeholders = usePlaceholders();
 
 	/**
@@ -60,6 +68,7 @@ export const PlaceholderTextControl = ( { label, value, onChange } ) => {
 					( placeholder ) => placeholder.label
 				) }
 				maxLength={ 1 }
+				onFocus={ onFocus }
 				__experimentalExpandOnFocus
 				__experimentalShowHowTo={ false }
 				onChange={ ( newValue ) =>
@@ -69,10 +78,11 @@ export const PlaceholderTextControl = ( { label, value, onChange } ) => {
 				}
 			/>
 			<p className="components-form-token-field__help">
-				{ __(
-					'Pick from the list, or type a value and press Enter.',
-					'advanced-query-loop'
-				) }
+				{ help ??
+					__(
+						'Pick from the list, or type a value and press Enter.',
+						'advanced-query-loop'
+					) }
 			</p>
 		</div>
 	);

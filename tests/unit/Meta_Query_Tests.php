@@ -412,4 +412,180 @@ class Meta_Query_Tests extends TestCase {
 
 		$this->assertEquals( $expected_results, $qpg->get_query_args() );
 	}
+	/**
+	 * Data provider for nested condition groups.
+	 *
+	 * @return array
+	 */
+	public function data_nested_groups() {
+		return array(
+			'(A and B) or C'                         => array(
+				array(
+					'meta_query' => array(
+						'relation' => 'OR',
+						'queries'  => array(
+							array(
+								'id'       => 'g1',
+								'relation' => 'AND',
+								'queries'  => array(
+									array(
+										'id'         => 'a',
+										'meta_key'   => 'color',
+										'meta_value' => 'blue',
+									),
+									array(
+										'id'           => 'b',
+										'meta_key'     => 'price',
+										'meta_value'   => '10',
+										'meta_compare' => '>',
+										'meta_type'    => 'NUMERIC',
+									),
+								),
+							),
+							array(
+								'id'         => 'c',
+								'meta_key'   => 'featured',
+								'meta_value' => 'yes',
+							),
+						),
+					),
+				),
+				array(
+					'is_aql'     => true,
+					'meta_query' => array(
+						'relation' => 'OR',
+						array(
+							'relation' => 'AND',
+							array(
+								'key'   => 'color',
+								'value' => 'blue',
+							),
+							array(
+								'key'     => 'price',
+								'value'   => '10',
+								'compare' => '>',
+								'type'    => 'NUMERIC',
+							),
+						),
+						array(
+							'key'   => 'featured',
+							'value' => 'yes',
+						),
+					),
+				),
+			),
+			'group without relation defaults to AND' => array(
+				array(
+					'meta_query' => array(
+						'queries' => array(
+							array(
+								'queries' => array(
+									array(
+										'meta_key'   => 'color',
+										'meta_value' => 'blue',
+									),
+								),
+							),
+						),
+					),
+				),
+				array(
+					'is_aql'     => true,
+					'meta_query' => array(
+						array(
+							'relation' => 'AND',
+							array(
+								'key'   => 'color',
+								'value' => 'blue',
+							),
+						),
+					),
+				),
+			),
+			'empty group is dropped'                 => array(
+				array(
+					'meta_query' => array(
+						'relation' => 'OR',
+						'queries'  => array(
+							array(
+								'relation' => 'AND',
+								'queries'  => array(
+									array(
+										'meta_key'   => '',
+										'meta_value' => '',
+									),
+								),
+							),
+							array(
+								'meta_key'   => 'featured',
+								'meta_value' => 'yes',
+							),
+						),
+					),
+				),
+				array(
+					'is_aql'     => true,
+					'meta_query' => array(
+						'relation' => 'OR',
+						array(
+							'key'   => 'featured',
+							'value' => 'yes',
+						),
+					),
+				),
+			),
+			'groups nest to any depth'               => array(
+				array(
+					'meta_query' => array(
+						'queries' => array(
+							array(
+								'relation' => 'OR',
+								'queries'  => array(
+									array(
+										'relation' => 'AND',
+										'queries'  => array(
+											array(
+												'meta_key' => 'a',
+												'meta_value' => '1',
+											),
+										),
+									),
+								),
+							),
+						),
+					),
+				),
+				array(
+					'is_aql'     => true,
+					'meta_query' => array(
+						array(
+							'relation' => 'OR',
+							array(
+								'relation' => 'AND',
+								array(
+									'key'   => 'a',
+									'value' => '1',
+								),
+							),
+						),
+					),
+				),
+			),
+		);
+	}
+
+	/**
+	 * Nested groups become nested WP_Query meta clauses.
+	 *
+	 * @param array $custom_data      The params coming from AQL.
+	 * @param array $expected_results The expected results.
+	 *
+	 * @dataProvider data_nested_groups
+	 */
+	public function test_nested_groups( $custom_data, $expected_results ) {
+		$qpg = new Query_Params_Generator( array(), $custom_data );
+		$qpg->process_all();
+
+		$this->assertSame( $expected_results, $qpg->get_query_args() );
+	}
 }
