@@ -253,6 +253,24 @@ test.describe( 'Placeholder reference', () => {
 		} );
 		await expect( panel ).toBeVisible();
 		await expect( toggle ).toHaveAttribute( 'aria-expanded', 'true' );
+
+		// Groups start collapsed.
+		const contentGroup = panel.getByRole( 'button', {
+			name: 'Content & users (5)',
+		} );
+		await expect( contentGroup ).toHaveAttribute(
+			'aria-expanded',
+			'false'
+		);
+		await expect( panel.getByText( 'Current Post ID' ) ).toBeHidden();
+		await expect(
+			panel.getByRole( 'button', { name: 'Current date & time (10)' } )
+		).toBeVisible();
+		await expect(
+			panel.getByRole( 'button', { name: 'Relative dates (8)' } )
+		).toBeVisible();
+
+		await contentGroup.click();
 		await expect( panel.getByText( 'Current Post ID' ) ).toBeVisible();
 		await expect( panel.getByText( '{aql:' ) ).toHaveCount( 0 );
 		await expect(
@@ -294,10 +312,13 @@ test.describe( 'Placeholder reference', () => {
 		await page
 			.getByRole( 'button', { name: 'About dynamic placeholders' } )
 			.click();
-		await page
-			.getByRole( 'region', { name: 'Dynamic placeholders' } )
-			.getByText( 'Current Post ID' )
+		const panel = page.getByRole( 'region', {
+			name: 'Dynamic placeholders',
+		} );
+		await panel
+			.getByRole( 'button', { name: 'Content & users (5)' } )
 			.click();
+		await panel.getByText( 'Current Post ID' ).click();
 
 		const blocks = await editor.getBlocks();
 		expect(

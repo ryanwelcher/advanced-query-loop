@@ -122,6 +122,29 @@
 		font-size: 12px;
 	}
 
+	&__group.components-panel__body {
+		margin: 0 -16px;
+		border-top: 1px solid #ddd;
+		border-bottom: 0;
+
+		&:last-child {
+			border-bottom: 1px solid #ddd;
+		}
+
+		> .components-panel__body-title .components-button {
+			font-size: 12px;
+			font-weight: 600;
+		}
+	}
+
+	&__intro {
+		margin-bottom: 8px;
+	}
+
+	&__panel {
+		padding-bottom: 0;
+	}
+
 	&__list {
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
