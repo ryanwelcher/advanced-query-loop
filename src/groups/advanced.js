@@ -24,7 +24,7 @@ export const AdvancedControls = ( props ) => {
 	// Skip the whole panel when none of its controls are allowed.
 	if (
 		! allowedControls.includes( 'query_id' ) &&
-		! allowedControls.include( 'hide_empty' )
+		! allowedControls.includes( 'hide_empty' )
 	) {
 		return null;
 	}
