@@ -18,6 +18,43 @@ if ( ! function_exists( 'add_filter' ) ) {
 }
 
 /**
+ * Number of AQL blocks currently rendering that rely on the query_loop_block_query_vars filter.
+ */
+$GLOBALS['aql_query_vars_filter_depth'] = 0;
+
+/**
+ * Applies the AQL params to a non-inherited Query Loop block query.
+ *
+ * @param array     $default_query The query vars built by core.
+ * @param \WP_Block $block         The block instance running the query.
+ *
+ * @return array
+ */
+function filter_query_loop_block_query_vars( $default_query, $block ) {
+	// Retrieve the query from the passed block context.
+	$block_query = $block->context['query'] ?? array();
+
+	// Process all of the params
+	$qpg = new Query_Params_Generator( $default_query, $block_query );
+	$qpg->process_all();
+	$query_args = $qpg->get_query_args();
+
+	/** This filter is documented in includes/query-loop.php */
+	$filtered_query_args = \apply_filters(
+		'aql_query_vars',
+		$query_args,
+		$block_query,
+		false
+	);
+
+	// Return the merged query.
+	return array_merge(
+		$default_query,
+		$filtered_query_args
+	);
+}
+
+/**
  * Updates the query on the front end based on custom query attributes.
  */
 \add_filter(
@@ -59,34 +96,8 @@ if ( ! function_exists( 'add_filter' ) ) {
 
 				$wp_query = new \WP_Query( array_filter( $filtered_query_args ) );
 			} else {
-				\add_filter(
-					'query_loop_block_query_vars',
-					function ( $default_query, $block ) {
-						// Retrieve the query from the passed block context.
-						$block_query = $block->context['query'] ?? array();
-
-						// Process all of the params
-						$qpg = new Query_Params_Generator( $default_query, $block_query );
-						$qpg->process_all();
-						$query_args = $qpg->get_query_args();
-
-						/** This filter is documented in includes/query-loop.php */
-						$filtered_query_args = \apply_filters(
-							'aql_query_vars',
-							$query_args,
-							$block_query,
-							false
-						);
-
-						// Return the merged query.
-						return array_merge(
-							$default_query,
-							$filtered_query_args
-						);
-					},
-					10,
-					2
-				);
+				++$GLOBALS['aql_query_vars_filter_depth'];
+				\add_filter( 'query_loop_block_query_vars', __NAMESPACE__ . '\filter_query_loop_block_query_vars', 10, 2 );
 			}
 		}
 
@@ -139,7 +150,6 @@ function add_more_sort_by( $query_params ) {
 	$query_params['orderby']['enum'][] = 'name';
 	return $query_params;
 }
-
 /**
  * Callback to handle the custom query params. Updates the block editor.
  *
@@ -179,7 +189,8 @@ add_filter(
 	'posts_pre_query',
 	function ( $null_return, $query ) {
 
-		if ( ! $query->is_admin &&
+		if (
+			! $query->is_admin &&
 			isset( $query->query['is_aql'] ) &&
 			isset( $query->query['enable_caching'] ) &&
 			true === $query->query['enable_caching'] &&
@@ -206,18 +217,72 @@ add_filter(
 add_filter(
 	'the_posts',
 	function ( $posts, $query ) {
-		if ( ! $query->is_admin &&
+		if (
+			! $query->is_admin &&
 			isset( $query->query['is_aql'] ) &&
 			isset( $query->query['enable_caching'] ) &&
 			true === $query->query['enable_caching'] &&
-			! isset( $_GET['context'] ) && // phpcs:ignore
-			! isset( $_GET['canvas'] ) // phpcs:ignore
+			! isset($_GET['context']) && // phpcs:ignore
+			! isset($_GET['canvas']) // phpcs:ignore
 		) {
 			if ( ! get_transient( $query->query_vars_hash ) ) {
 				set_transient( $query->query_vars_hash, $query, HOUR_IN_SECONDS );
 			}
 		}
 		return $posts;
+	},
+	10,
+	2
+);
+
+/**
+ * Hide an AQL block once it has rendered if its query has no results.
+ */
+add_filter(
+	'render_block_core/query',
+	function ( $block_content, $block ) {
+		if ( ! isset( $block['attrs']['namespace'] ) || 'advanced-query-loop' !== $block['attrs']['namespace'] ) {
+			return $block_content;
+		}
+
+		$hide_if_empty = ! empty( $block['attrs']['query']['hide_if_empty'] );
+		$query         = null;
+
+		if ( ! empty( $block['attrs']['query']['inherit'] ) ) {
+			global $wp_query;
+			$query = $wp_query;
+		} else {
+			if ( $hide_if_empty ) {
+				/*
+				 * Rebuild the query the same way core's inner blocks (e.g. query-no-results) do. The Query block
+				 * doesn't consume its own context, so run it through a post-template block that does. The results
+				 * come from the `post-queries` cache populated when the post template rendered.
+				 */
+				$query_id = $block['attrs']['queryId'] ?? 0;
+				$template = new \WP_Block(
+					array( 'blockName' => 'core/post-template' ),
+					array(
+						'queryId' => $query_id,
+						'query'   => $block['attrs']['query'] ?? array(),
+					)
+				);
+				$page_key = 'query-' . $query_id . '-page';
+				$page     = empty( $_GET[ $page_key ] ) ? 1 : (int) $_GET[ $page_key ]; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$query    = new \WP_Query( \build_query_vars_from_query_block( $template, $page ) );
+			}
+
+			// Stop applying the AQL params once the outermost AQL block is done.
+			if ( --$GLOBALS['aql_query_vars_filter_depth'] <= 0 ) {
+				$GLOBALS['aql_query_vars_filter_depth'] = 0;
+				\remove_filter( 'query_loop_block_query_vars', __NAMESPACE__ . '\filter_query_loop_block_query_vars', 10 );
+			}
+		}
+
+		if ( $hide_if_empty && $query instanceof \WP_Query && 0 === $query->post_count ) {
+			return '';
+		}
+
+		return $block_content;
 	},
 	10,
 	2

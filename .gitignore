@@ -12,3 +12,5 @@ artifacts
 test-results
 .mcp.json
 docs/superpowers/
+# Claude Code worktrees
+.claude/worktrees/
