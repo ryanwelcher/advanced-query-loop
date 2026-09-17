@@ -11,7 +11,7 @@ export const HideIfEmptyToggle = ( { attributes, setAttributes } ) => {
 			__nextHasNoMarginBottom
 			label={ __( 'Hide template', 'advanced-query-loop' ) }
 			help={ __(
-				'If there are no results, hide the all the inner blocks',
+				'If there are no results, hide all the inner blocks',
 				'advanced-query-loop'
 			) }
 			checked={ !! HideIfEmpty }
