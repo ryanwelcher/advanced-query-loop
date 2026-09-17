@@ -42,7 +42,13 @@ class Query_Params_Generator {
 		'exclude_posts'            => 'exclude_posts',
 		'enable_caching'           => 'enable_caching',
 		'query_id'                 => 'aql_query_id',
+		'hide_empty'               => 'hide_if_empty',
 	);
+
+	/**
+	 * Some controls don't need to be processed in the query generator.
+	 */
+	const CONTROLS_TO_SKIP = [ 'hide_empty' ];
 
 	/**
 	 * Additional param names that must also trigger process_orderBy().
@@ -138,7 +144,9 @@ class Query_Params_Generator {
 	protected function get_params_to_process() {
 		$params = array();
 		foreach ( self::get_allowed_controls() as $control ) {
-			$params[] = self::ALLOWED_CONTROLS[ $control ];
+			if ( ! in_array( $control, self::CONTROLS_TO_SKIP, true ) ) {
+				$params[] = self::ALLOWED_CONTROLS[ $control ];
+			}
 		}
 		return $params;
 	}
