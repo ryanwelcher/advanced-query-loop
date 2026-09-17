@@ -194,8 +194,8 @@ add_filter(
 			isset( $query->query['is_aql'] ) &&
 			isset( $query->query['enable_caching'] ) &&
 			true === $query->query['enable_caching'] &&
-			! isset($_GET['context']) && // phpcs:ignore
-			! isset($_GET['canvas']) // phpcs:ignore
+			! isset( $_GET['context'] ) && // phpcs:ignore
+			! isset( $_GET['canvas'] ) // phpcs:ignore
 		) {
 			$cached_query = get_transient( $query->query_vars_hash );
 			if ( $cached_query ) {
