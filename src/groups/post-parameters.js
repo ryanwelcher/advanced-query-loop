@@ -15,6 +15,7 @@ import { __ } from '@wordpress/i18n';
 import { MultiplePostSelect } from '../components/multiple-post-select';
 import { PostIncludeControls } from '../components/post-include-controls';
 import { ExcludeCurrentPostToggle } from '../components/post-exclude-controls';
+import { ExcludePasswordProtectedToggle } from '../components/exclude-password-protected-toggle';
 import { PostPickerControl } from '../components/post-picker-control';
 import { ChildItemsToggle } from '../components/child-items-toggle';
 import { useToolsPanelDropdownMenuProps } from './use-dropdown-menu-props';
@@ -24,6 +25,7 @@ const GROUP_CONTROLS = [
 	'include_posts',
 	'exclude_posts',
 	'exclude_current_post',
+	'exclude_password_protected',
 	'child_items_only',
 ];
 
@@ -53,6 +55,7 @@ export const PostParametersControls = ( props ) => {
 					'include_posts',
 					'exclude_posts',
 					'exclude_current',
+					'exclude_password_protected',
 					'post_parent',
 				] )
 			}
@@ -118,6 +121,22 @@ export const PostParametersControls = ( props ) => {
 					}
 				>
 					<ExcludeCurrentPostToggle { ...props } />
+				</ToolsPanelItem>
+			) }
+			{ allowedControls.includes( 'exclude_password_protected' ) && (
+				<ToolsPanelItem
+					label={ __(
+						'Exclude password protected posts',
+						'advanced-query-loop'
+					) }
+					hasValue={ () => !! query.exclude_password_protected }
+					onDeselect={ () =>
+						removeKeys( attributes, setAttributes, [
+							'exclude_password_protected',
+						] )
+					}
+				>
+					<ExcludePasswordProtectedToggle { ...props } />
 				</ToolsPanelItem>
 			) }
 			{ allowedControls.includes( 'child_items_only' ) && (
