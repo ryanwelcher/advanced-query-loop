@@ -88,9 +88,9 @@ class Placeholder_Resolver_Tests extends TestCase {
 	}
 
 	/**
-	 * A known token with no value in context stays in the value verbatim.
+	 * A known token with no value in context is replaced with the no-value marker.
 	 */
-	public function test_known_token_without_context_value_stays_verbatim() {
+	public function test_known_token_without_context_value_becomes_no_value_marker() {
 		$params = array(
 			'meta_key'   => 'related_post',
 			'meta_value' => '{aql:current_post_id}',
@@ -98,7 +98,7 @@ class Placeholder_Resolver_Tests extends TestCase {
 
 		$resolved = Placeholder_Resolver::resolve_params( $params, array( 'post_id' => 0 ) );
 
-		$this->assertSame( '{aql:current_post_id}', $resolved['meta_value'] );
+		$this->assertSame( Placeholder_Resolver::NO_VALUE, $resolved['meta_value'] );
 		$this->assertSame( 'related_post', $resolved['meta_key'] );
 	}
 
@@ -165,40 +165,40 @@ class Placeholder_Resolver_Tests extends TestCase {
 	 */
 	public function data_context_tokens() {
 		return array(
-			'author_id resolves'                           => array(
+			'author_id resolves'                        => array(
 				array( 'meta_value' => '{aql:author_id}' ),
 				array( 'author_id' => 12 ),
 				array( 'meta_value' => '12' ),
 			),
-			'user_id resolves'                             => array(
+			'user_id resolves'                          => array(
 				array( 'meta_value' => '{aql:user_id}' ),
 				array( 'user_id' => 3 ),
 				array( 'meta_value' => '3' ),
 			),
-			'user_id empty when logged out stays verbatim' => array(
+			'user_id empty when logged out is marked'   => array(
 				array( 'meta_value' => '{aql:user_id}' ),
 				array( 'user_id' => 0 ),
-				array( 'meta_value' => '{aql:user_id}' ),
+				array( 'meta_value' => Placeholder_Resolver::NO_VALUE ),
 			),
-			'current_post_parent_id resolves'              => array(
+			'current_post_parent_id resolves'           => array(
 				array( 'post_parent' => '{aql:current_post_parent_id}' ),
 				array( 'post_parent_id' => 42 ),
 				array( 'post_parent' => '42' ),
 			),
-			'current_post_parent_id on top-level post stays verbatim' => array(
+			'current_post_parent_id on top-level post is marked' => array(
 				array( 'meta_value' => '{aql:current_post_parent_id}' ),
 				array( 'post_parent_id' => 0 ),
-				array( 'meta_value' => '{aql:current_post_parent_id}' ),
+				array( 'meta_value' => Placeholder_Resolver::NO_VALUE ),
 			),
-			'current_term_id resolves'                     => array(
+			'current_term_id resolves'                  => array(
 				array( 'meta_value' => '{aql:current_term_id}' ),
 				array( 'term_id' => 7 ),
 				array( 'meta_value' => '7' ),
 			),
-			'current_term_id outside archive stays verbatim' => array(
+			'current_term_id outside archive is marked' => array(
 				array( 'meta_value' => '{aql:current_term_id}' ),
 				array( 'term_id' => 0 ),
-				array( 'meta_value' => '{aql:current_term_id}' ),
+				array( 'meta_value' => Placeholder_Resolver::NO_VALUE ),
 			),
 		);
 	}
@@ -378,10 +378,11 @@ class Placeholder_Resolver_Tests extends TestCase {
 	}
 
 	/**
-	 * Regression test for Finding 1: with no context post_id, the meta_query
-	 * clause carries the literal unresolved token rather than being dropped.
+	 * With no context post_id, the meta_query clause becomes one that never
+	 * matches rather than comparing against the literal token (which MySQL
+	 * casts to 0 for NUMERIC clauses).
 	 */
-	public function test_unresolved_meta_query_stays_verbatim_in_query_params_generator() {
+	public function test_valueless_meta_query_clause_never_matches() {
 		$block_query = array(
 			'meta_query' => array(
 				'relation' => 'AND',
@@ -389,6 +390,7 @@ class Placeholder_Resolver_Tests extends TestCase {
 					array(
 						'meta_key'   => 'related_post',
 						'meta_value' => '{aql:current_post_id}',
+						'meta_type'  => 'NUMERIC',
 					),
 				),
 			),
@@ -400,6 +402,99 @@ class Placeholder_Resolver_Tests extends TestCase {
 		$qpg->process_all();
 		$query_args = $qpg->get_query_args();
 
-		$this->assertSame( '{aql:current_post_id}', $query_args['meta_query'][0]['value'] );
+		$this->assertSame(
+			array(
+				'key'     => Placeholder_Resolver::NO_VALUE,
+				'compare' => 'EXISTS',
+			),
+			$query_args['meta_query'][0]
+		);
+	}
+
+	/**
+	 * Only the clause holding the valueless token is replaced, so an OR
+	 * relation still matches on its other clauses.
+	 */
+	public function test_valueless_clause_keeps_other_clauses_and_relation() {
+		$block_query = array(
+			'meta_query' => array(
+				'relation' => 'OR',
+				'queries'  => array(
+					array(
+						'meta_key'   => 'owner',
+						'meta_value' => '{aql:user_id}',
+					),
+					array(
+						'meta_key'     => 'color',
+						'meta_value'   => 'red,blue',
+						'meta_compare' => 'IN',
+					),
+				),
+			),
+		);
+
+		$resolved = Placeholder_Resolver::resolve_params( $block_query, array( 'user_id' => 0 ) );
+
+		$qpg = new Query_Params_Generator( array(), $resolved );
+		$qpg->process_all();
+		$meta_query = $qpg->get_query_args()['meta_query'];
+
+		$this->assertSame( 'OR', $meta_query['relation'] );
+		$this->assertSame( Placeholder_Resolver::NO_VALUE, $meta_query[0]['key'] );
+		$this->assertSame(
+			array(
+				'key'     => 'color',
+				'value'   => 'red,blue',
+				'compare' => 'IN',
+			),
+			$meta_query[1]
+		);
+	}
+
+	/**
+	 * A valueless token inside a larger value or in the meta key also
+	 * makes the clause never match.
+	 */
+	public function test_valueless_token_in_key_or_partial_value_never_matches() {
+		$block_query = array(
+			'meta_query' => array(
+				'queries' => array(
+					array(
+						'meta_key'     => 'color',
+						'meta_value'   => 'red,{aql:user_id}',
+						'meta_compare' => 'IN',
+					),
+					array(
+						'meta_key'     => 'saved_by_{aql:user_id}',
+						'meta_compare' => 'NOT EXISTS',
+					),
+				),
+			),
+		);
+
+		$resolved = Placeholder_Resolver::resolve_params( $block_query, array( 'user_id' => 0 ) );
+
+		$qpg = new Query_Params_Generator( array(), $resolved );
+		$qpg->process_all();
+		$meta_query = $qpg->get_query_args()['meta_query'];
+
+		$this->assertSame( Placeholder_Resolver::NO_VALUE, $meta_query[0]['key'] );
+		$this->assertSame( Placeholder_Resolver::NO_VALUE, $meta_query[1]['key'] );
+	}
+
+	/**
+	 * A custom filter returning an empty string marks its token as valueless.
+	 */
+	public function test_filter_returning_empty_string_marks_token_valueless() {
+		$GLOBALS['aql_test_filters']['aql_resolve_placeholder'][] = function ( $resolved, $name ) {
+			return 'my_custom' === $name ? '' : $resolved;
+		};
+
+		$resolved = Placeholder_Resolver::resolve_params(
+			array( 'meta_value' => '{aql:my_custom}' ),
+			array()
+		);
+
+		$this->assertSame( Placeholder_Resolver::NO_VALUE, $resolved['meta_value'] );
 	}
 }

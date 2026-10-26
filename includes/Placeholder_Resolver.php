@@ -25,14 +25,21 @@ class Placeholder_Resolver {
 	const TOKEN_PATTERN = '/\{aql:([a-z0-9_]+)\}/';
 
 	/**
+	 * Marker substituted for a known token that currently has no value.
+	 * The Meta_Query trait turns any clause containing it into a clause
+	 * that never matches.
+	 */
+	const NO_VALUE = '__aql_no_value__';
+
+	/**
 	 * Recursively resolve tokens in every string value of a params array.
 	 *
-	 * A token that does not resolve to a non-empty string is left in the
-	 * value verbatim — nothing is ever dropped. This means e.g. a
-	 * logged-out {aql:user_id} clause is compared against the literal
-	 * string "{aql:user_id}", which matches no real meta value, so the
-	 * clause still matches nothing without ever widening to match
-	 * everything. Token-free values pass through untouched.
+	 * An unknown token is left in the value verbatim. A known token that
+	 * currently has no value (e.g. {aql:user_id} for a logged-out visitor)
+	 * is replaced with self::NO_VALUE so the meta query clause using it
+	 * matches nothing, whatever its compare or type. Comparing against the
+	 * literal token instead is unsafe: MySQL casts it to 0 for NUMERIC
+	 * clauses. Token-free values pass through untouched.
 	 *
 	 * @param array $params  Raw params (block query, query vars, or REST params).
 	 * @param array $context Resolution context. Keys: post_id, post_type,
@@ -70,8 +77,12 @@ class Placeholder_Resolver {
 			self::TOKEN_PATTERN,
 			function ( $matches ) use ( $context ) {
 				$resolved = self::resolve_token( $matches[1], $context );
-				// Unresolved (unknown, or known but currently valueless): leave it verbatim.
-				return '' === (string) $resolved ? $matches[0] : $resolved;
+				if ( null === $resolved ) {
+					// Unknown: leave it verbatim.
+					return $matches[0];
+				}
+				// Known but currently valueless: mark it so the clause matches nothing.
+				return '' === $resolved ? self::NO_VALUE : $resolved;
 			},
 			$value
 		) ?? $value; // A PCRE failure returns null; fall back to the original string.
@@ -95,9 +106,10 @@ class Placeholder_Resolver {
 		 * Filter a placeholder resolution.
 		 *
 		 * Return a non-empty string to resolve the token (overriding
-		 * built-ins). Return null, or leave $resolved untouched, for a
-		 * name you don't handle or one with currently no value — the
-		 * token is then left in the value verbatim rather than dropped.
+		 * built-ins). Return an empty string for a token you handle that
+		 * currently has no value; the meta query clause using it then
+		 * matches nothing. Return null, or leave $resolved untouched, for
+		 * a name you don't handle; the token is then left verbatim.
 		 *
 		 * @since 4.5.0
 		 *

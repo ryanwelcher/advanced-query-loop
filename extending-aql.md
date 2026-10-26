@@ -201,11 +201,12 @@ add_filter(
 );
 ```
 
-Resolution rules: return a string to resolve the token; return null, or leave
-`$resolved` untouched, for names you don't handle. A token that resolves to
-nothing — unknown, or known but currently valueless (e.g. `{aql:user_id}` for
-a logged-out visitor) — is left in the value verbatim, so equality-style
-comparisons against it match nothing.
+Resolution rules: return a string to resolve the token. Return an empty string
+when your token currently has no value (like `{aql:user_id}` for a logged-out
+visitor). Any meta query clause using it then matches nothing, whatever its
+compare or type, and the other clauses keep their AND/OR relation. Return null,
+or leave `$resolved` untouched, for names you don't handle. Unknown tokens are
+left in the value verbatim.
 
 The `$context` array includes `post_id`, `post_type`, `post_parent_id`, `author_id`,
 `user_id`, `term_id`, `is_editor_preview`, `block_query`, and `inherited`.

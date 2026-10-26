@@ -61,12 +61,19 @@ function build_placeholder_context( array $block_query, bool $inherited, bool $i
 			// Hijack the global query. It's a hack, but it works.
 			if ( isset( $parsed_block['attrs']['query']['inherit'] ) && true === $parsed_block['attrs']['query']['inherit'] ) {
 				global $wp_query;
+
+				// Resolve dynamic placeholders before any processing.
+				$block_query = Placeholder_Resolver::resolve_params(
+					$parsed_block['attrs']['query'],
+					build_placeholder_context( $parsed_block['attrs']['query'], true )
+				);
+
 				$query_args = array_merge(
 					$wp_query->query_vars,
 					array(
-						'posts_per_page' => $parsed_block['attrs']['query']['perPage'],
-						'order'          => $parsed_block['attrs']['query']['order'],
-						'orderby'        => $parsed_block['attrs']['query']['orderBy'],
+						'posts_per_page' => $block_query['perPage'],
+						'order'          => $block_query['order'],
+						'orderby'        => $block_query['orderBy'],
 					)
 				);
 
@@ -86,7 +93,7 @@ function build_placeholder_context( array $block_query, bool $inherited, bool $i
 				$filtered_query_args = \apply_filters(
 					'aql_query_vars',
 					$query_args,
-					$parsed_block['attrs']['query'],
+					$block_query,
 					true,
 				);
 
@@ -98,11 +105,11 @@ function build_placeholder_context( array $block_query, bool $inherited, bool $i
 						// Retrieve the query from the passed block context.
 						$block_query = $block->context['query'] ?? array();
 
-						// Resolve dynamic placeholders before any processing.
-						$block_query = Placeholder_Resolver::resolve_params(
-							$block_query,
-							build_placeholder_context( $block_query, false )
-						);
+						// Resolve dynamic placeholders before any processing, including
+						// in the args core built from the block (e.g. search).
+						$context       = build_placeholder_context( $block_query, false );
+						$block_query   = Placeholder_Resolver::resolve_params( $block_query, $context );
+						$default_query = Placeholder_Resolver::resolve_params( $default_query, $context );
 
 						// Process all of the params
 						$qpg = new Query_Params_Generator( $default_query, $block_query );
@@ -198,6 +205,7 @@ function add_custom_query_params( $args, $request ) {
 
 	$context = build_placeholder_context( $params, false, true, $preview_post_id );
 	$params  = Placeholder_Resolver::resolve_params( $params, $context );
+	$args    = Placeholder_Resolver::resolve_params( $args, $context );
 
 	// Process all of the params
 	$qpg = new Query_Params_Generator( $args, $params );
