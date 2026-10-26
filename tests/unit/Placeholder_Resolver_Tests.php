@@ -452,6 +452,55 @@ class Placeholder_Resolver_Tests extends TestCase {
 	}
 
 	/**
+	 * A valueless token inside a nested group also never matches, and its
+	 * sibling conditions in the group are kept.
+	 */
+	public function test_valueless_clause_in_nested_group_never_matches() {
+		$block_query = array(
+			'meta_query' => array(
+				'relation' => 'AND',
+				'queries'  => array(
+					array(
+						'relation' => 'OR',
+						'queries'  => array(
+							array(
+								'meta_key'   => 'related_post',
+								'meta_value' => '{aql:current_post_id}',
+								'meta_type'  => 'NUMERIC',
+							),
+							array(
+								'meta_key'   => 'color',
+								'meta_value' => 'red',
+							),
+						),
+					),
+				),
+			),
+		);
+
+		$resolved = Placeholder_Resolver::resolve_params( $block_query, array( 'post_id' => 0 ) );
+
+		$qpg = new Query_Params_Generator( array(), $resolved );
+		$qpg->process_all();
+		$meta_query = $qpg->get_query_args()['meta_query'];
+
+		$this->assertSame(
+			array(
+				'relation' => 'OR',
+				array(
+					'key'     => Placeholder_Resolver::NO_VALUE,
+					'compare' => 'EXISTS',
+				),
+				array(
+					'key'   => 'color',
+					'value' => 'red',
+				),
+			),
+			$meta_query[0]
+		);
+	}
+
+	/**
 	 * A valueless token inside a larger value or in the meta key also
 	 * makes the clause never match.
 	 */

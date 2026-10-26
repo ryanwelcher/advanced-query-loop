@@ -25,8 +25,9 @@ import usePlaceholders from '../hooks/usePlaceholders';
  * @param {string}   props.label    Field label.
  * @param {string}   props.value    Current value.
  * @param {Function} props.onChange Change handler receiving the new value.
+ * @param {string}   props.help     Optional help text.
  */
-export const PlaceholderTextControl = ( { label, value, onChange } ) => {
+export const PlaceholderTextControl = ( { label, value, onChange, help } ) => {
 	const placeholders = usePlaceholders();
 
 	return (
@@ -37,6 +38,7 @@ export const PlaceholderTextControl = ( { label, value, onChange } ) => {
 				label={ label }
 				value={ value ?? '' }
 				onChange={ onChange }
+				help={ help }
 			/>
 			<DropdownMenu
 				icon={ null }
