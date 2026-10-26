@@ -3,8 +3,17 @@
  * Bootstrap for tests.
  */
 
+/*
+ * Registry for test filters.
+ * Tests append callables to $GLOBALS['aql_test_filters']['filter_name'][] = callback
+ */
+$GLOBALS['aql_test_filters'] = array();
+
 if ( ! function_exists( 'apply_filters' ) ) {
-	function apply_filters( $tag, $value ) {
+	function apply_filters( $tag, $value, ...$args ) {
+		foreach ( $GLOBALS['aql_test_filters'][ $tag ] ?? array() as $callback ) {
+			$value = call_user_func( $callback, $value, ...$args );
+		}
 		return $value;
 	}
 }
@@ -59,5 +68,18 @@ if ( ! function_exists( 'sanitize_title' ) ) {
 	 */
 	function sanitize_title( $title ) {
 		return strtolower( str_replace( ' ', '-', $title ) );
+	}
+}
+
+if ( ! function_exists( '__' ) ) {
+	/**
+	 * Mock translation function for testing.
+	 *
+	 * @param string $text   Text to translate.
+	 * @param string $domain Text domain.
+	 * @return string The untranslated text.
+	 */
+	function __( $text, $domain = 'default' ) { // phpcs:ignore
+		return $text;
 	}
 }
