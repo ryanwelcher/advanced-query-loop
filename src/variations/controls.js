@@ -59,6 +59,21 @@ const ALL_CONTROLS = [
 ];
 
 /**
+ * Trailing "AQL: Extensions" panel for third-party SlotFills.
+ * Renders nothing when no fills are registered.
+ *
+ * @param {Object} props
+ * @param {Array}  props.fills Rendered fills to display.
+ * @return {Element|null} The panel, or null when empty.
+ */
+const ExtensionsPanel = ( { fills } ) =>
+	fills.length ? (
+		<PanelBody title={ __( 'AQL: Extensions', 'advanced-query-loop' ) }>
+			{ fills }
+		</PanelBody>
+	) : null;
+
+/**
  * Custom controls
  *
  * @param {*} BlockEdit
@@ -117,19 +132,14 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 								<AQLControls.Slot
 									fillProps={ { ...propsWithControls } }
 								>
-									{ ( fills ) =>
-										legacyFills.length || fills.length ? (
-											<PanelBody
-												title={ __(
-													'AQL: Extensions',
-													'advanced-query-loop'
-												) }
-											>
-												{ legacyFills }
-												{ fills }
-											</PanelBody>
-										) : null
-									}
+									{ ( fills ) => (
+										<ExtensionsPanel
+											fills={ [
+												...legacyFills,
+												...fills,
+											] }
+										/>
+									) }
 								</AQLControls.Slot>
 							) }
 						</AQLLegacyControls.Slot>
@@ -142,18 +152,13 @@ const withAdvancedQueryControls = ( BlockEdit ) => ( props ) => {
 			<>
 				<BlockEdit { ...props } />
 				<InspectorControls>
-					<PanelBody
-						title={ __(
-							'Advanced Query Settings',
-							'advanced-query-loop'
-						) }
-					>
-						<AQLControlsInheritedQuery.Slot
-							fillProps={ { ...propsWithControls } }
-						/>
-					</PanelBody>
 					<OrderControls { ...propsWithControls } />
 					<AdvancedControls { ...propsWithControls } />
+					<AQLControlsInheritedQuery.Slot
+						fillProps={ { ...propsWithControls } }
+					>
+						{ ( fills ) => <ExtensionsPanel fills={ fills } /> }
+					</AQLControlsInheritedQuery.Slot>
 				</InspectorControls>
 			</>
 		);

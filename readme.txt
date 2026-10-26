@@ -173,6 +173,7 @@ Advanced Query Loop is built with developers in mind:
 * Order by multiple properties (primary + secondary sort), including meta values, for non-inherited queries.
 * Reorganize inspector controls into grouped panels (AQL: Post, Taxonomy, Meta, Date, Order by, Performance, Advanced).
 * Add an "AQL: Extensions" panel for third-party controls (formerly inside "Advanced Query Settings"), shown only when extensions are registered.
+* Inherited queries use the same trailing "AQL: Extensions" panel (replacing the always-visible "Advanced Query Settings" panel), shown only when extensions are registered.
 * Split date filters into separate Dynamic range and Date relationship options.
 
 = 4.4.1 =
