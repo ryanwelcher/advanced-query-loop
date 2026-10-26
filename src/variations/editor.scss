@@ -9,6 +9,30 @@
 	.components-form-token-field__suggestion.is-empty {
 		display: none;
 	}
+
+	/**
+	 * Float the suggestions over the controls below instead of pushing them
+	 * down. Otherwise the list closing on blur shifts the layout mid-click,
+	 * so a click on the next control (e.g. "Insert dynamic value") misses.
+	 */
+	.components-form-token-field__input-container {
+		position: relative;
+	}
+
+	.components-form-token-field__suggestions-list {
+		position: absolute;
+		top: 100%;
+		left: -1px;
+		right: -1px;
+		z-index: 1;
+		background: #fff;
+		border: 1px solid #949494;
+
+		// With only the hidden "No items found" row, it shows as a bare border.
+		&:not(:has(.components-form-token-field__suggestion:not(.is-empty))) {
+			display: none;
+		}
+	}
 }
 
 .aql-placeholder-text-control {
