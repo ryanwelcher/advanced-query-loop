@@ -32,6 +32,10 @@ Choose the posts you want to display manually or only the children of the curren
 
 Remove the current post from the query.
 
+#### Exclude password protected posts
+
+Remove password protected posts from the query results.
+
 #### Exclude posts list
 
 Curate a list of posts to exclude from the query.
@@ -101,6 +105,7 @@ add_filter(
 -   `'post_meta_query'`
 -   `'post_order'`
 -   `'exclude_current_post'`
+-   `'exclude_password_protected'`
 -   `'exclude_posts'`
 -   `'include_posts'`
 -   `'child_items_only'`
