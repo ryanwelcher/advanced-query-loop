@@ -111,7 +111,7 @@ class Placeholder_Resolver {
 		 * matches nothing. Return null, or leave $resolved untouched, for
 		 * a name you don't handle; the token is then left verbatim.
 		 *
-		 * @since 4.5.0
+		 * @since 5.1.0
 		 *
 		 * @param string|null $resolved The built-in resolution, or null for unknown names.
 		 * @param string      $name     The token name.
@@ -321,7 +321,7 @@ class Placeholder_Resolver {
 		/**
 		 * Filter the user-facing placeholder list shown in editor pickers.
 		 *
-		 * @since 4.5.0
+		 * @since 5.1.0
 		 *
 		 * @param array $list List of arrays with name, label, and description keys.
 		 */

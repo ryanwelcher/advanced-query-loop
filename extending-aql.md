@@ -211,6 +211,62 @@ left in the value verbatim.
 The `$context` array includes `post_id`, `post_type`, `post_parent_id`, `author_id`,
 `user_id`, `term_id`, `is_editor_preview`, `block_query`, and `inherited`.
 
+##### Handling a placeholder in your own code
+
+`aql_resolve_placeholder` can only swap a token for a single string. To turn a
+token into something else, such as a list of post IDs, skip the resolver and
+handle the token in `aql_query_vars` instead. Placeholders are resolved before
+`aql_query_vars` runs, and a token nobody resolves is left verbatim, so your
+callback receives `{aql:my_favorites}` exactly as stored.
+
+This example lists a "My Favorites" placeholder in the Meta Value menu, then
+replaces the clause that uses it with a `post__in` list read from user meta:
+
+```php
+// Show it in the editor's Meta Value menu. There is no resolver for it.
+add_filter(
+	'aql_placeholder_list',
+	function ( $list ) {
+		$list[] = array(
+			'name'        => 'my_favorites',
+			'label'       => __( 'My Favorites', 'my-plugin' ),
+			'description' => __( "Posts in the logged-in user's favorites.", 'my-plugin' ),
+		);
+		return $list;
+	}
+);
+
+// Replace the clause holding the token with a post__in list.
+add_filter(
+	'aql_query_vars',
+	function ( $query_args ) {
+		if ( empty( $query_args['meta_query'] ) ) {
+			return $query_args;
+		}
+		foreach ( $query_args['meta_query'] as $index => $clause ) {
+			if ( is_array( $clause ) && '{aql:my_favorites}' === ( $clause['value'] ?? '' ) ) {
+				unset( $query_args['meta_query'][ $index ] );
+				$favorites = get_user_meta( get_current_user_id(), 'favorite_posts', true );
+				// array( 0 ) matches nothing when the user has no favorites.
+				$query_args['post__in'] = $favorites ? array_map( 'absint', (array) $favorites ) : array( 0 );
+			}
+		}
+		return $query_args;
+	}
+);
+```
+
+In the editor, add a meta query clause with any meta key, then pick My
+Favorites as its value. Keep in mind:
+
+- Your callback has to replace the token. Until it does, the clause compares
+  against the literal `{aql:my_favorites}`, and a `NUMERIC` clause casts that
+  to `0`.
+- Removing a clause changes the meaning of an OR relation. The example suits
+  AND relations, or a query with a single clause.
+- In the editor preview, `get_current_user_id()` returns the user who is
+  editing, not a site visitor.
+
 ##### Placeholder-aware custom controls
 
 Custom SlotFill controls can reuse AQL's picker UI so their inputs accept
