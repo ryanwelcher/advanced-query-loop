@@ -1,0 +1,47 @@
+/**
+ * Hide FormTokenField's hard-coded "No items found" row inside AQL's
+ * token fields — the component offers no prop for this, and with
+ * expand-on-focus enabled the row would show whenever a typed custom
+ * value matches no suggestion. Screen readers still receive the
+ * component's built-in "No results." announcement.
+ */
+.aql-token-field {
+	.components-form-token-field__suggestion.is-empty {
+		display: none;
+	}
+
+	/**
+	 * Float the suggestions over the controls below instead of pushing them
+	 * down. Otherwise the list closing on blur shifts the layout mid-click,
+	 * so a click on the next control (e.g. "Insert dynamic value") misses.
+	 */
+	.components-form-token-field__input-container {
+		position: relative;
+	}
+
+	.components-form-token-field__suggestions-list {
+		position: absolute;
+		top: 100%;
+		left: -1px;
+		right: -1px;
+		z-index: 1;
+		background: #fff;
+		border: 1px solid #949494;
+
+		// With only the hidden "No items found" row, it shows as a bare border.
+		&:not(:has(.components-form-token-field__suggestion:not(.is-empty))) {
+			display: none;
+		}
+	}
+}
+
+.aql-placeholder-text-control {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 4px;
+
+	> .components-base-control {
+		align-self: stretch;
+	}
+}

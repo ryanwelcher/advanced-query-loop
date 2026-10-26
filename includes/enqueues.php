@@ -35,12 +35,24 @@ if ( ! function_exists( 'add_action' ) ) {
 				$assets['version'],
 				true
 			);
+			// Editor styles for AQL's token fields.
+			if ( file_exists( BUILD_DIR_PATH . 'variations.css' ) ) {
+				\wp_enqueue_style(
+					'advanced-query-loop',
+					BUILD_DIR_URL . 'variations.css',
+					array(),
+					$assets['version']
+				);
+			}
+
 			// Allow for translation.
 			wp_set_script_translations( 'advanced-query-loop', 'advanced-query-loop' );
 			// Add inline script.
 			wp_add_inline_script(
 				'advanced-query-loop',
-				'window.aql = window.aql || {}; window.aql.allowedControls = "' . implode( ',', Query_Params_Generator::get_allowed_controls() ) . '";'
+				'window.aql = window.aql || {};'
+				. ' window.aql.allowedControls = "' . implode( ',', Query_Params_Generator::get_allowed_controls() ) . '";'
+				. ' window.aql.placeholders = ' . wp_json_encode( Placeholder_Resolver::get_placeholder_list() ) . ';'
 			);
 		}
 	}
