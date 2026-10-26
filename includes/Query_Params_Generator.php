@@ -14,6 +14,7 @@ class Query_Params_Generator {
 
 	use Traits\Multiple_Posts;
 	use Traits\Exclude_Current;
+	use Traits\Exclude_Password_Protected;
 	use Traits\Exclude_Posts;
 	use Traits\Include_Posts;
 	use Traits\Meta_Query;
@@ -29,19 +30,20 @@ class Query_Params_Generator {
 	 * The list of allowed controls and their associated params in the query.
 	 */
 	const ALLOWED_CONTROLS = array(
-		'additional_post_types'    => 'multiple_posts',
-		'taxonomy_query_builder'   => 'tax_query',
-		'post_meta_query'          => 'meta_query',
-		'post_order'               => 'orderBy',
-		'exclude_current_post'     => 'exclude_current',
-		'include_posts'            => 'include_posts',
-		'child_items_only'         => 'post_parent',
-		'date_query_dynamic_range' => 'date_query',
-		'date_query_relationship'  => 'date_query',
-		'pagination'               => 'disable_pagination',
-		'exclude_posts'            => 'exclude_posts',
-		'enable_caching'           => 'enable_caching',
-		'query_id'                 => 'aql_query_id',
+		'additional_post_types'      => 'multiple_posts',
+		'taxonomy_query_builder'     => 'tax_query',
+		'post_meta_query'            => 'meta_query',
+		'post_order'                 => 'orderBy',
+		'exclude_current_post'       => 'exclude_current',
+		'exclude_password_protected' => 'exclude_password_protected',
+		'include_posts'              => 'include_posts',
+		'child_items_only'           => 'post_parent',
+		'date_query_dynamic_range'   => 'date_query',
+		'date_query_relationship'    => 'date_query',
+		'pagination'                 => 'disable_pagination',
+		'exclude_posts'              => 'exclude_posts',
+		'enable_caching'             => 'enable_caching',
+		'query_id'                   => 'aql_query_id',
 	);
 
 	/**

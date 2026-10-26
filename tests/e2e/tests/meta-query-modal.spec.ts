@@ -45,13 +45,12 @@ test.describe( 'Meta query builder modal', () => {
 			.fill( 'color' );
 		await page.keyboard.press( 'Enter' );
 
-		// Suggestions still render and select inside the modal.
-		const metaValueField = dialog.getByRole( 'combobox', {
-			name: 'Meta Value',
-		} );
-		await metaValueField.click();
+		// The dynamic value menu still opens and inserts inside the modal.
+		await dialog
+			.getByRole( 'button', { name: 'Insert dynamic value' } )
+			.click();
 		await page
-			.getByRole( 'option', { name: 'Current Post ID', exact: true } )
+			.getByRole( 'menuitem', { name: /^Current Post ID/ } )
 			.click();
 
 		let blocks = await editor.getBlocks();
@@ -457,9 +456,8 @@ test.describe( 'Type guidance', () => {
 		const dialog = page.getByRole( 'dialog', {
 			name: 'Meta Query Builder',
 		} );
-		const value = dialog.getByRole( 'combobox', { name: 'Meta Value' } );
+		const value = dialog.getByRole( 'textbox', { name: 'Meta Value' } );
 		await value.fill( 'anything' );
-		await page.keyboard.press( 'Enter' );
 
 		await dialog
 			.getByRole( 'combobox', { name: 'Meta Compare' } )
@@ -509,7 +507,7 @@ test.describe( 'Type guidance', () => {
 			blocks[ 0 ].attributes.query.meta_query.queries[ 0 ].meta_value;
 		expect( stored ).toMatch( /^\d{4}-\d{2}-15$/ );
 		await expect(
-			dialog.getByRole( 'combobox', { name: 'Meta Value' } )
+			dialog.getByRole( 'textbox', { name: 'Meta Value' } )
 		).toBeVisible();
 	} );
 } );
@@ -541,12 +539,11 @@ test.describe( 'Nested condition groups', () => {
 		await page.keyboard.press( 'Enter' );
 	};
 
-	const fillLastValue = async ( scope, page, value: string ) => {
+	const fillLastValue = async ( scope, value: string ) => {
 		await scope
-			.getByRole( 'combobox', { name: 'Meta Value' } )
+			.getByRole( 'textbox', { name: 'Meta Value' } )
 			.last()
 			.fill( value );
-		await page.keyboard.press( 'Enter' );
 	};
 
 	test( 'builds (A and B) or C and stores a nested group', async ( {
@@ -628,7 +625,7 @@ test.describe( 'Nested condition groups', () => {
 		// ( _test_featured = yes AND _test_noise EXISTS ) OR no_such_key = x
 		await dialog.getByRole( 'button', { name: 'Add group' } ).click();
 		await fillLastKey( group, page, '_test_featured' );
-		await fillLastValue( group, page, 'yes' );
+		await fillLastValue( group, 'yes' );
 		await group.getByRole( 'button', { name: 'Add condition' } ).click();
 		await fillLastKey( group, page, '_test_noise' );
 		await group
@@ -642,7 +639,7 @@ test.describe( 'Nested condition groups', () => {
 
 		await dialog.getByRole( 'button', { name: 'Add new query' } ).click();
 		await fillLastKey( dialog, page, 'no_such_key' );
-		await fillLastValue( dialog, page, 'x' );
+		await fillLastValue( dialog, 'x' );
 
 		await dialog
 			.getByRole( 'radio', { name: 'Any condition' } )

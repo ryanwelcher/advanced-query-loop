@@ -190,3 +190,14 @@
 		background: #fff;
 	}
 }
+
+.aql-placeholder-text-control {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 4px;
+
+	> .components-base-control {
+		align-self: stretch;
+	}
+}

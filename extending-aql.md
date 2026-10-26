@@ -12,7 +12,7 @@ For example, a control that makes changes to the content types being displayed m
 -   AQLControls
 -   AQLControlsInheritedQuery
 
-Both SlotFills are passed all `props` from the main block and are available on the `window.aql` object for use. Built-in AQL controls now live in their own grouped panels (AQL: Post, AQL: Taxonomy, AQL: Meta, AQL: Date, AQL: Order by, AQL: Performance, and AQL: Advanced). When `Inherit query from template` is disabled, fills registered via `AQLControls` (and the legacy `AQLLegacyControls`) render in a separate, trailing "AQL: Extensions" panel; this panel is only rendered when at least one fill is registered, so it stays hidden until an extension adds one. When `Inherit query from template` is enabled, fills registered via `AQLControlsInheritedQuery` continue to render inside the existing "Advanced Query Settings" panel, and the "AQL: Order by" panel offers only the primary order and direction — multi-property ordering (the meta sort key and the secondary sort) applies to non-inherited queries only, since inherited queries do not run the AQL query generator on the frontend.
+Both SlotFills are passed all `props` from the main block and are available on the `window.aql` object for use. Built-in AQL controls now live in their own grouped panels (AQL: Post, AQL: Taxonomy, AQL: Meta, AQL: Date, AQL: Order by, AQL: Performance, and AQL: Advanced). When `Inherit query from template` is disabled, fills registered via `AQLControls` (and the legacy `AQLLegacyControls`) render in a separate, trailing "AQL: Extensions" panel; this panel is only rendered when at least one fill is registered, so it stays hidden until an extension adds one. When `Inherit query from template` is enabled, fills registered via `AQLControlsInheritedQuery` render in the same trailing "AQL: Extensions" panel, likewise only when at least one fill is registered, and the "AQL: Order by" panel offers only the primary order and direction — multi-property ordering (the meta sort key and the secondary sort) applies to non-inherited queries only, since inherited queries do not run the AQL query generator on the frontend.
 
 ##### Available props
 
@@ -201,11 +201,12 @@ add_filter(
 );
 ```
 
-Resolution rules: return a string to resolve the token; return null, or leave
-`$resolved` untouched, for names you don't handle. A token that resolves to
-nothing — unknown, or known but currently valueless (e.g. `{aql:user_id}` for
-a logged-out visitor) — is left in the value verbatim, so equality-style
-comparisons against it match nothing.
+Resolution rules: return a string to resolve the token. Return an empty string
+when your token currently has no value (like `{aql:user_id}` for a logged-out
+visitor). Any meta query clause using it then matches nothing, whatever its
+compare or type, and the other clauses keep their AND/OR relation. Return null,
+or leave `$resolved` untouched, for names you don't handle. Unknown tokens are
+left in the value verbatim.
 
 The `$context` array includes `post_id`, `post_type`, `post_parent_id`, `author_id`,
 `user_id`, `term_id`, `is_editor_preview`, `block_query`, and `inherited`.

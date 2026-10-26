@@ -24,54 +24,62 @@ test.describe( 'Dynamic placeholders', () => {
 		await playground.cleanUp();
 	} );
 
-	test( 'inserts the Current Post ID token from the picker', async ( {
+	/**
+	 * Open the meta query builder, add a query, and set its meta key so the
+	 * Meta Value field appears.
+	 *
+	 * @param page    The Playwright page.
+	 * @param metaKey The meta key to set.
+	 */
+	const addMetaQuery = async ( page, metaKey ) => {
+		await page
+			.getByRole( 'button', { name: 'Open Post Meta query builder' } )
+			.click();
+		await page.getByRole( 'button', { name: 'Add new query' } ).click();
+		await page
+			.getByRole( 'combobox', { name: 'Meta Key' } )
+			.fill( metaKey );
+		await page.keyboard.press( 'Enter' );
+	};
+
+	const getMetaValue = async ( editor ) => {
+		const blocks = await editor.getBlocks();
+		return blocks[ 0 ].attributes.query.meta_query.queries[ 0 ].meta_value;
+	};
+
+	test( 'inserts the Current Post ID token from the menu', async ( {
 		page,
 		editor,
 	} ) => {
-		// Open the meta query builder and add a query.
+		await addMetaQuery( page, 'related_post' );
+
 		await page
-			.getByRole( 'button', { name: 'Open Post Meta query builder' } )
+			.getByRole( 'button', { name: 'Insert dynamic value' } )
 			.click();
-		await page.getByRole( 'button', { name: 'Add new query' } ).click();
-
-		// Set a meta key so the Meta Value field appears.
 		await page
-			.getByRole( 'combobox', { name: 'Meta Key' } )
-			.fill( 'related_post' );
-		await page.keyboard.press( 'Enter' );
+			.getByRole( 'menuitem', { name: /^Current Post ID/ } )
+			.click();
 
-		// Pick "Current Post ID" from the Meta Value suggestions.
-		const metaValueField = page.getByRole( 'combobox', {
-			name: 'Meta Value',
-		} );
-		await metaValueField.fill( 'Current Post ID' );
-		await page.keyboard.press( 'Enter' );
-
-		const blocks = await editor.getBlocks();
-		expect(
-			blocks[ 0 ].attributes.query.meta_query.queries[ 0 ].meta_value
-		).toEqual( '{aql:current_post_id}' );
+		expect( await getMetaValue( editor ) ).toEqual(
+			'{aql:current_post_id}'
+		);
+		await expect(
+			page.getByRole( 'textbox', { name: 'Meta Value' } )
+		).toHaveValue( '{aql:current_post_id}' );
 	} );
 
-	test( 'suggests all placeholders on focus and filters while typing', async ( {
+	test( 'lists every built-in placeholder in the menu', async ( {
 		page,
 	} ) => {
+		await addMetaQuery( page, 'any_key' );
+
 		await page
-			.getByRole( 'button', { name: 'Open Post Meta query builder' } )
+			.getByRole( 'button', { name: 'Insert dynamic value' } )
 			.click();
-		await page.getByRole( 'button', { name: 'Add new query' } ).click();
-		await page
-			.getByRole( 'combobox', { name: 'Meta Key' } )
-			.fill( 'any_key' );
-		await page.keyboard.press( 'Enter' );
-
-		const metaValueField = page.getByRole( 'combobox', {
-			name: 'Meta Value',
-		} );
-
-		// Focusing the empty field lists every built-in placeholder.
-		await metaValueField.click();
-		for ( const label of [
+		// Labels only; each menu item also shows its description.
+		await expect(
+			page.locator( '[role="menuitem"] .components-menu-item__item' )
+		).toHaveText( [
 			'Current Post ID',
 			'Current Post Parent ID',
 			'Author ID',
@@ -95,48 +103,38 @@ test.describe( 'Dynamic placeholders', () => {
 			'3 Months From Now',
 			'6 Months From Now',
 			'12 Months From Now',
-		] ) {
-			await expect(
-				page.getByRole( 'option', { name: label, exact: true } )
-			).toBeVisible();
-		}
-
-		// Typing filters the list.
-		await metaValueField.fill( 'Month' );
-		await expect(
-			page.getByRole( 'option', { name: '3 Months Ago', exact: true } )
-		).toBeVisible();
-		await expect(
-			page.getByRole( 'option', { name: 'Author ID', exact: true } )
-		).toBeHidden();
-
-		// An input matching nothing shows no empty-state prompt.
-		await metaValueField.fill( 'zzz' );
-		await expect( page.getByText( 'No items found' ) ).toBeHidden();
+		] );
 	} );
 
-	test( 'stores a hand-typed literal verbatim', async ( {
+	test( 'stores a typed value with commas verbatim', async ( {
 		page,
 		editor,
 	} ) => {
+		await addMetaQuery( page, 'color' );
+
 		await page
-			.getByRole( 'button', { name: 'Open Post Meta query builder' } )
+			.getByRole( 'textbox', { name: 'Meta Value' } )
+			.fill( 'red,blue' );
+
+		expect( await getMetaValue( editor ) ).toEqual( 'red,blue' );
+	} );
+
+	test( 'appends a placeholder to a typed value', async ( {
+		page,
+		editor,
+	} ) => {
+		await addMetaQuery( page, 'related_posts' );
+
+		await page.getByRole( 'textbox', { name: 'Meta Value' } ).fill( '12,' );
+		await page
+			.getByRole( 'button', { name: 'Insert dynamic value' } )
 			.click();
-		await page.getByRole( 'button', { name: 'Add new query' } ).click();
 		await page
-			.getByRole( 'combobox', { name: 'Meta Key' } )
-			.fill( 'color' );
-		await page.keyboard.press( 'Enter' );
+			.getByRole( 'menuitem', { name: /^Current Post ID/ } )
+			.click();
 
-		const metaValueField = page.getByRole( 'combobox', {
-			name: 'Meta Value',
-		} );
-		await metaValueField.fill( 'blue' );
-		await page.keyboard.press( 'Enter' );
-
-		const blocks = await editor.getBlocks();
-		expect(
-			blocks[ 0 ].attributes.query.meta_query.queries[ 0 ].meta_value
-		).toEqual( 'blue' );
+		expect( await getMetaValue( editor ) ).toEqual(
+			'12,{aql:current_post_id}'
+		);
 	} );
 } );

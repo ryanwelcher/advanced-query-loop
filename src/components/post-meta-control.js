@@ -204,12 +204,6 @@ export const PostMetaControl = ( {
 			</Grid>
 			{ hasKey && ! isValueless && (
 				<>
-					{ /*
-					 * The picker sits above the value field on purpose: the
-					 * field's suggestion list expands below it, and anything
-					 * placed there would shift when the list collapses on blur,
-					 * swallowing the click.
-					 */ }
 					<MetaValuePicker
 						metaType={ metaType }
 						value={ activeQuery.meta_value }

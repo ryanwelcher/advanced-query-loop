@@ -96,7 +96,7 @@ Sort your content exactly how you want:
 
 ==== 🎭 Dynamic Placeholders ====
 
-Use values like Current Post ID, Author ID, Logged-in User ID, Current Term ID, or Current Date in meta queries: the Meta Value field suggests dynamic values by name, and picking one stores the placeholder while typing anything else stores it verbatim.
+Use values like Current Post ID, Author ID, Logged-in User ID, Current Term ID, or Current Date in meta queries: pick one from the Meta Value field's Insert dynamic value menu, or type values as usual.
 * **Built-in placeholders**: Current post, parent, author, user, and archive term IDs; the current date (YYYY-MM-DD or YYYYMMDD), date and time, time, and timestamp; current year, month, day, hour, and week; and dates 1, 3, 6, or 12 months in the past or future, all in the site timezone
 * **Editor preview**: See resolved values in the block editor before publishing
 * **Extensible**: Register custom placeholders with simple PHP filters
@@ -183,6 +183,7 @@ Advanced Query Loop is built with developers in mind:
 * Order by multiple properties (primary + secondary sort), including meta values, for non-inherited queries.
 * Reorganize inspector controls into grouped panels (AQL: Post, Taxonomy, Meta, Date, Order by, Performance, Advanced).
 * Add an "AQL: Extensions" panel for third-party controls (formerly inside "Advanced Query Settings"), shown only when extensions are registered.
+* Inherited queries use the same trailing "AQL: Extensions" panel (replacing the always-visible "Advanced Query Settings" panel), shown only when extensions are registered.
 * Split date filters into separate Dynamic range and Date relationship options.
 
 = 4.4.1 =
