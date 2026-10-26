@@ -76,10 +76,9 @@ test.describe( 'Dynamic placeholders', () => {
 		await page
 			.getByRole( 'button', { name: 'Insert dynamic value' } )
 			.click();
-		// Labels only; each menu item also shows its description.
-		await expect(
-			page.locator( '[role="menuitem"] .components-menu-item__item' )
-		).toHaveText( [
+		// Each item's text is its label followed by its description, so match
+		// each item, in order, on its label as a prefix.
+		const labels = [
 			'Current Post ID',
 			'Current Post Parent ID',
 			'Author ID',
@@ -103,7 +102,17 @@ test.describe( 'Dynamic placeholders', () => {
 			'3 Months From Now',
 			'6 Months From Now',
 			'12 Months From Now',
-		] );
+		];
+		await expect(
+			page.locator( '.components-dropdown-menu__menu [role="menuitem"]' )
+		).toHaveText(
+			labels.map(
+				( label ) =>
+					new RegExp(
+						`^${ label.replace( /[.*+?^${}()|[\]\\]/g, '\\$&' ) }`
+					)
+			)
+		);
 	} );
 
 	test( 'stores a typed value with commas verbatim', async ( {
